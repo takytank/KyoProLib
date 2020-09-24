@@ -14,6 +14,14 @@
 
 - [C#で競技プログラミングをし続ける人のためのTips](https://qiita.com/Camypaper/items/de6d576fe5513743a50e#dictionarykv)
 
+### ModInt
+
+- [「1000000007 で割ったあまり」の求め方を総特集！ 〜 逆元から離散対数まで 〜](https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a)
+
+### NTT
+
+- [Fast Number Theoretic Transform](https://kopricky.github.io/code/FFTs/ntt.html)
+
 ### Scanner
 
 - [chokudai さんの tweet](https://twitter.com/chokudai/status/1051741812501536769?s=20)
