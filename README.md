@@ -10,6 +10,10 @@
 
 このライブラリは、以下の記事を参考にして作成されています。
 
+### Deque
+
+- [deque](https://ufcpp.net/study/stl/deque.html)
+
 ### HashMap
 
 - [C#で競技プログラミングをし続ける人のためのTips](https://qiita.com/Camypaper/items/de6d576fe5513743a50e#dictionarykv)
