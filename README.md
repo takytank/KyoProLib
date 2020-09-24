@@ -32,3 +32,8 @@
 - [chokudai さんの tweet](https://twitter.com/chokudai/status/1051741812501536769?s=20)
 - [↑のリンク先](https://atcoder.jp/contests/agc028/submissions/3392785)
 - [C#で競技プログラミングをし続ける人のためのTips](https://qiita.com/Camypaper/items/de6d576fe5513743a50e#入出力の高速化)
+
+### UnionFindTree
+
+- [Union find(素集合データ構造)](https://www.slideshare.net/chokudai/union-find-49066733)
+- [ちょっと変わったセグメント木の使い方](https://ei1333.hateblo.jp/entry/2017/12/14/000000)
