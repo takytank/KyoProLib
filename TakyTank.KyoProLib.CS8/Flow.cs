@@ -205,6 +205,71 @@ namespace TakyTank.KyoProLib.CS8
 			return (flowLimit - f, minCost);
 		}
 
+		public (long flow, long cost) CalculateMinCostFlowBySpfa(int s, int t, long flowLimit)
+		{
+			var prevVertexes = new int[n_];
+			var prevEdgeIndexes = new int[n_];
+			var distances = new long[n_];
+			var pending = new bool[n_];
+			var times = new int[n_];
+
+			long minCost = 0;
+			long f = flowLimit;
+			while (f > 0) {
+				var que = new Queue<int>();
+				que.Enqueue(s);
+
+				distances.AsSpan().Fill(INF);
+				distances[s] = 0;
+				pending.AsSpan().Fill(false);
+				pending[s] = true;
+				times.AsSpan().Fill(0);
+				times[s]++;
+				while (que.Count > 0) {
+					var v = que.Dequeue();
+					pending[v] = false;
+					for (int j = 0; j < edges_[v].Count; j++) {
+						var edge = edges_[v][j];
+						var newDistance = distances[v] + edge.Cost;
+						if (edge.Capacity <= 0 || newDistance >= distances[edge.To]) {
+							continue;
+						}
+
+						distances[edge.To] = newDistance;
+						prevVertexes[edge.To] = v;
+						prevEdgeIndexes[edge.To] = j;
+						if (pending[edge.To] == false) {
+							++times[edge.To];
+							if (times[edge.To] >= n_) {
+								return (-1, 0);
+							}
+
+							pending[edge.To] = true;
+							que.Enqueue(edge.To);
+						}
+					}
+				}
+
+				if (distances[t] == INF) {
+					return (-1, 0);
+				}
+
+				long d = f;
+				for (int v = t; v != s; v = prevVertexes[v]) {
+					d = Math.Min(d, edges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
+				}
+
+				f -= d;
+				minCost += d * distances[t];
+				for (int v = t; v != s; v = prevVertexes[v]) {
+					edges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity -= d;
+					edges_[v][edges_[prevVertexes[v]][prevEdgeIndexes[v]].ReverseEdgeIndex].Capacity += d;
+				}
+			}
+
+			return (flowLimit - f, minCost);
+		}
+
 		public (long flow, long cost) CalculateMinCostFlowByDijkstra(
 			int s, int t, long flowLimit, bool hasMinusCost = false)
 		{

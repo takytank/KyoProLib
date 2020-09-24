@@ -22,6 +22,7 @@
 ### Flow
 
 - 蟻本
+- [単一始点最短路(SPFA)](https://ei1333.github.io/luzhiled/snippets/graph/shortest-path-faster-algorithm.html)
 
 ### HashMap
 
