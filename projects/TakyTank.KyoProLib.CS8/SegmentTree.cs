@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CS8
 {
+	[DebuggerTypeProxy(typeof(SegmentTree<>.DebugView))]
 	public class SegmentTree<T> : IEnumerable<T>
 	{
 		private readonly int n_;
@@ -157,8 +159,65 @@ namespace TakyTank.KyoProLib.CS8
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		[DebuggerDisplay("data= {" + nameof(data_) + "}", Name = "{" + nameof(key_) + ",nq}")]
+		private struct DebugItem
+		{
+			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+			private readonly string key_;
+			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+			private readonly T data_;
+			public DebugItem(int l, int r, T data)
+			{
+				if (r - l == 1) {
+					key_ = $"[{l}]";
+				} else {
+					key_ = $"[{l}-{r})";
+				}
+
+				data_ = data;
+			}
+		}
+
+		private class DebugView
+		{
+			private readonly SegmentTree<T> tree_;
+			public DebugView(SegmentTree<T> tree)
+			{
+				tree_ = tree;
+			}
+
+			[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+			public DebugItem[] Items
+			{
+				get
+				{
+					var items = new List<DebugItem>(tree_.Count);
+					int length = tree_.n_;
+					while (length > 0) {
+						int unit = tree_.n_ / length;
+						for (int i = 0; i < length; i++) {
+							int l = i * unit;
+							int r = l + unit;
+							if (l < tree_.Count) {
+								int dataIndex = i + length;
+								items.Add(new DebugItem(
+									l,
+									r,
+									tree_.tree_[dataIndex]));
+							}
+						}
+
+						length >>= 1;
+					}
+
+					return items.ToArray();
+				}
+			}
+		}
 	}
 
+	[DebuggerTypeProxy(typeof(DualSegmentTree<>.DebugView))]
 	public class DualSegmentTree<T> : IEnumerable<T>
 	{
 		private readonly int n_;
@@ -341,8 +400,65 @@ namespace TakyTank.KyoProLib.CS8
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		[DebuggerDisplay("data= {" + nameof(data_) + "}", Name = "{" + nameof(key_) + ",nq}")]
+		private struct DebugItem
+		{
+			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+			private readonly string key_;
+			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+			private readonly T data_;
+			public DebugItem(int l, int r, T data)
+			{
+				if (r - l == 1) {
+					key_ = $"[{l}]";
+				} else {
+					key_ = $"[{l}-{r})";
+				}
+
+				data_ = data;
+			}
+		}
+
+		private class DebugView
+		{
+			private readonly DualSegmentTree<T> tree_;
+			public DebugView(DualSegmentTree<T> tree)
+			{
+				tree_ = tree;
+			}
+
+			[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+			public DebugItem[] Items
+			{
+				get
+				{
+					var items = new List<DebugItem>(tree_.Count);
+					int length = tree_.n_;
+					while (length > 0) {
+						int unit = tree_.n_ / length;
+						for (int i = 0; i < length; i++) {
+							int l = i * unit;
+							int r = l + unit;
+							if (l < tree_.Count) {
+								int dataIndex = i + length;
+								items.Add(new DebugItem(
+									l,
+									r,
+									tree_.tree_[dataIndex]));
+							}
+						}
+
+						length >>= 1;
+					}
+
+					return items.ToArray();
+				}
+			}
+		}
 	}
 
+	[DebuggerTypeProxy(typeof(LazySegmentTree<,>.DebugView))]
 	public class LazySegmentTree<TData, TUpdate> : IEnumerable<TData>
 	{
 		private readonly int n_;
@@ -540,5 +656,65 @@ namespace TakyTank.KyoProLib.CS8
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		[DebuggerDisplay("data= {" + nameof(data_) + "}, lazy= {" + nameof(lazy_) + "}", Name = "{" + nameof(key_) + ",nq}")]
+		private struct DebugItem
+		{
+			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+			private readonly string key_;
+			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+			private readonly TData data_;
+			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+			private readonly TUpdate lazy_;
+			public DebugItem(int l, int r, TData data, TUpdate lazy)
+			{
+				if (r - l == 1) {
+					key_ = $"[{l}]";
+				} else {
+					key_ = $"[{l}-{r})";
+				}
+
+				data_ = data;
+				lazy_ = lazy;
+			}
+		}
+
+		private class DebugView
+		{
+			private readonly LazySegmentTree<TData, TUpdate> tree_;
+			public DebugView(LazySegmentTree<TData, TUpdate> tree)
+			{
+				tree_ = tree;
+			}
+
+			[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+			public DebugItem[] Items
+			{
+				get
+				{
+					var items = new List<DebugItem>(tree_.Count);
+					int length = tree_.n_;
+					while (length > 0) {
+						int unit = tree_.n_ / length;
+						for (int i = 0; i < length; i++) {
+							int l = i * unit;
+							int r = l + unit;
+							if (l < tree_.Count) {
+								int dataIndex = i + length;
+								items.Add(new DebugItem(
+									l,
+									r,
+									tree_.data_[dataIndex],
+									tree_.lazy_[dataIndex]));
+							}
+						}
+
+						length >>= 1;
+					}
+
+					return items.ToArray();
+				}
+			}
+		}
 	};
 }
