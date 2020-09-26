@@ -5,7 +5,7 @@
 ## ライセンス
 
 このライブラリは、MIT License のもとで公開されています。  
-ただし、競技プログラミングのためにこのライブラリの一部をジャッジサーバなどに送信するとき、著作権表示および許諾表示を省略することができます。
+ただし、競技プログラミングのためにこのライブラリの一部をジャッジサーバーなどに送信するとき、著作権表示および許諾表示を省略することができます。
 
 ## 参考文献
 
@@ -46,6 +46,19 @@
 - [chokudai さんの tweet](https://twitter.com/chokudai/status/1051741812501536769?s=20)
 - [↑のリンク先](https://atcoder.jp/contests/agc028/submissions/3392785)
 - [C#で競技プログラミングをし続ける人のためのTips](https://qiita.com/Camypaper/items/de6d576fe5513743a50e#入出力の高速化)
+
+### SegmentTree
+
+- 蟻本
+- [セグメント木を徹底解説！0から遅延評価やモノイドまで](https://algo-logic.info/segment-tree/)
+- [遅延伝播セグメント木について](https://beet-aizu.hatenablog.com/entry/2017/12/01/225955)
+- [セグ木に載せるモノイドまとめ（未完）](https://beet-aizu.hatenablog.com/entry/2019/03/12/171221)
+- [Segment木の種類とその要件](https://kimiyuki.net/blog/2017/01/17/segment-tree-requirements/)
+- [Segment Treeをちょっと高速化したい](https://komiyam.hatenadiary.org/entry/20131202/1385992406)
+- [非再帰版の遅延評価セグメント木の実装メモ](https://smijake3.hatenablog.com/entry/2018/11/03/100133)
+- [非再帰セグ木サイコー！ 一番すきなセグ木です](https://hcpc-hokudai.github.io/archive/structure_segtree_001.pdf)
+- [ac-library-cs](https://github.com/key-moon/ac-library-cs)
+
 
 ### UnionFindTree
 
