@@ -11,12 +11,13 @@ namespace TakyTank.KyoProLib.CS8
 		private readonly List<T> values_;
 		private readonly Dictionary<T, int> map_;
 
-		public Compress(IReadOnlyList<T> values)
+		public Compress(IReadOnlyList<T> values, int offset = 0)
 		{
 			values_ = values.Distinct().OrderBy(x => x).ToList();
 			map_ = new Dictionary<T, int>();
-			for (int i = 0; i < values_.Count; i++) {
-				map_[values_[i]] = i;
+			int number = offset;
+			for (int i = 0; i < values_.Count; ++i, ++number) {
+				map_[values_[i]] = number;
 			}
 		}
 
