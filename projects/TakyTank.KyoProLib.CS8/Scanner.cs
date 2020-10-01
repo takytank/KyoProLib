@@ -62,6 +62,17 @@ namespace TakyTank.KyoProLib.CS8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public string[] ArrayString(int length)
+		{
+			var array = new string[length];
+			for (int i = 0; i < length; ++i) {
+				array[i] = Next();
+			}
+
+			return array;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Int() => (int)Long();
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Int(int offset) => Int() + offset;
@@ -77,11 +88,12 @@ namespace TakyTank.KyoProLib.CS8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int[] ArrayInt(int length, int offset = 0)
 		{
-			int[] Array = new int[length];
-			for (int i = 0; i < length; i++) {
-				Array[i] = Int(offset);
+			var array = new int[length];
+			for (int i = 0; i < length; ++i) {
+				array[i] = Int(offset);
 			}
-			return Array;
+
+			return array;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -122,11 +134,12 @@ namespace TakyTank.KyoProLib.CS8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long[] ArrayLong(int length, long offset = 0)
 		{
-			long[] Array = new long[length];
-			for (int i = 0; i < length; i++) {
-				Array[i] = Long(offset);
+			var array = new long[length];
+			for (int i = 0; i < length; ++i) {
+				array[i] = Long(offset);
 			}
-			return Array;
+
+			return array;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -145,11 +158,12 @@ namespace TakyTank.KyoProLib.CS8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public double[] ArrayDouble(int length, double offset = 0)
 		{
-			double[] Array = new double[length];
-			for (int i = 0; i < length; i++) {
-				Array[i] = Double(offset);
+			var array = new double[length];
+			for (int i = 0; i < length; ++i) {
+				array[i] = Double(offset);
 			}
-			return Array;
+
+			return array;
 		}
 
 		private byte Read()
