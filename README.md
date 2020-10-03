@@ -11,7 +11,7 @@
 
 このライブラリは、以下の書籍や記事を参考にして作成されています。
 
-### Compress
+### Compression
 
 - 蟻本
 - [座標圧縮(Compress)](https://ei1333.github.io/luzhiled/snippets/other/compress.html)
