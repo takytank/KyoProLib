@@ -9,10 +9,11 @@ namespace TakyTank.KyoProLib.CS8
 	public static class Helper
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void UpdateMin<T>(ref T target, T value) where T : IComparable<T>
+		public static void UpdateMin<T>(this ref T target, T value) where T : struct, IComparable<T>
 			=> target = target.CompareTo(value) > 0 ? value : target;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void UpdateMin<T>(ref T target, T value, Action<T> onUpdated) where T : IComparable<T>
+		public static void UpdateMin<T>(this ref T target, T value, Action<T> onUpdated)
+			where T : struct, IComparable<T>
 		{
 			if (target.CompareTo(value) > 0) {
 				target = value;
@@ -21,10 +22,11 @@ namespace TakyTank.KyoProLib.CS8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void UpdateMax<T>(ref T target, T value) where T : IComparable<T>
+		public static void UpdateMax<T>(this ref T target, T value) where T : struct, IComparable<T>
 			=> target = target.CompareTo(value) < 0 ? value : target;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void UpdateMax<T>(ref T target, T value, Action<T> onUpdated) where T : IComparable<T>
+		public static void UpdateMax<T>(this ref T target, T value, Action<T> onUpdated)
+			where T : struct, IComparable<T>
 		{
 			if (target.CompareTo(value) < 0) {
 				target = value;
