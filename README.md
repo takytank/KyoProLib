@@ -13,7 +13,9 @@
 
 ### Compress
 
+- 蟻本
 - [座標圧縮(Compress)](https://ei1333.github.io/luzhiled/snippets/other/compress.html)
+- [座標圧縮の解説（1次元から2次元の圧縮まで）](https://algo-logic.info/coordinate-compress/)
 
 ### Deque
 
