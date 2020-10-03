@@ -5,18 +5,49 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CS8
 {
-	public class Compress<T>
+	public class Compression<T>
 		where T : IComparable<T>
 	{
-		private readonly List<T> values_;
+		public static int Compress(
+			IList<T> raws,
+			Func<int, T> cast)
+		{
+			int n = raws.Count;
+			var values = raws.Distinct().OrderBy(x => x).ToArray();
+
+			static int LowerBound(T[] values, T target)
+			{
+				int ng = -1;
+				int ok = values.Length - 1;
+				while (ok - ng > 1) {
+					int mid = (ok + ng) / 2;
+					if (values[mid].CompareTo(target) >= 0) {
+						ok = mid;
+					} else {
+						ng = mid;
+					}
+				}
+
+				return ok;
+			}
+
+			for (int i = 0; i < n; i++) {
+				T newValue = cast.Invoke(LowerBound(values, raws[i]));
+				raws[i] = newValue;
+			}
+
+			return values.Length;
+		}
+
+		private readonly T[] values_;
 		private readonly Dictionary<T, int> map_;
 
-		public Compress(IReadOnlyList<T> values, int offset = 0)
+		public Compression(IReadOnlyList<T> values, int offset = 0)
 		{
-			values_ = values.Distinct().OrderBy(x => x).ToList();
-			map_ = new Dictionary<T, int>();
+			values_ = values.Distinct().OrderBy(x => x).ToArray();
+			map_ = new Dictionary<T, int>(values_.Length);
 			int number = offset;
-			for (int i = 0; i < values_.Count; ++i, ++number) {
+			for (int i = 0; i < values_.Length; ++i, ++number) {
 				map_[values_[i]] = number;
 			}
 		}
@@ -34,7 +65,7 @@ namespace TakyTank.KyoProLib.CS8
 		public int LowerBound(T value)
 		{
 			int ng = -1;
-			int ok = values_.Count - 1;
+			int ok = values_.Length - 1;
 			while (ok - ng > 1) {
 				int mid = (ok + ng) / 2;
 				if (values_[mid].CompareTo(value) >= 0) {
@@ -48,49 +79,94 @@ namespace TakyTank.KyoProLib.CS8
 		}
 	}
 
-	public class Compress1D
+	public class Compression1D<T>
+		where T : IComparable<T>
 	{
-		private readonly long[] values_;
-		private readonly Dictionary<long, int> map_;
+		public static int Compress(
+			Span<(T start, T end)> raws,
+			Func<T, T> next,
+			Func<int, T> cast)
+		{
+			int n = raws.Length;
+			var temp = new List<T>(n * 2);
+			for (int i = 0; i < n; i++) {
+				temp.Add(raws[i].start);
+				temp.Add(next.Invoke(raws[i].start));
+				temp.Add(raws[i].end);
+				temp.Add(next.Invoke(raws[i].end));
+			}
+
+			var values = temp.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
+
+			static int LowerBound(T[] values, T target)
+			{
+				int ng = -1;
+				int ok = values.Length - 1;
+				while (ok - ng > 1) {
+					int mid = (ok + ng) / 2;
+					if (values[mid].CompareTo(target) >= 0) {
+						ok = mid;
+					} else {
+						ng = mid;
+					}
+				}
+
+				return ok;
+			}
+
+			for (int i = 0; i < n; i++) {
+				T ns = cast.Invoke(LowerBound(values, raws[i].start));
+				T ne = cast.Invoke(LowerBound(values, raws[i].end));
+				raws[i] = (ns, ne);
+			}
+
+			return values.Length;
+		}
+
+		private readonly T[] values_;
+		private readonly Dictionary<T, int> map_;
 
 		public int Length => values_.Length;
 
-		public Compress1D(ReadOnlySpan<(long start, long end)> raws, int offset = 0)
+		public Compression1D(
+			ReadOnlySpan<(T start, T end)> raws,
+			Func<T, T> next,
+			int offset = 0)
 		{
 			int n = raws.Length;
-			var temp = new List<long>(n * 4);
+			var temp = new List<T>(n * 2);
 			for (int i = 0; i < n; i++) {
 				temp.Add(raws[i].start);
-				temp.Add(raws[i].start + 1);
+				temp.Add(next.Invoke(raws[i].start));
 				temp.Add(raws[i].end);
-				temp.Add(raws[i].end + 1);
+				temp.Add(next.Invoke(raws[i].end));
 			}
 
-			values_ = temp.Distinct().OrderBy(x => x).ToArray();
-			map_ = new Dictionary<long, int>(values_.Length);
+			values_ = temp.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
+			map_ = new Dictionary<T, int>(values_.Length);
 			int number = offset;
-			for (int i = 0; i < values_.Length - 1; ++i, ++number) {
+			for (int i = 0; i < values_.Length; ++i, ++number) {
 				map_[values_[i]] = number;
 			}
 		}
 
-		public int Zip(long value)
+		public int Zip(T value)
 		{
 			return map_[value];
 		}
 
-		public long UnZip(int index)
+		public T UnZip(int index)
 		{
 			return values_[index];
 		}
 
-		public int LowerBound(long value)
+		public int LowerBound(T value)
 		{
 			int ng = -1;
 			int ok = values_.Length - 1;
 			while (ok - ng > 1) {
 				int mid = (ok + ng) / 2;
-				if (values_[mid] >= value) {
+				if (values_[mid].CompareTo(value) >= 0) {
 					ok = mid;
 				} else {
 					ng = mid;
@@ -101,56 +177,111 @@ namespace TakyTank.KyoProLib.CS8
 		}
 	}
 
-	public class Compress2D
+	public class Compression2D<T>
+		where T : IComparable<T>
 	{
-		private readonly long[] valuesX_;
-		private readonly Dictionary<long, int> mapX_;
-		private readonly long[] valuesY_;
-		private readonly Dictionary<long, int> mapY_;
+		public static (int height, int width) Compress(
+			Span<(T x1, T y1, T x2, T y2)> raws,
+			Func<T, T> next,
+			Func<int, T> cast)
+		{
+			int n = raws.Length;
+			var tempX = new List<T>(n * 4);
+			var tempY = new List<T>(n * 4);
+			for (int i = 0; i < n; i++) {
+				tempX.Add(raws[i].x1);
+				tempX.Add(raws[i].x2);
+				tempY.Add(raws[i].y1);
+				tempY.Add(raws[i].y2);
+				tempX.Add(next(raws[i].x1));
+				tempX.Add(next(raws[i].x2));
+				tempY.Add(next(raws[i].y1));
+				tempY.Add(next(raws[i].y2));
+			}
+
+			var valuesX = tempX.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
+			var valuesY = tempY.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
+
+			static int LowerBound(T[] values, T target)
+			{
+				int ng = -1;
+				int ok = values.Length - 1;
+				while (ok - ng > 1) {
+					int mid = (ok + ng) / 2;
+					if (values[mid].CompareTo(target) >= 0) {
+						ok = mid;
+					} else {
+						ng = mid;
+					}
+				}
+
+				return ok;
+			}
+
+			for (int i = 0; i < n; i++) {
+				T nx1 = cast.Invoke(LowerBound(valuesX, raws[i].x1));
+				T nx2 = cast.Invoke(LowerBound(valuesX, raws[i].x2));
+				T ny1 = cast.Invoke(LowerBound(valuesY, raws[i].y1));
+				T ny2 = cast.Invoke(LowerBound(valuesY, raws[i].y2));
+				raws[i] = (nx1, ny1, nx2, ny2);
+			}
+
+			return (valuesY.Length, valuesX.Length);
+		}
+
+		private readonly T[] valuesX_;
+		private readonly Dictionary<T, int> mapX_;
+		private readonly T[] valuesY_;
+		private readonly Dictionary<T, int> mapY_;
 
 		public int Height => valuesY_.Length;
 		public int Width => valuesX_.Length;
 
-		public Compress2D(
-			ReadOnlySpan<(long x1, long y1, long x2, long y2)> raws,
+		public Compression2D(
+			ReadOnlySpan<(T x1, T y1, T x2, T y2)> raws,
+			Func<T, T> next,
 			int offset = 0)
 		{
 			int n = raws.Length;
-			var tempX = new List<long>(n * 4);
-			var tempY = new List<long>(n * 4);
+			var tempX = new List<T>(n * 4);
+			var tempY = new List<T>(n * 4);
 			for (int i = 0; i < n; i++) {
-				for (int d = 0; d < 2; d++) {
-					tempX.Add(raws[i].x1 + d);
-					tempX.Add(raws[i].x2 + d);
-					tempY.Add(raws[i].y1 + d);
-					tempY.Add(raws[i].y2 + d);
-				}
+				tempX.Add(raws[i].x1);
+				tempX.Add(raws[i].x2);
+				tempY.Add(raws[i].y1);
+				tempY.Add(raws[i].y2);
+				tempX.Add(next(raws[i].x1));
+				tempX.Add(next(raws[i].x2));
+				tempY.Add(next(raws[i].y1));
+				tempY.Add(next(raws[i].y2));
 			}
 
-			valuesX_ = tempX.Distinct().OrderBy(x => x).ToArray();
-			valuesY_ = tempX.Distinct().OrderBy(x => x).ToArray();
+			valuesX_ = tempX.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
+			mapX_ = new Dictionary<T, int>(valuesX_.Length);
+			valuesY_ = tempY.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
+			mapY_ = new Dictionary<T, int>(valuesY_.Length);
 			int number = offset;
-			for (int i = 0; i < valuesX_.Length - 1; ++i, ++number) {
+			for (int i = 0; i < valuesX_.Length; ++i, ++number) {
 				mapX_[valuesX_[i]] = number;
 			}
 
 			number = offset;
-			for (int i = 0; i < valuesY_.Length - 1; ++i, ++number) {
+			for (int i = 0; i < valuesY_.Length; ++i, ++number) {
 				mapY_[valuesY_[i]] = number;
 			}
 		}
 
-		public (int xi, int yi) Zip(long x, long y)
+		public (int xi, int yi) Zip(T x, T y)
 		{
 			return (mapX_[x], mapY_[y]);
 		}
 
-		public (long x, long y) UnZip(int xi, int yi)
+		public (T x, T y) UnZip(int xi, int yi)
 		{
 			return (valuesX_[xi], valuesY_[yi]);
 		}
 
-		public (int xi, int yi) LowerBound(long x, long y)
+		public (int xi, int yi) LowerBound(T x, T y)
 		{
 			int xi;
 			{
@@ -158,7 +289,7 @@ namespace TakyTank.KyoProLib.CS8
 				int ok = valuesX_.Length - 1;
 				while (ok - ng > 1) {
 					int mid = (ok + ng) / 2;
-					if (valuesX_[mid] >= x) {
+					if (valuesX_[mid].CompareTo(x) >= 0) {
 						ok = mid;
 					} else {
 						ng = mid;
@@ -174,7 +305,7 @@ namespace TakyTank.KyoProLib.CS8
 				int ok = valuesY_.Length - 1;
 				while (ok - ng > 1) {
 					int mid = (ok + ng) / 2;
-					if (valuesY_[mid] >= y) {
+					if (valuesY_[mid].CompareTo(y) >= 0) {
 						ok = mid;
 					} else {
 						ng = mid;
