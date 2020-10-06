@@ -65,6 +65,11 @@
 - [非再帰セグ木サイコー！ 一番すきなセグ木です](https://hcpc-hokudai.github.io/archive/structure_segtree_001.pdf)
 - [ac-library-cs](https://github.com/key-moon/ac-library-cs)
 
+### Sieve
+
+- [AtCoder Beginner Contest 152 解説 (E問題)](https://www.youtube.com/watch?v=UTVg7wzMWQc&feature=youtu.be)
+
+
 
 ### UnionFindTree
 
