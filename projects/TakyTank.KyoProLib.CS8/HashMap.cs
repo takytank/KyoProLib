@@ -23,11 +23,13 @@ namespace TakyTank.KyoProLib.CS8
 		{
 			get
 			{
-				if (ContainsKey(key) == false) {
-					base[key] = initialzier_(key);
+				if (TryGetValue(key, out TValue value)) {
+					return value;
+				} else {
+					var init = initialzier_(key);
+					base[key] = init;
+					return init;
 				}
-
-				return base[key];
 			}
 
 			set { base[key] = value; }
