@@ -68,7 +68,8 @@
 ### Sieve
 
 - [AtCoder Beginner Contest 152 解説 (E問題)](https://www.youtube.com/watch?v=UTVg7wzMWQc&feature=youtu.be)
-
+- [エラトステネスの篩の高速化](https://qiita.com/peria/items/a4ff4ddb3336f7b81d50)
+- [線形篩](https://37zigen.com/線形篩/)
 
 
 ### UnionFindTree
