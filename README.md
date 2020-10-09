@@ -70,6 +70,7 @@
 - [AtCoder Beginner Contest 152 解説 (E問題)](https://www.youtube.com/watch?v=UTVg7wzMWQc&feature=youtu.be)
 - [エラトステネスの篩の高速化](https://qiita.com/peria/items/a4ff4ddb3336f7b81d50)
 - [線形篩](https://37zigen.com/線形篩/)
+- [エラトステネスの篩に基づく高速な素因数分解](https://qiita.com/rsk0315_h4x/items/ff3b542a4468679fb409)
 
 
 ### UnionFindTree

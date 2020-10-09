@@ -236,4 +236,37 @@ namespace TakyTank.KyoProLib.CS8
 			};
 		}
 	}
+
+	public class LinearSeive
+	{
+		private readonly long[] primes_;
+		private readonly long[] minPrimeFactors_;
+
+		public ReadOnlySpan<long> Primes => primes_;
+
+		public LinearSeive(long n)
+		{
+			minPrimeFactors_ = new long[n + 1];
+			minPrimeFactors_[0] = -1;
+			minPrimeFactors_[1] = -1;
+
+			var tempPrimes = new List<long>();
+			for (int d = 2; d <= n; d++) {
+				if (minPrimeFactors_[d] == 0) {
+					tempPrimes.Add(d);
+					minPrimeFactors_[d] = d;
+				}
+
+				foreach (var p in tempPrimes) {
+					if (p * d > n || p > minPrimeFactors_[d]) {
+						break;
+					}
+
+					minPrimeFactors_[p * d] = p;
+				}
+			}
+
+			primes_ = tempPrimes.ToArray();
+		}
+	}
 }
