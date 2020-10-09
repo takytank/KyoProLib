@@ -9,7 +9,11 @@
 
 ## 参考文献
 
-このライブラリは、以下の書籍や記事を参考にして作成されています。
+このライブラリは、以下の書籍や記事、動画を参考にして作成されています。
+
+### BitFlag
+
+- [M-SOLUTIONS プロコンオープン 2020 解説 (E問題)](https://atcoder.jp/contests/m-solutions2020/editorial)
 
 ### Compression
 
