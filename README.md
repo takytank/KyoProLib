@@ -51,6 +51,10 @@
 
 - [Fast Number Theoretic Transform](https://kopricky.github.io/code/FFTs/ntt.html)
 
+### Permutation
+
+- [std::next_permutation](https://cpprefjp.github.io/reference/algorithm/next_permutation.html)
+
 ### Scanner
 
 - [chokudai さんの tweet](https://twitter.com/chokudai/status/1051741812501536769?s=20)
