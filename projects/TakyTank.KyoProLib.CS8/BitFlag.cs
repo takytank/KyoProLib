@@ -9,6 +9,7 @@ namespace TakyTank.KyoProLib.CS8
 	{
 		public static BitFlag Begin() => 0;
 		public static BitFlag End(int bitCount) => 1 << bitCount;
+		public static BitFlag FromBit(int bitNumber) => 1 << bitNumber;
 
 		private readonly int flags_;
 		public bool this[int bitNumber] => (flags_ & (1 << bitNumber)) != 0;
@@ -51,6 +52,8 @@ namespace TakyTank.KyoProLib.CS8
 
 		public static implicit operator BitFlag(int t) => new BitFlag(t);
 		public static implicit operator int(BitFlag t) => t.flags_;
+
+		public override string ToString() => $"{Convert.ToString(flags_, 2).PadLeft(32, '0')} ({flags_})";
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void ForEachSubBits(Action<BitFlag> action)
