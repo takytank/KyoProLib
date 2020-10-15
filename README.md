@@ -54,6 +54,7 @@
 ### Permutation
 
 - [std::next_permutation](https://cpprefjp.github.io/reference/algorithm/next_permutation.html)
+- [順列の列挙](http://www.tbasic.org/reference/old/Permutation.html)
 
 ### Scanner
 

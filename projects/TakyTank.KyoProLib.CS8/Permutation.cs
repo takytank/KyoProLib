@@ -15,16 +15,7 @@ namespace TakyTank.KyoProLib.CS8
 			} while (Next(src, 0, n));
 		}
 
-		public static void ForEach(int n, int offset, Func<int[], bool> action)
-		{
-			var src = Enumerable.Range(1 + offset, n).ToArray();
-			do {
-				if (action(src) == false) {
-					return;
-				}
-			} while (Next(src, 0, n));
-		}
-
+		public static bool Next(int[] src) => Next(src, 0, src.Length);
 		public static bool Next(int[] src, int index, int length)
 		{
 			if (length <= 1) {
@@ -42,9 +33,37 @@ namespace TakyTank.KyoProLib.CS8
 						--j;
 					}
 
-					int temp = src[i];
-					src[i] = src[j];
-					src[j] = temp;
+					(src[j], src[i]) = (src[i], src[j]);
+					Array.Reverse(src, ii, last - ii + 1);
+					return true;
+				}
+
+				if (i == index) {
+					Array.Reverse(src, index, length);
+					return false;
+				}
+			}
+		}
+
+		public static bool Prev(int[] src) => Prev(src, 0, src.Length);
+		public static bool Prev(int[] src, int index, int length)
+		{
+			if (length <= 1) {
+				return false;
+			}
+
+			int last = index + length - 1;
+			int i = last;
+			while (true) {
+				int ii = i;
+				--i;
+				if (src[ii] < src[i]) {
+					int j = last;
+					while (src[j] >= src[i]) {
+						--j;
+					}
+
+					(src[j], src[i]) = (src[i], src[j]);
 					Array.Reverse(src, ii, last - ii + 1);
 					return true;
 				}
@@ -67,7 +86,6 @@ namespace TakyTank.KyoProLib.CS8
 
 		public static bool Next<T>(T[] src) where T : IComparable<T>
 			=> Next(src, 0, src.Length);
-
 		public static bool Next<T>(T[] src, int index, int length)
 			where T : IComparable<T>
 		{
@@ -77,7 +95,6 @@ namespace TakyTank.KyoProLib.CS8
 
 			int last = index + length - 1;
 			int i = last;
-
 			while (true) {
 				int ii = i;
 				--i;
@@ -87,9 +104,7 @@ namespace TakyTank.KyoProLib.CS8
 						--j;
 					}
 
-					T temp = src[i];
-					src[i] = src[j];
-					src[j] = temp;
+					(src[j], src[i]) = (src[i], src[j]);
 					Array.Reverse(src, ii, last - ii + 1);
 					return true;
 				}
@@ -103,7 +118,6 @@ namespace TakyTank.KyoProLib.CS8
 
 		public static bool Prev<T>(T[] src) where T : IComparable<T>
 			=> Prev(src, 0, src.Length);
-
 		public static bool Prev<T>(T[] src, int index, int length)
 			where T : IComparable<T>
 		{
@@ -113,7 +127,6 @@ namespace TakyTank.KyoProLib.CS8
 
 			int last = index + length - 1;
 			int i = last;
-
 			while (true) {
 				int ii = i;
 				--i;
@@ -123,9 +136,7 @@ namespace TakyTank.KyoProLib.CS8
 						--j;
 					}
 
-					T temp = src[i];
-					src[i] = src[j];
-					src[j] = temp;
+					(src[j], src[i]) = (src[i], src[j]);
 					Array.Reverse(src, ii, last - ii + 1);
 					return true;
 				}
