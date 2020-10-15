@@ -147,5 +147,32 @@ namespace TakyTank.KyoProLib.CS8
 				}
 			}
 		}
+
+		public static IReadOnlyList<T[]> AllOfNotComparable<T>(IEnumerable<T> src)
+		{
+			var perms = new List<T[]>();
+			Search(perms, new Stack<T>(), src.ToArray());
+			return perms;
+		}
+
+		private static void Search<T>(List<T[]> perms, Stack<T> stack, T[] a)
+		{
+			int n = a.Length;
+			if (n == 0) {
+				perms.Add(stack.Reverse().ToArray());
+			} else {
+				var b = new T[n - 1];
+				Array.Copy(a, 1, b, 0, n - 1);
+				for (int i = 0; i < a.Length; ++i) {
+					stack.Push(a[i]);
+					Search(perms, stack, b);
+					if (i < b.Length) {
+						b[i] = a[i];
+					}
+
+					stack.Pop();
+				}
+			}
+		}
 	}
 }
