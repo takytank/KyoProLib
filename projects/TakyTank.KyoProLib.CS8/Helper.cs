@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CS8
@@ -68,12 +69,7 @@ namespace TakyTank.KyoProLib.CS8
 		public static T[,] Fill<T>(this T[,] array, T initialValue)
 			where T : struct
 		{
-			for (int i = 0; i < array.GetLength(0); ++i) {
-				for (int j = 0; j < array.GetLength(1); ++j) {
-					array[i, j] = initialValue;
-				}
-			}
-
+			MemoryMarshal.CreateSpan<T>(ref array[0, 0], array.Length).Fill(initialValue);
 			return array;
 		}
 
@@ -85,14 +81,7 @@ namespace TakyTank.KyoProLib.CS8
 		public static T[,,] Fill<T>(this T[,,] array, T initialValue)
 			where T : struct
 		{
-			for (int i1 = 0; i1 < array.GetLength(0); ++i1) {
-				for (int i2 = 0; i2 < array.GetLength(1); ++i2) {
-					for (int i3 = 0; i3 < array.GetLength(2); ++i3) {
-						array[i1, i2, i3] = initialValue;
-					}
-				}
-			}
-
+			MemoryMarshal.CreateSpan<T>(ref array[0, 0, 0], array.Length).Fill(initialValue);
 			return array;
 		}
 
@@ -104,16 +93,7 @@ namespace TakyTank.KyoProLib.CS8
 		public static T[,,,] Fill<T>(this T[,,,] array, T initialValue)
 			where T : struct
 		{
-			for (int i1 = 0; i1 < array.GetLength(0); ++i1) {
-				for (int i2 = 0; i2 < array.GetLength(1); ++i2) {
-					for (int i3 = 0; i3 < array.GetLength(2); ++i3) {
-						for (int i4 = 0; i4 < array.GetLength(3); ++i4) {
-							array[i1, i2, i3, i4] = initialValue;
-						}
-					}
-				}
-			}
-
+			MemoryMarshal.CreateSpan<T>(ref array[0, 0, 0, 0], array.Length).Fill(initialValue);
 			return array;
 		}
 
@@ -144,7 +124,7 @@ namespace TakyTank.KyoProLib.CS8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void ForEachSubBit(int bit, Action<int> action)
+		public static void ForEachSubBits(int bit, Action<int> action)
 		{
 			for (int sub = bit; sub >= 0; --sub) {
 				sub &= bit;
