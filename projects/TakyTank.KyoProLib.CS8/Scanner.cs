@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -137,6 +138,30 @@ namespace TakyTank.KyoProLib.CS8
 			var array = new long[length];
 			for (int i = 0; i < length; ++i) {
 				array[i] = Long(offset);
+			}
+
+			return array;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public BigInteger Big() => new BigInteger(Long());
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public BigInteger Big(long offset) => Big() + offset;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (BigInteger, BigInteger) Big2(long offset = 0)
+			=> (Big(offset), Big(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (BigInteger, BigInteger, BigInteger) Big3(long offset = 0)
+			=> (Big(offset), Big(offset), Big(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (BigInteger, BigInteger, BigInteger, BigInteger) Big4(long offset = 0)
+			=> (Big(offset), Big(offset), Big(offset), Big(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public BigInteger[] ArrayBig(int length, long offset = 0)
+		{
+			var array = new BigInteger[length];
+			for (int i = 0; i < length; ++i) {
+				array[i] = Big(offset);
 			}
 
 			return array;
