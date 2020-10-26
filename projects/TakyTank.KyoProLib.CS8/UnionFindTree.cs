@@ -202,4 +202,83 @@ namespace TakyTank.KyoProLib.CS8
 			}
 		}
 	}
+
+	public class UndoUnionFindTree<T>
+	{
+		private readonly int[] data_;
+		private readonly T[] values_;
+		private readonly Func<T, T, T> merge_;
+		private readonly Stack<(int index, int data, T value)> undoStack_
+			= new Stack<(int index, int data, T value)>();
+
+		public int Count => data_.Length;
+		public int GroupCount { get; private set; }
+
+		public UndoUnionFindTree(
+			int count,
+			Func<int, T> init,
+			Func<T, T, T> merge)
+		{
+			data_ = new int[count];
+			values_ = new T[count];
+			for (int i = 0; i < count; i++) {
+				data_[i] = -1;
+				values_[i] = init(i);
+			}
+
+			GroupCount = count;
+			merge_ = merge;
+		}
+
+		public int GetSizeOf(int k) => -data_[Find(k)];
+		public T GetValueOf(int k) => values_[Find(k)];
+
+		public bool IsUnited(int x, int y) => Find(x) == Find(y);
+		public bool Unite(int x, int y)
+		{
+			x = Find(x);
+			y = Find(y);
+			undoStack_.Push((x, data_[x], values_[x]));
+			undoStack_.Push((y, data_[y], values_[y]));
+			if (x == y) {
+				return false;
+			}
+
+			if (data_[x] > data_[y]) {
+				(x, y) = (y, x);
+			}
+
+			--GroupCount;
+			data_[x] += data_[y];
+			values_[x] = merge_(values_[x], values_[y]);
+			data_[y] = x;
+			return true;
+		}
+
+		public int Find(int k)
+		{
+			if (data_[k] < 0) {
+				return k;
+			}
+
+			return Find(data_[k]);
+		}
+
+		public void Undo()
+		{
+			if (undoStack_.Count < 2) {
+				return;
+			}
+
+			var (indexX, dataX, valueX) = undoStack_.Pop();
+			var (indexY, dataY, valueY) = undoStack_.Pop();
+			data_[indexX] = dataX;
+			values_[indexX] = valueX;
+			data_[indexY] = dataY;
+			values_[indexY] = valueY;
+			if (indexX != indexY) {
+				++GroupCount;
+			}
+		}
+	}
 }
