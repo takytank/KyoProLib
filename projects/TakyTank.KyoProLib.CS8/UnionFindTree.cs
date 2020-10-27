@@ -137,6 +137,83 @@ namespace TakyTank.KyoProLib.CS8
 		}
 	}
 
+	public class PotentialUnionFind<T>
+	{
+		private readonly int[] data_;
+		private readonly T[] deltaPotentials_;
+		private readonly Func<T, T, T> merge_;
+		private readonly Func<T, T> invert_;
+
+		public int Count => data_.Length;
+		public int GroupCount { get; private set; }
+
+		public PotentialUnionFind(
+			int count,
+			T initialPotential,
+			Func<T, T, T> merge,
+			Func<T, T> invert)
+		{
+			data_ = new int[count];
+			deltaPotentials_ = new T[count];
+			for (int i = 0; i < count; i++) {
+				data_[i] = -1;
+				deltaPotentials_[i] = initialPotential;
+			}
+
+			GroupCount = count;
+			merge_ = merge;
+			invert_ = invert;
+		}
+
+		public int GetSizeOf(int v) => -data_[Find(v)];
+
+		public bool IsUnited(int x, int y) => Find(x) == Find(y);
+		public bool Unite(int x, int y, T w)
+		{
+			w = merge_(w, GetPotentialOf(x));
+			w = merge_(w, invert_(GetPotentialOf(y)));
+			x = Find(x);
+			y = Find(y);
+			if (x == y) {
+				return false;
+			}
+
+			if (data_[x] > data_[y]) {
+				(x, y) = (y, x);
+				w = invert_(w);
+			}
+
+			--GroupCount;
+			data_[x] += data_[y];
+			data_[y] = x;
+
+			deltaPotentials_[y] = w;
+			return true;
+		}
+
+		public int Find(int v)
+		{
+			if (data_[v] < 0) {
+				return v;
+			} else {
+				int p = Find(data_[v]);
+				deltaPotentials_[v] = merge_(
+					deltaPotentials_[v], deltaPotentials_[data_[v]]);
+				data_[v] = p;
+				return p;
+			}
+		}
+
+		public T GetPotentialOf(int v)
+		{
+			Find(v);
+			return deltaPotentials_[v];
+		}
+
+		public T GetDeltaPotential(int x, int y)
+			=> merge_(GetPotentialOf(y), invert_(GetPotentialOf(x)));
+	}
+
 	public class UndoUnionFindTree
 	{
 		private readonly int[] data_;
