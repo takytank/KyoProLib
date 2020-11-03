@@ -43,6 +43,10 @@
 
 - [C#で競技プログラミングをし続ける人のためのTips](https://qiita.com/Camypaper/items/de6d576fe5513743a50e#dictionarykv)
 
+## Imos
+
+- [いもす法](https://imoz.jp/algorithms/imos_method.html)
+
 ### ModCounting
 
 - [「1000000007 で割ったあまり」の求め方を総特集！ 〜 逆元から離散対数まで 〜](https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a)
