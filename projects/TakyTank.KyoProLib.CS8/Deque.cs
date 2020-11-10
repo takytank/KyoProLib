@@ -14,6 +14,8 @@ namespace TakyTank.KyoProLib.CS8
 		private int back_;
 
 		public int Count { get; private set; } = 0;
+		public T Front => ringBuffer_[front_];
+		public T Back => ringBuffer_[back_];
 
 		public T this[int index]
 		{
