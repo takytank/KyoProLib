@@ -10,41 +10,41 @@ namespace TakyTank.KyoProLib.CS8
 		private readonly Stack<T> frontValues_;
 		private readonly Stack<T> frontAggregates_;
 		private readonly Stack<T> backValues_;
-		private readonly Stack<T> backAggregates_;
-		private readonly Func<T, T, T> op_;
+		private readonly Func<T, T, T> merge_;
+
+		private T backAggregated_;
 
 		public bool IsEmpty => frontValues_.Count == 0 && backValues_.Count == 0;
 		public int Count => frontValues_.Count + backValues_.Count;
 
-		public SlidingWindowAggregation(Func<T, T, T> op) : this(1024, op) { }
-		public SlidingWindowAggregation(int capacity, Func<T, T, T> op)
+		public SlidingWindowAggregation(Func<T, T, T> merge) : this(1024, merge) { }
+		public SlidingWindowAggregation(int capacity, Func<T, T, T> merge)
 		{
-			op_ = op;
+			merge_ = merge;
 			frontValues_ = new Stack<T>(capacity);
 			frontAggregates_ = new Stack<T>(capacity);
 			backValues_ = new Stack<T>(capacity);
-			backAggregates_ = new Stack<T>(capacity);
 		}
 
 		public T Fold()
 		{
 			if (frontAggregates_.Count == 0) {
-				return backAggregates_.Peek();
-			} else if (backAggregates_.Count == 0) {
+				return backAggregated_;
+			} else if (backValues_.Count == 0) {
 				return frontAggregates_.Peek();
 			} else {
-				return op_(frontAggregates_.Peek(), backAggregates_.Peek());
+				return merge_(frontAggregates_.Peek(), backAggregated_);
 			}
 		}
 
-		public void Push(T x)
+		public void Push(T value)
 		{
 			if (backValues_.Count == 0) {
-				backValues_.Push(x);
-				backAggregates_.Push(x);
+				backValues_.Push(value);
+				backAggregated_ = value;
 			} else {
-				backValues_.Push(x);
-				backAggregates_.Push(op_(backAggregates_.Peek(), x));
+				backValues_.Push(value);
+				backAggregated_ = merge_(backAggregated_, value);
 			}
 		}
 
@@ -66,14 +66,12 @@ namespace TakyTank.KyoProLib.CS8
 		{
 			if (frontValues_.Count == 0) {
 				var back = backValues_.Pop();
-				backAggregates_.Pop();
 				frontValues_.Push(back);
 				frontAggregates_.Push(back);
 				while (backValues_.Count > 0) {
 					back = backValues_.Pop();
-					backAggregates_.Pop();
 					frontValues_.Push(back);
-					frontAggregates_.Push(op_(back, frontAggregates_.Peek()));
+					frontAggregates_.Push(merge_(back, frontAggregates_.Peek()));
 				}
 			}
 		}
