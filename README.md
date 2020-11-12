@@ -90,6 +90,10 @@
 - [線形篩](https://37zigen.com/線形篩/)
 - [エラトステネスの篩に基づく高速な素因数分解](https://qiita.com/rsk0315_h4x/items/ff3b542a4468679fb409)
 
+### SlidingWindowAggregation
+
+- [Sliding Window Aggregation](https://scrapbox.io/data-structures/Sliding_Window_Aggregation)
+- [SWAG(Sliding Window Aggregation)の実装についての提案](https://motsu-xe.hatenablog.com/entry/2019/12/06/192424)
 
 ### UnionFindTree
 
