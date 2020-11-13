@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CS8
@@ -218,6 +219,7 @@ namespace TakyTank.KyoProLib.CS8
 	{
 		private readonly int[] data_;
 		private readonly Stack<(int index, int data)> undoStack_ = new Stack<(int index, int data)>();
+		private int restoreCount_ = 0;
 
 		public int Count => data_.Length;
 		public int GroupCount { get; private set; }
@@ -241,6 +243,7 @@ namespace TakyTank.KyoProLib.CS8
 			y = Find(y);
 			undoStack_.Push((x, data_[x]));
 			undoStack_.Push((y, data_[y]));
+			++restoreCount_;
 			if (x == y) {
 				return false;
 			}
@@ -264,7 +267,25 @@ namespace TakyTank.KyoProLib.CS8
 			return Find(data_[k]);
 		}
 
+		public void Memory() => restoreCount_ = 0;
+
 		public void Undo()
+		{
+			UndoCore();
+			--restoreCount_;
+		}
+
+		public void Restore()
+		{
+			for (int i = 0; i < restoreCount_; i++) {
+				UndoCore();
+			}
+
+			restoreCount_ = 0;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void UndoCore()
 		{
 			if (undoStack_.Count < 2) {
 				return;
@@ -287,6 +308,7 @@ namespace TakyTank.KyoProLib.CS8
 		private readonly Func<T, T, T> merge_;
 		private readonly Stack<(int index, int data, T value)> undoStack_
 			= new Stack<(int index, int data, T value)>();
+		private int restoreCount_ = 0;
 
 		public int Count => data_.Length;
 		public int GroupCount { get; private set; }
@@ -317,6 +339,7 @@ namespace TakyTank.KyoProLib.CS8
 			y = Find(y);
 			undoStack_.Push((x, data_[x], values_[x]));
 			undoStack_.Push((y, data_[y], values_[y]));
+			++restoreCount_;
 			if (x == y) {
 				return false;
 			}
@@ -341,7 +364,25 @@ namespace TakyTank.KyoProLib.CS8
 			return Find(data_[k]);
 		}
 
+		public void Memory() => restoreCount_ = 0;
+
 		public void Undo()
+		{
+			UndoCore();
+			--restoreCount_;
+		}
+
+		public void Restore()
+		{
+			for (int i = 0; i < restoreCount_; i++) {
+				UndoCore();
+			}
+
+			restoreCount_ = 0;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void UndoCore()
 		{
 			if (undoStack_.Count < 2) {
 				return;
