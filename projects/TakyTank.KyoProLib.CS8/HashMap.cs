@@ -34,5 +34,16 @@ namespace TakyTank.KyoProLib.CS8
 
 			set { base[key] = value; }
 		}
+
+		public HashMap<TKey, TValue> Merge(
+			HashMap<TKey, TValue> src,
+			Func<TValue, TValue, TValue> mergeValues)
+		{
+			foreach (var key in src.Keys) {
+				this[key] = mergeValues(this[key], src[key]);
+			}
+
+			return this;
+		}
 	}
 }
