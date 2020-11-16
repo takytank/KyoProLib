@@ -1,11 +1,123 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CS8
 {
+	public class Imos1D
+	{
+		private readonly long[] raw_;
+		private readonly long[] built_;
+		private readonly int n_;
+
+		public long this[int index] => built_[index + 1];
+		public long Max() => built_[1..].Max();
+		public long Min() => built_[1..].Min();
+
+		public Imos1D(int n)
+		{
+			n_ = n;
+			raw_ = new long[n + 1];
+			built_ = new long[n + 1];
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(Range range, long value) => Add(range.Start.Value, range.End.Value, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(int l, int r, long value)
+		{
+			if (l >= r || l >= n_ || r <= 0) {
+				return;
+			}
+
+			raw_[l] += value;
+			raw_[r] -= value;
+		}
+
+		public void Build()
+		{
+			built_[0] = 0;
+			for (int i = 0; i < n_; i++) {
+				built_[i + 1] += raw_[i] + built_[i];
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long Query(Range range) => Query(range.Start.Value, range.End.Value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long Query(int l, int r)
+		{
+			if (l >= r || l >= n_ || r <= 0) {
+				return 0;
+			}
+
+			return built_[r] - built_[l];
+		}
+	}
+
+	public class Imos1D<T> where T : struct
+	{
+		private readonly T[] raw_;
+		private readonly T[] built_;
+		private readonly int n_;
+		private readonly T defaultValue_;
+		private readonly Func<T, T, T> add_;
+		private readonly Func<T, T, T> subtract_;
+
+		public T this[int index] => built_[index + 1];
+
+		public T Max() => built_.Max();
+		public T Min() => built_.Min();
+
+		public Imos1D(int n, T defaultValue, Func<T, T, T> add, Func<T, T, T> subtract)
+		{
+			n_ = n;
+			defaultValue_ = defaultValue;
+			raw_ = new T[n + 1];
+			raw_.AsSpan().Fill(defaultValue);
+			built_ = new T[n + 1];
+			built_.AsSpan().Fill(defaultValue);
+			add_ = add;
+			subtract_ = subtract;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(Range range, T value) => Add(range.Start.Value, range.End.Value, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(int l, int r, T value)
+		{
+			if (l >= r || l >= n_ || r <= 0) {
+				return;
+			}
+
+			raw_[l] = add_(raw_[l], value);
+			raw_[r] = subtract_(raw_[r], value);
+		}
+
+		public void Build()
+		{
+			built_[0] = defaultValue_;
+			for (int i = 0; i < n_; i++) {
+				built_[i + 1] = add_(built_[i + 1], add_(raw_[i], built_[i]));
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T Query(Range range) => Query(range.Start.Value, range.End.Value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T Query(int l, int r)
+		{
+			if (l >= r || l >= n_ || r <= 0) {
+				return defaultValue_;
+			}
+
+			return subtract_(built_[r], built_[l]);
+		}
+	}
+
 	public class Imos2D
 	{
 		private readonly long[,] map_;
