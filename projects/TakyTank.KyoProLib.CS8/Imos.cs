@@ -132,10 +132,16 @@ namespace TakyTank.KyoProLib.CS8
 			map_ = new long[h + 1, w + 1];
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(Range row, Range column, long value)
+			=> Add(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(int y1, int x1, int y2, int x2, long value)
 		{
-			x2++;
-			y2++;
+			if (x1 >= x2 || x1 >= w_ || x2 <= 0 || y1 >= y2 || y1 >= h_ || y2 <= 0) {
+				return;
+			}
+
 			map_[y1, x1] += value;
 			map_[y1, x2] -= value;
 			map_[y2, x1] -= value;
@@ -161,22 +167,28 @@ namespace TakyTank.KyoProLib.CS8
 		public long Query(Range row, Range column)
 			=> Query(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long Query(int h1, int w1, int h2, int w2)
+		public long Query(int y1, int x1, int y2, int x2)
 		{
-			h1--;
-			w1--;
-
-			long ret = map_[h2, w2];
-			if (h1 >= 0) {
-				ret -= map_[h1, w2];
+			if (x1 >= x2 || x1 >= w_ || x2 <= 0 || y1 >= y2 || y1 >= h_ || y2 <= 0) {
+				return 0;
 			}
 
-			if (w1 >= 0) {
-				ret -= map_[h2, w1];
+			y1--;
+			x1--;
+			y2--;
+			x2--;
+
+			long ret = map_[y2, x2];
+			if (y1 >= 0) {
+				ret -= map_[y1, x2];
 			}
 
-			if (h1 >= 0 && w1 >= 0) {
-				ret += map_[h1, w1];
+			if (x1 >= 0) {
+				ret -= map_[y2, x1];
+			}
+
+			if (y1 >= 0 && x1 >= 0) {
+				ret += map_[y1, x1];
 			}
 
 			return ret;
@@ -188,6 +200,7 @@ namespace TakyTank.KyoProLib.CS8
 		private readonly T[,] map_;
 		private readonly int w_;
 		private readonly int h_;
+		private readonly T defaultValue_;
 		private readonly Func<T, T, T> add_;
 		private readonly Func<T, T, T> subtract_;
 
@@ -197,16 +210,23 @@ namespace TakyTank.KyoProLib.CS8
 		{
 			w_ = w;
 			h_ = h;
+			defaultValue_ = defaultValue;
 			map_ = new T[h + 1, w + 1];
 			MemoryMarshal.CreateSpan(ref map_[0, 0], map_.Length).Fill(defaultValue);
 			add_ = add;
 			subtract_ = subtract;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(Range row, Range column, T value)
+			=> Add(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(int y1, int x1, int y2, int x2, T value)
 		{
-			x2++;
-			y2++;
+			if (x1 >= x2 || x1 >= w_ || x2 <= 0 || y1 >= y2 || y1 >= h_ || y2 <= 0) {
+				return;
+			}
+
 			map_[y1, x1] = add_(map_[y1, x1], value);
 			map_[y1, x2] = subtract_(map_[y1, x2], value);
 			map_[y2, x1] = subtract_(map_[y2, x1], value);
@@ -232,22 +252,28 @@ namespace TakyTank.KyoProLib.CS8
 		public T Query(Range row, Range column)
 			=> Query(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T Query(int h1, int w1, int h2, int w2)
+		public T Query(int y1, int x1, int y2, int x2)
 		{
-			h1--;
-			w1--;
-
-			T ret = map_[h2, w2];
-			if (h1 >= 0) {
-				ret = subtract_(ret, map_[h1, w2]);
+			if (x1 >= x2 || x1 >= w_ || x2 <= 0 || y1 >= y2 || y1 >= h_ || y2 <= 0) {
+				return defaultValue_;
 			}
 
-			if (w1 >= 0) {
-				ret = subtract_(ret, map_[h2, w1]);
+			y1--;
+			x1--;
+			y2--;
+			x2--;
+
+			T ret = map_[y2, x2];
+			if (y1 >= 0) {
+				ret = subtract_(ret, map_[y1, x2]);
 			}
 
-			if (h1 >= 0 && w1 >= 0) {
-				ret = add_(ret, map_[h1, w1]);
+			if (x1 >= 0) {
+				ret = subtract_(ret, map_[y2, x1]);
+			}
+
+			if (y1 >= 0 && x1 >= 0) {
+				ret = add_(ret, map_[y1, x1]);
 			}
 
 			return ret;
