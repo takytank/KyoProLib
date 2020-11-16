@@ -9,6 +9,119 @@ namespace TakyTank.KyoProLib.CS8
 {
 	public class Imos1D
 	{
+		private readonly long[] map_;
+		private readonly int n_;
+
+		public long this[int index] => map_[index];
+		public long Max() => map_[..^2].Max();
+		public long Min() => map_[..^2].Min();
+
+		public Imos1D(int n)
+		{
+			n_ = n;
+			map_ = new long[n + 1];
+		}
+
+		public void Add(int l, int r, long value)
+		{
+			if (l >= r || l >= n_ || r <= 0) {
+				return;
+			}
+
+			map_[l] += value;
+			map_[r] -= value;
+		}
+
+		public void Build()
+		{
+			for (int i = 0; i < n_; i++) {
+				map_[i + 1] += map_[i];
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long Query(Range range)
+		 => Query(range.Start.Value, range.End.Value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long Query(int l, int r)
+		{
+			if (l >= r || l >= n_ || r <= 0) {
+				return 0;
+			}
+
+			--l;
+			--r;
+			long ret = map_[r];
+			if (l >= 0) {
+				ret -= map_[l];
+			}
+
+			return ret;
+		}
+	}
+
+	public class Imos1D<T> where T : struct
+	{
+		private readonly T[] map_;
+		private readonly int n_;
+		private readonly T defaultValue_;
+		private readonly Func<T, T, T> add_;
+		private readonly Func<T, T, T> subtract_;
+
+		public T this[int index] => map_[index];
+		public T Max() => map_[..^2].Max();
+		public T Min() => map_[..^2].Min();
+
+		public Imos1D(int n, T defaultValue, Func<T, T, T> add, Func<T, T, T> subtract)
+		{
+			n_ = n;
+			defaultValue_ = defaultValue;
+			map_ = new T[n + 1];
+			map_.AsSpan().Fill(defaultValue);
+			add_ = add;
+			subtract_ = subtract;
+		}
+
+		public void Add(int l, int r, T value)
+		{
+			if (l >= r || l >= n_ || r <= 0) {
+				return;
+			}
+
+			map_[l] = add_(map_[l], value);
+			map_[r] = subtract_(map_[r], value);
+		}
+
+		public void Build()
+		{
+			for (int i = 0; i < n_; i++) {
+				map_[i + 1] = add_(map_[i + 1], map_[i]);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T Query(Range range)
+		 => Query(range.Start.Value, range.End.Value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T Query(int l, int r)
+		{
+			if (l >= r || l >= n_ || r <= 0) {
+				return defaultValue_;
+			}
+
+			--l;
+			--r;
+			T ret = map_[r];
+			if (l >= 0) {
+				ret = subtract_(ret, map_[l]);
+			}
+
+			return ret;
+		}
+	}
+
+	public class RepeatImos1D
+	{
 		private readonly long[] raw_;
 		private readonly long[] built_;
 		private readonly int n_;
@@ -17,7 +130,7 @@ namespace TakyTank.KyoProLib.CS8
 		public long Max() => built_[1..].Max();
 		public long Min() => built_[1..].Min();
 
-		public Imos1D(int n)
+		public RepeatImos1D(int n)
 		{
 			n_ = n;
 			raw_ = new long[n + 1];
@@ -58,7 +171,7 @@ namespace TakyTank.KyoProLib.CS8
 		}
 	}
 
-	public class Imos1D<T> where T : struct
+	public class RepeatImos1D<T> where T : struct
 	{
 		private readonly T[] raw_;
 		private readonly T[] built_;
@@ -68,11 +181,10 @@ namespace TakyTank.KyoProLib.CS8
 		private readonly Func<T, T, T> subtract_;
 
 		public T this[int index] => built_[index + 1];
-
 		public T Max() => built_.Max();
 		public T Min() => built_.Min();
 
-		public Imos1D(int n, T defaultValue, Func<T, T, T> add, Func<T, T, T> subtract)
+		public RepeatImos1D(int n, T defaultValue, Func<T, T, T> add, Func<T, T, T> subtract)
 		{
 			n_ = n;
 			defaultValue_ = defaultValue;
@@ -354,12 +466,18 @@ namespace TakyTank.KyoProLib.CS8
 		private readonly Func<T, T, T> subtract_;
 
 		public T this[int y, int x] => built_[y + 1, x + 1];
-		public RepeatImos2D(int h, int w)
+		public RepeatImos2D(
+			int h, int w, T defaultValue, Func<T, T, T> add, Func<T, T, T> subtract)
 		{
 			w_ = w;
 			h_ = h;
+			defaultValue_ = defaultValue;
 			raw_ = new T[h + 1, w + 1];
+			MemoryMarshal.CreateSpan(ref raw_[0, 0], raw_.Length).Fill(defaultValue);
 			built_ = new T[h + 1, w + 1];
+			MemoryMarshal.CreateSpan(ref built_[0, 0], built_.Length).Fill(defaultValue);
+			add_ = add;
+			subtract_ = subtract;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
