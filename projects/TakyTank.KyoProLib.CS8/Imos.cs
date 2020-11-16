@@ -279,4 +279,135 @@ namespace TakyTank.KyoProLib.CS8
 			return ret;
 		}
 	}
+
+	public class RepeatImos2D
+	{
+		private readonly long[,] raw_;
+		private readonly long[,] built_;
+		private readonly int w_;
+		private readonly int h_;
+
+		public long this[int y, int x] => built_[y + 1, x + 1];
+		public RepeatImos2D(int h, int w)
+		{
+			w_ = w;
+			h_ = h;
+			raw_ = new long[h + 1, w + 1];
+			built_ = new long[h + 1, w + 1];
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(Range row, Range column, long value)
+			=> Add(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(int y1, int x1, int y2, int x2, long value)
+		{
+			if (x1 >= x2 || x1 >= w_ || x2 <= 0 || y1 >= y2 || y1 >= h_ || y2 <= 0) {
+				return;
+			}
+
+			raw_[y1, x1] += value;
+			raw_[y1, x2] -= value;
+			raw_[y2, x1] -= value;
+			raw_[y2, x2] += value;
+		}
+
+		public void Build()
+		{
+			built_[0, 0] = 0;
+			built_[1, 0] = 0;
+			for (int i = 0; i < h_; i++) {
+				for (int j = 0; j < w_; j++) {
+					built_[i + 1, j + 1] += raw_[i, j] + built_[i + 1, j];
+				}
+			}
+
+			for (int i = 0; i < h_; i++) {
+				for (int j = 1; j <= w_; j++) {
+					built_[i + 1, j] += built_[i, j];
+				}
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long Query(Range row, Range column)
+			=> Query(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long Query(int y1, int x1, int y2, int x2)
+		{
+			if (x1 >= x2 || x1 >= w_ || x2 <= 0 || y1 >= y2 || y1 >= h_ || y2 <= 0) {
+				return 0;
+			}
+
+			return raw_[y2, x2] - raw_[y1, x2] - raw_[y2, x1] + raw_[y1, x1];
+		}
+	}
+
+	public class RepeatImos2D<T>
+	{
+		private readonly T[,] raw_;
+		private readonly T[,] built_;
+		private readonly int w_;
+		private readonly int h_;
+		private readonly T defaultValue_;
+		private readonly Func<T, T, T> add_;
+		private readonly Func<T, T, T> subtract_;
+
+		public T this[int y, int x] => built_[y + 1, x + 1];
+		public RepeatImos2D(int h, int w)
+		{
+			w_ = w;
+			h_ = h;
+			raw_ = new T[h + 1, w + 1];
+			built_ = new T[h + 1, w + 1];
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(Range row, Range column, T value)
+			=> Add(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(int y1, int x1, int y2, int x2, T value)
+		{
+			if (x1 >= x2 || x1 >= w_ || x2 <= 0 || y1 >= y2 || y1 >= h_ || y2 <= 0) {
+				return;
+			}
+
+			raw_[y1, x1] = add_(raw_[y1, x1], value);
+			raw_[y1, x2] = subtract_(raw_[y1, x2], value);
+			raw_[y2, x1] = subtract_(raw_[y2, x1], value);
+			raw_[y2, x2] = add_(raw_[y2, x2], value);
+		}
+
+		public void Build()
+		{
+			built_[0, 0] = defaultValue_;
+			built_[1, 0] = defaultValue_;
+			for (int i = 0; i < h_; i++) {
+				for (int j = 0; j < w_; j++) {
+					built_[i + 1, j + 1] = add_(
+						built_[i + 1, j + 1],
+						add_(raw_[i, j], built_[i + 1, j]));
+				}
+			}
+
+			for (int i = 0; i < h_; i++) {
+				for (int j = 1; j <= w_; j++) {
+					built_[i + 1, j] = add_(built_[i + 1, j], built_[i, j]);
+				}
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T Query(Range row, Range column)
+			=> Query(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T Query(int y1, int x1, int y2, int x2)
+		{
+			if (x1 >= x2 || x1 >= w_ || x2 <= 0 || y1 >= y2 || y1 >= h_ || y2 <= 0) {
+				return defaultValue_;
+			}
+
+			return subtract_(raw_[y2, x2], subtract_(raw_[y1, x2], add_(raw_[y2, x1], raw_[y1, x1])));
+		}
+	}
 }
