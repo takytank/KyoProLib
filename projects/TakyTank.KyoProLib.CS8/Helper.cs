@@ -36,10 +36,10 @@ namespace TakyTank.KyoProLib.CS8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Array<T>(int n, T initialValue) where T : struct
+		public static T[] Array1<T>(int n, T initialValue) where T : struct
 			=> new T[n].Fill(initialValue);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Array<T>(int n, Func<int, T> initializer)
+		public static T[] Array1<T>(int n, Func<int, T> initializer)
 			=> Enumerable.Range(0, n).Select(x => initializer(x)).ToArray();
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Fill<T>(this T[] array, T value)
