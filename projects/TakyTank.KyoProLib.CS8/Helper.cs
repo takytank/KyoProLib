@@ -99,7 +99,7 @@ namespace TakyTank.KyoProLib.CS8
 
 		private static readonly int[] delta4_ = { 1, 0, -1, 0, 1 };
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void DoAt4(int i, int j, int imax, int jmax, Action<int, int> action)
+		public static void DoIn4(int i, int j, int imax, int jmax, Action<int, int> action)
 		{
 			for (int dn = 0; dn < 4; ++dn) {
 				int d4i = i + delta4_[dn];
@@ -112,7 +112,7 @@ namespace TakyTank.KyoProLib.CS8
 
 		private static readonly int[] delta8_ = { 1, 0, -1, 0, 1, 1, -1, -1, 1 };
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void DoAt8(int i, int j, int imax, int jmax, Action<int, int> action)
+		public static void DoIn8(int i, int j, int imax, int jmax, Action<int, int> action)
 		{
 			for (int dn = 0; dn < 8; ++dn) {
 				int d8i = i + delta8_[dn];
@@ -141,11 +141,23 @@ namespace TakyTank.KyoProLib.CS8
 				chars[i] = chars[j];
 				chars[j] = tmp;
 			}
+
 			return new string(chars);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static string Join<T>(this IEnumerable<T> values, string separator = "")
 			=> string.Join(separator, values);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<T> AsSpan<T>(this List<T> list)
+		{
+			return Unsafe.As<FakeList<T>>(list).Array.AsSpan(0, list.Count);
+		}
+
+		private class FakeList<T>
+		{
+			public T[] Array = null;
+		}
 	}
 }
