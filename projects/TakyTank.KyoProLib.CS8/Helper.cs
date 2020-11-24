@@ -148,6 +148,9 @@ namespace TakyTank.KyoProLib.CS8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static string Join<T>(this IEnumerable<T> values, string separator = "")
 			=> string.Join(separator, values);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static string JoinNL<T>(this IEnumerable<T> values)
+			=> string.Join(Environment.NewLine, values);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<T> AsSpan<T>(this List<T> list)
