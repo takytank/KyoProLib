@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CS8
@@ -53,6 +54,7 @@ namespace TakyTank.KyoProLib.CS8
 		public static implicit operator BitFlag(int t) => new BitFlag(t);
 		public static implicit operator int(BitFlag t) => t.flags_;
 
+		public int PopCount => (int)Popcnt.PopCount((uint)flags_);
 		public override string ToString() => $"{Convert.ToString(flags_, 2).PadLeft(32, '0')} ({flags_})";
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
