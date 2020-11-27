@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -8,9 +9,11 @@ namespace TakyTank.KyoProLib.CS8
 	public class FenwickTree : IEnumerable<long>
 	{
 		public static long InversionNumber(IReadOnlyList<int> numbers)
+			=> InversionNumber(numbers, numbers.Max());
+		public static long InversionNumber(IReadOnlyList<int> numbers, int max)
 		{
 			int n = numbers.Count;
-			var bit = new FenwickTree(n);
+			var bit = new FenwickTree(max + 1);
 			long ret = 0;
 			for (int i = 0; i < n; i++) {
 				ret += i - bit.Sum(numbers[i]);
@@ -94,6 +97,7 @@ namespace TakyTank.KyoProLib.CS8
 				yield return this[i];
 			}
 		}
+
 	}
 
 	public class ModFenwickTree : IEnumerable<ModInt>
