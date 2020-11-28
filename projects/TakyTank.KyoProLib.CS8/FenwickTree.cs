@@ -6,7 +6,7 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CS8
 {
-	public class FenwickTree : IEnumerable<long>
+	public class FenwickTree
 	{
 		public static long InversionNumber(IReadOnlyList<int> numbers)
 			=> InversionNumber(numbers, numbers.Max());
@@ -90,7 +90,6 @@ namespace TakyTank.KyoProLib.CS8
 			}
 		}
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 		public IEnumerator<long> GetEnumerator()
 		{
 			for (int i = 0; i < n_; i++) {
@@ -100,7 +99,7 @@ namespace TakyTank.KyoProLib.CS8
 
 	}
 
-	public class ModFenwickTree : IEnumerable<ModInt>
+	public class ModFenwickTree
 	{
 		private readonly int n_;
 		private readonly ModInt[] bit_;
@@ -145,7 +144,6 @@ namespace TakyTank.KyoProLib.CS8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ModInt Sum(int l, int r) => Sum(r - 1) - Sum(l - 1);
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 		public IEnumerator<ModInt> GetEnumerator()
 		{
 			for (int i = 0; i < n_; i++) {
@@ -154,7 +152,7 @@ namespace TakyTank.KyoProLib.CS8
 		}
 	}
 
-	public class RangeFenwickTree : IEnumerable<long>
+	public class RangeFenwickTree
 	{
 		private readonly int n_;
 		private readonly long[,] bit_;
@@ -216,7 +214,6 @@ namespace TakyTank.KyoProLib.CS8
 			return res;
 		}
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 		public IEnumerator<long> GetEnumerator()
 		{
 			for (int i = 0; i < n_; i++) {
@@ -225,7 +222,7 @@ namespace TakyTank.KyoProLib.CS8
 		}
 	};
 
-	public class ModRangeFenwickTree : IEnumerable<ModInt>
+	public class ModRangeFenwickTree
 	{
 		private readonly int n_;
 		private readonly ModInt[,] bit_;
@@ -287,7 +284,6 @@ namespace TakyTank.KyoProLib.CS8
 			return res;
 		}
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 		public IEnumerator<ModInt> GetEnumerator()
 		{
 			for (int i = 0; i < n_; i++) {
