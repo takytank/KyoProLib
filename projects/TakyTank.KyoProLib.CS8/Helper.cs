@@ -74,6 +74,10 @@ namespace TakyTank.KyoProLib.CS8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<T> AsSpan<T>(this T[,] array, int i)
+			=> MemoryMarshal.CreateSpan<T>(ref array[i, 0], array.GetLength(1));
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[,,] Array3<T>(int n1, int n2, int n3, T initialValue)
 			where T : struct
 			=> new T[n1, n2, n3].Fill(initialValue);
@@ -86,6 +90,10 @@ namespace TakyTank.KyoProLib.CS8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<T> AsSpan<T>(this T[,,] array, int i, int j)
+			=> MemoryMarshal.CreateSpan<T>(ref array[i, j, 0], array.GetLength(2));
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[,,,] Array4<T>(int n1, int n2, int n3, int n4, T initialValue)
 			where T : struct
 			=> new T[n1, n2, n3, n4].Fill(initialValue);
@@ -96,6 +104,10 @@ namespace TakyTank.KyoProLib.CS8
 			MemoryMarshal.CreateSpan<T>(ref array[0, 0, 0, 0], array.Length).Fill(initialValue);
 			return array;
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<T> AsSpan<T>(this T[,,,] array, int i, int j, int k)
+			=> MemoryMarshal.CreateSpan<T>(ref array[i, j, k, 0], array.GetLength(3));
 
 		private static readonly int[] delta4_ = { 1, 0, -1, 0, 1 };
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
