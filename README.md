@@ -100,3 +100,7 @@
 - [Union find(素集合データ構造)](https://www.slideshare.net/chokudai/union-find-49066733)
 - [ちょっと変わったセグメント木の使い方](https://ei1333.hateblo.jp/entry/2017/12/14/000000)
 - [重み付き Union-Find 木とそれが使える問題のまとめ、および、牛ゲーについて](https://qiita.com/drken/items/cce6fc5c579051e64fab)
+
+### WalshHadamard
+
+- [色々な畳み込み](https://kazuma8128.hatenablog.com/entry/2018/05/31/144519)
