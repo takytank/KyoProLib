@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.X86;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Core31
+namespace TakyTank.KyoProLib.CSharp
 {
 	public struct BitFlag
 	{
@@ -13,6 +12,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		public static BitFlag FromBit(int bitNumber) => 1 << bitNumber;
 
 		private readonly int flags_;
+		public int Flag => flags_;
 		public bool this[int bitNumber] => (flags_ & (1 << bitNumber)) != 0;
 		public BitFlag(int flags) { flags_ = flags; }
 
@@ -54,7 +54,6 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		public static implicit operator BitFlag(int t) => new BitFlag(t);
 		public static implicit operator int(BitFlag t) => t.flags_;
 
-		public int PopCount => (int)Popcnt.PopCount((uint)flags_);
 		public override string ToString() => $"{Convert.ToString(flags_, 2).PadLeft(32, '0')} ({flags_})";
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
