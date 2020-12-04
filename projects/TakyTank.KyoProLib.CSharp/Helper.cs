@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Core31
+namespace TakyTank.KyoProLib.CSharp
 {
 	public static class Helper
 	{
@@ -163,16 +163,5 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static string JoinNL<T>(this IEnumerable<T> values)
 			=> string.Join(Environment.NewLine, values);
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Span<T> AsSpan<T>(this List<T> list)
-		{
-			return Unsafe.As<FakeList<T>>(list).Array.AsSpan(0, list.Count);
-		}
-
-		private class FakeList<T>
-		{
-			public T[] Array = null;
-		}
 	}
 }

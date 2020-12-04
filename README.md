@@ -25,6 +25,10 @@
 
 - [deque](https://ufcpp.net/study/stl/deque.html)
 
+### FakeList
+
+- [List<T>からSpan<T>を引き抜いて高速化](https://ikorin2.hatenablog.jp/entry/2020/04/13/131614)
+
 ### FenwickTree
 
 - 蟻本
