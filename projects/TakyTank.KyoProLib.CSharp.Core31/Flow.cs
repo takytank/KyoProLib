@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSCore31
+namespace TakyTank.KyoProLib.CSharp.Core31
 {
 	public class Flow
 	{

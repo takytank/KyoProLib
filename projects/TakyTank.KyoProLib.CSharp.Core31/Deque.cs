@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSCore31
+namespace TakyTank.KyoProLib.CSharp.Core31
 {
 	public class Deque<T> : IEnumerable<T>
 	{
