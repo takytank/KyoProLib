@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CS8
+namespace TakyTank.KyoProLib.CSCore31
 {
 	public class PriorityQueue<T> where T : IComparable<T>
 	{

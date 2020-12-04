@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CS8
+namespace TakyTank.KyoProLib.CSCore31
 {
 	public struct ModInt
 	{

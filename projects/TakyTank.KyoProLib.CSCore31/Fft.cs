@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CS8
+namespace TakyTank.KyoProLib.CSCore31
 {
 	public static class Fft
 	{

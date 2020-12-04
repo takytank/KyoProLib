@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CS8
+namespace TakyTank.KyoProLib.CSCore31
 {
 	public static class Helper
 	{

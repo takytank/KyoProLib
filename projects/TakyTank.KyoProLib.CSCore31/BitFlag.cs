@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CS8
+namespace TakyTank.KyoProLib.CSCore31
 {
 	public struct BitFlag
 	{

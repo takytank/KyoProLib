@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CS8
+namespace TakyTank.KyoProLib.CSCore31
 {
 	[DebuggerTypeProxy(typeof(SegmentTree<>.DebugView))]
 	public class SegmentTree<T> : IEnumerable<T>
