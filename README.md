@@ -76,6 +76,8 @@
 ### PopCount
 
 - [ビットを数える・探すアルゴリズム](http://www.nminoru.jp/~nminoru/programming/bitcount.html)
+- [ビットを数える x86/x64最適化勉強会1](https://www.slideshare.net/takesako/x86x64-sse42-popcnt)
+- [x86_64でpopcnt / tzcnt / lzcntする【ビット演算テクニック](https://qiita.com/ocxtal/items/01c46b15cb1f2e656887)
 
 ### Scanner
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.X86;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.Core31
@@ -10,7 +10,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int PopCount(this BitFlag bit)
-			=> (int)Popcnt.PopCount((uint)bit.Flag);
+			=> (int)BitOperations.PopCount((uint)bit.Flag);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<T> AsSpan<T>(this List<T> list)
