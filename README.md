@@ -29,6 +29,13 @@
 
 - [deque](https://ufcpp.net/study/stl/deque.html)
 
+### EulerTour
+
+- 蟻本
+- [木に対する一般的なテク達](https://www.npca.jp/works/magazine/2015_5/)
+- [Euler Tour のお勉強](https://maspypy.com/euler-tour-のお勉強)
+- [2種類のEuler Tourについて](https://beet-aizu.hatenablog.com/entry/2019/07/08/174727)
+
 ### FakeList
 
 - [List<T>からSpan<T>を引き抜いて高速化](https://ikorin2.hatenablog.jp/entry/2020/04/13/131614)
