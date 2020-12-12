@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
@@ -97,6 +98,231 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			int lca = Lca(u, v);
 			return costAccum_[u + 1] + costAccum_[v + 1] - (costAccum_[lca + 1] * 2);
+		}
+	}
+
+	public class EulerTourSubTreeE<TEdge>
+	{
+		private readonly int vertexCount_;
+		private readonly int tourCount_;
+
+		private readonly int[] tour_;
+		private readonly int[] discovery_;
+		private readonly int[] finish_;
+		private readonly TEdge[] edgeTree_;
+		private readonly Func<TEdge, TEdge, TEdge> mergeEdge_;
+		private readonly TEdge edgeUnit_;
+		private readonly Dictionary<(int p, int q), int> edgeMap_;
+		
+		public EulerTourSubTreeE(
+			List<(int v, TEdge cost)>[] g,
+			TEdge edgeUnit,
+			Func<TEdge, TEdge, TEdge> mergeEdge,
+			int root = 0)
+		{
+			vertexCount_ = g.Length;
+			tourCount_ = vertexCount_ << 1;
+			tour_ = new int[tourCount_];
+			discovery_ = new int[vertexCount_];
+			finish_ = new int[vertexCount_];
+			edgeTree_ = new TEdge[tourCount_ << 1];
+			mergeEdge_ = mergeEdge;
+			edgeUnit_ = edgeUnit;
+			edgeMap_ = new Dictionary<(int p, int q), int>();
+
+			void Dfs(int v, int parent, int depth, ref int index)
+			{
+				discovery_[v] = index;
+				tour_[index] = v;
+				++index;
+				for (int i = 0; i < g[v].Count; i++) {
+					if (g[v][i].v == parent) {
+						continue;
+					}
+
+					edgeTree_[index + tourCount_] = g[v][i].cost;
+					edgeMap_[(v, g[v][i].v)] = g[v][i].v;
+					Dfs(g[v][i].v, v, depth + 1, ref index);
+
+					++index;
+				}
+
+				tour_[index] = -v;
+				edgeTree_[index + tourCount_] = edgeUnit;
+				finish_[v] = index;
+			}
+
+			int index = 0;
+			Dfs(root, -1, 0, ref index);
+
+			for (int i = tourCount_ - 1; i > 0; i--) {
+				var l = edgeTree_[i << 1];
+				var r = edgeTree_[(i << 1) + 1];
+				edgeTree_[i] = mergeEdge(l, r);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public TEdge QueryEdge(int v)
+		{
+			int left = discovery_[v];
+			int right = finish_[v];
+			if (left > right || right < 0 || left >= tourCount_) {
+				return edgeUnit_;
+			}
+
+			int l = left + tourCount_;
+			int r = right + tourCount_;
+			TEdge valL = edgeUnit_;
+			TEdge valR = edgeUnit_;
+			while (l < r) {
+				if ((l & 1) != 0) {
+					valL = mergeEdge_(valL, edgeTree_[l]);
+					++l;
+				}
+				if ((r & 1) != 0) {
+					--r;
+					valR = mergeEdge_(edgeTree_[r], valR);
+				}
+
+				l >>= 1;
+				r >>= 1;
+			}
+
+			return mergeEdge_(valL, valR);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void UpdateEdge(int p, int q, TEdge value)
+		{
+			if (edgeMap_.ContainsKey((p, q))) {
+				UpdateEdge(edgeMap_[(p, q)], value);
+			} else if (edgeMap_.ContainsKey((q, p))) {
+				UpdateEdge(edgeMap_[(q, p)], value);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void UpdateEdge(int v, TEdge value)
+		{
+			if (v >= tourCount_) {
+				return;
+			}
+
+			int index = discovery_[v] + tourCount_;
+			edgeTree_[index] = value;
+			index >>= 1;
+			while (index != 0) {
+				edgeTree_[index] = mergeEdge_(edgeTree_[index << 1], edgeTree_[(index << 1) + 1]);
+				index >>= 1;
+			}
+		}
+	}
+
+	public class EulerTourSubTreeV<TVertex>
+	{
+		private readonly int vertexCount_;
+		private readonly int tourCount_;
+
+		private readonly int[] tour_;
+		private readonly int[] discovery_;
+		private readonly int[] finish_;
+		private readonly TVertex[] vertexTree_;
+		private readonly Func<TVertex, TVertex, TVertex> mergeVertex_;
+		private readonly TVertex vertexUnit_;
+
+		public EulerTourSubTreeV(
+			List<int>[] g,
+			TVertex[] vertexes,
+			TVertex vertexUnit,
+			Func<TVertex, TVertex, TVertex> mergeVertex,
+			int root = 0)
+		{
+			vertexCount_ = g.Length;
+			tourCount_ = vertexCount_ << 1;
+			tour_ = new int[tourCount_];
+			discovery_ = new int[vertexCount_];
+			finish_ = new int[vertexCount_];
+			vertexTree_ = new TVertex[tourCount_ << 1];
+			mergeVertex_ = mergeVertex;
+			vertexUnit_ = vertexUnit;
+
+			void Dfs(int v, int parent, int depth, ref int index)
+			{
+				vertexTree_[index + tourCount_] = vertexes[v];
+				discovery_[v] = index;
+				tour_[index] = v;
+				++index;
+				for (int i = 0; i < g[v].Count; i++) {
+					if (g[v][i] == parent) {
+						continue;
+					}
+
+					
+					Dfs(g[v][i], v, depth + 1, ref index);
+
+					++index;
+				}
+
+				tour_[index] = -v;
+				vertexTree_[index + tourCount_] = vertexUnit;
+				finish_[v] = index;
+			}
+
+			int index = 0;
+			Dfs(root, -1, 0, ref index);
+
+			for (int i = tourCount_ - 1; i > 0; i--) {
+				var l = vertexTree_[i << 1];
+				var r = vertexTree_[(i << 1) + 1];
+				vertexTree_[i] = mergeVertex(l, r);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public TVertex QueryEdge(int v)
+		{
+			int left = discovery_[v];
+			int right = finish_[v];
+			if (left > right || right < 0 || left >= tourCount_) {
+				return vertexUnit_;
+			}
+
+			int l = left + tourCount_;
+			int r = right + tourCount_;
+			TVertex valL = vertexUnit_;
+			TVertex valR = vertexUnit_;
+			while (l < r) {
+				if ((l & 1) != 0) {
+					valL = mergeVertex_(valL, vertexTree_[l]);
+					++l;
+				}
+				if ((r & 1) != 0) {
+					--r;
+					valR = mergeVertex_(vertexTree_[r], valR);
+				}
+
+				l >>= 1;
+				r >>= 1;
+			}
+
+			return mergeVertex_(valL, valR);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void UpdateEdge(int v, TVertex value)
+		{
+			if (v >= tourCount_) {
+				return;
+			}
+
+			int index = discovery_[v] + tourCount_;
+			vertexTree_[index] = value;
+			index >>= 1;
+			while (index != 0) {
+				vertexTree_[index] = mergeVertex_(vertexTree_[index << 1], vertexTree_[(index << 1) + 1]);
+				index >>= 1;
+			}
 		}
 	}
 }
