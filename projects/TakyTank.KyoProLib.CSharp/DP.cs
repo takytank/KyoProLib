@@ -35,7 +35,8 @@ namespace TakyTank.KyoProLib.CSharp
 			return dp[n, m];
 		}
 
-		public static (int distance, List<T> edited) LevenshteinDistanceWith<T>(ReadOnlySpan<T> a, ReadOnlySpan<T> b)
+		public static (int distance, List<T> edited) LevenshteinDistanceAndSequence<T>(
+			ReadOnlySpan<T> a, ReadOnlySpan<T> b)
 			where T : IComparable<T>
 		{
 			int n = a.Length;
@@ -90,6 +91,84 @@ namespace TakyTank.KyoProLib.CSharp
 			list.Reverse();
 
 			return (dp[n, m], list);
+		}
+
+
+		public static int LcsLength<T>(ReadOnlySpan<T> a, ReadOnlySpan<T> b)
+			where T : IComparable<T>
+			=> LongestCommonSubsequenceLength(a, b);
+		public static int LongestCommonSubsequenceLength<T>(ReadOnlySpan<T> a, ReadOnlySpan<T> b)
+			where T : IComparable<T>
+		{
+			int n = a.Length;
+			int m = b.Length;
+
+			var dp = new int[n + 1, m + 1];
+			for (int i = 0; i < n; i++) {
+				for (int j = 0; j < m; j++) {
+					if (a[i].CompareTo(b[j]) == 0) {
+						dp[i + 1, j + 1] = dp[i, j] + 1;
+					} else {
+						dp[i + 1, j + 1] = Math.Max(dp[i, j + 1], dp[i + 1, j]);
+					}
+				}
+			}
+
+			return dp[n, m];
+		}
+
+		public static List<T> LCS<T>(ReadOnlySpan<T> a, ReadOnlySpan<T> b)
+			where T : IComparable<T>
+			=> LongestCommonSubsequence(a, b);
+		public static List<T> LongestCommonSubsequence<T>(ReadOnlySpan<T> a, ReadOnlySpan<T> b)
+			where T : IComparable<T>
+		{
+			int n = a.Length;
+			int m = b.Length;
+
+			var dp = new int[n + 1, m + 1];
+			var prev = new int[n + 1, m + 1];
+			for (int i = 0; i < n; i++) {
+				for (int j = 0; j < m; j++) {
+					if (a[i].CompareTo(b[j]) == 0) {
+						dp[i + 1, j + 1] = dp[i, j] + 1;
+						prev[i + 1, j + 1] = 0;
+					} else {
+						if (dp[i, j + 1] > dp[i + 1, j]) {
+							dp[i + 1, j + 1] = dp[i, j + 1];
+							prev[i + 1, j + 1] = 1;
+						} else {
+							dp[i + 1, j + 1] = dp[i + 1, j];
+							prev[i + 1, j + 1] = 2;
+						}
+					}
+				}
+			}
+
+			var list = new List<T>();
+			int ii = n;
+			int jj = m;
+			while (ii > 0 && jj > 0) {
+				switch (prev[ii, jj]) {
+					case 0:
+						list.Add(a[ii - 1]);
+						--ii;
+						--jj;
+						break;
+					case 1:
+						--ii;
+						break;
+					case 2:
+						--jj;
+						break;
+					default:
+						break;
+				}
+			}
+
+			list.Reverse();
+
+			return list;
 		}
 	}
 }

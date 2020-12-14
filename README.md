@@ -62,6 +62,8 @@
 
 - [いもす法](https://imoz.jp/algorithms/imos_method.html)
 
+### LCS (Longest Common Subsequence)
+
 ### LevenshteinDistance (EditDistance)
 
 - けんちょん本
