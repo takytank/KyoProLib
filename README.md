@@ -33,8 +33,8 @@
 
 - 蟻本
 - [木に対する一般的なテク達](https://www.npca.jp/works/magazine/2015_5/)
-- [Euler Tour のお勉強](https://maspypy.com/euler-tour-のお勉強)
 - [2種類のEuler Tourについて](https://beet-aizu.hatenablog.com/entry/2019/07/08/174727)
+- [Euler Tour のお勉強](https://maspypy.com/euler-tour-のお勉強)
 
 ### FakeList
 
@@ -58,9 +58,15 @@
 
 - [C#で競技プログラミングをし続ける人のためのTips](https://qiita.com/Camypaper/items/de6d576fe5513743a50e#dictionarykv)
 
-## Imos
+### Imos
 
 - [いもす法](https://imoz.jp/algorithms/imos_method.html)
+
+### LevenshteinDistance (EditDistance)
+
+- けんちょん本
+- [DP(編集距離)とDPの問題を解くコツ](https://www.slideshare.net/utgw/dpdp-63918394)
+- [意外と解説がない！動的計画法で得た最適解を「復元」する一般的な方法](https://qiita.com/drken/items/0c7bab0384438f285f93)
 
 ### ModCounting
 
