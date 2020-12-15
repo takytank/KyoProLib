@@ -115,7 +115,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Lca(int u, int v)
+		public int LCA(int u, int v)
 		{
 			int left = Math.Min(discovery_[u], discovery_[v]);
 			int right = Math.Max(discovery_[u], discovery_[v]) + 1;
@@ -397,7 +397,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Lca(int u, int v)
+		public int LCA(int u, int v)
 		{
 			int left = Math.Min(discovery_[u], discovery_[v]);
 			int right = Math.Max(discovery_[u], discovery_[v]) + 1;

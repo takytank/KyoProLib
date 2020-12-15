@@ -111,7 +111,8 @@ namespace TakyTank.KyoProLib.CSharp
 			return new ModInt(ret);
 		}
 
-
+		public static Span<ModInt> NTT(Span<int> values, bool inverses = false)
+			=> NumberTheoreticTransform(values, inverses);
 		public static Span<ModInt> NumberTheoreticTransform(
 			Span<int> values, bool inverses = false)
 		{
@@ -123,6 +124,8 @@ namespace TakyTank.KyoProLib.CSharp
 			return NumberTheoreticTransform(mods, inverses);
 		}
 
+		public static Span<ModInt> NTT(Span<long> values, bool inverses = false)
+			=> NumberTheoreticTransform(values, inverses);
 		public static Span<ModInt> NumberTheoreticTransform(
 			Span<long> values, bool inverses = false)
 		{
@@ -134,6 +137,8 @@ namespace TakyTank.KyoProLib.CSharp
 			return NumberTheoreticTransform(mods, inverses);
 		}
 
+		public static Span<ModInt> NTT(Span<ModInt> values, bool inverses = false)
+			=> NumberTheoreticTransform(values, inverses);
 		public static Span<ModInt> NumberTheoreticTransform(
 			Span<ModInt> a, bool inverses = false)
 		{
@@ -182,6 +187,8 @@ namespace TakyTank.KyoProLib.CSharp
 			return a;
 		}
 
+		public static ModInt[,] Ntt2D(ModInt[,] a, bool inverses = false)
+			=> NumberTheoreticTransform2D(a, inverses);
 		public static ModInt[,] NumberTheoreticTransform2D(ModInt[,] a, bool inverses = false)
 		{
 			int h = a.GetLength(0);

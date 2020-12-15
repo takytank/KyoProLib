@@ -51,7 +51,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 			return result;
 		}
 
-		public long CalculateMaxFlowByFordFulkerson(int s, int t, bool keepsEdges = false)
+		public long MaxFlowByFordFulkerson(int s, int t, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
 				CopyEdges();
@@ -94,7 +94,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 			return flow;
 		}
 
-		public long CalculateMaxFlowByDinic(int s, int t, bool keepsEdges = false)
+		public long MaxFlowByDinic(int s, int t, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
 				CopyEdges();
@@ -164,7 +164,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 			return flow;
 		}
 
-		public (long flow, long cost) CalculateMinCostFlowByBellmanFord(
+		public (long flow, long cost) MinCostFlowByBellmanFord(
 			int s, int t, long flowLimit, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -230,7 +230,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 			return (flowLimit - f, minCost);
 		}
 
-		public (long flow, long cost) CalculateMinCostFlowByFpsa(
+		public (long flow, long cost) MinCostFlowByFpsa(
 			int s, int t, long flowLimit, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -302,7 +302,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 			return (flowLimit - f, minCost);
 		}
 
-		public (long flow, long cost) CalculateMinCostFlowByDijkstra(
+		public (long flow, long cost) MinCostFlowByDijkstra(
 			int s, int t, long flowLimit, bool hasMinusCost = false, bool keepsEdges = false)
 		{
 			if (keepsEdges) {

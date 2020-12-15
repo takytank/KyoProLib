@@ -5,9 +5,11 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
-	public static class Fft
+	public static class Fourier
 	{
-		public static Span<Complex> FourierTransformByCooleyTukey(
+		public static Span<Complex> FFT(Span<double> values, bool inverses = false)
+			=> FastFourierTransformByCooleyTukey(values, inverses);
+		public static Span<Complex> FastFourierTransformByCooleyTukey(
 			Span<double> values, bool inverses = false)
 		{
 			var complex = new Complex[values.Length];
@@ -15,10 +17,12 @@ namespace TakyTank.KyoProLib.CSharp
 				complex[i] = new Complex(values[i], 0);
 			}
 
-			return FourierTransformByCooleyTukey(complex, inverses);
+			return FastFourierTransformByCooleyTukey(complex, inverses);
 		}
 
-		public static Span<Complex> FourierTransformByCooleyTukey(
+		public static Span<Complex> FFT(Span<Complex> values, bool inverses = false)
+			=> FastFourierTransformByCooleyTukey(values, inverses);
+		public static Span<Complex> FastFourierTransformByCooleyTukey(
 			Span<Complex> values, bool inverses = false)
 		{
 			int n = values.Length;
@@ -74,13 +78,13 @@ namespace TakyTank.KyoProLib.CSharp
 			var bb = new double[fftLength];
 			b.CopyTo(bb);
 
-			var fa = FourierTransformByCooleyTukey(aa);
-			var fb = FourierTransformByCooleyTukey(bb);
+			var fa = FFT(aa);
+			var fb = FFT(bb);
 			for (int i = 0; i < fftLength; i++) {
 				fa[i] *= fb[i];
 			}
 
-			var convolved = FourierTransformByCooleyTukey(fa, true);
+			var convolved = FFT(fa, true);
 			var result = new double[resultLength];
 			for (int i = 0; i < resultLength; i++) {
 				result[i] = convolved[i].Real;

@@ -56,7 +56,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			return minPrimeFactors_[n] == n;
 		}
 
-		public IReadOnlyList<long> CalculatePrimeFactorsOf(long n)
+		public IReadOnlyList<long> PrimeFactorsOf(long n)
 		{
 			var factors = new List<long>();
 			while (n > 1) {
@@ -67,10 +67,10 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			return factors;
 		}
 
-		public Dictionary<long, int> CalculatePrimeFactors(long n)
+		public Dictionary<long, int> PrimeFactors(long n)
 		{
 			var factors = new Dictionary<long, int>();
-			var list = CalculatePrimeFactorsOf(n);
+			var list = PrimeFactorsOf(n);
 			foreach (long value in list) {
 				if (factors.ContainsKey(value)) {
 					factors[value]++;
@@ -82,11 +82,11 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			return factors;
 		}
 
-		public Dictionary<long, int> CalculatePrimeFactorsOfLcm(ReadOnlySpan<long> values)
+		public Dictionary<long, int> PrimeFactorsOfLcm(ReadOnlySpan<long> values)
 		{
 			var factors = new Dictionary<long, int>();
 			foreach (long value in values) {
-				var temp = CalculatePrimeFactors(value);
+				var temp = PrimeFactors(value);
 				foreach (long key in temp.Keys) {
 					if (factors.ContainsKey(key)) {
 						factors[key] = Math.Max(factors[key], temp[key]);
