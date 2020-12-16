@@ -71,7 +71,7 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			int m = n_ + 1;
 			if (w <= 0) {
-				return 0;
+				return -1;
 			} else {
 				int x = 0;
 				int r = 1;
@@ -96,7 +96,6 @@ namespace TakyTank.KyoProLib.CSharp
 				yield return this[i];
 			}
 		}
-
 	}
 
 	public class ModFenwickTree
