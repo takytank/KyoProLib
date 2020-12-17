@@ -58,11 +58,20 @@
 
 - [C#で競技プログラミングをし続ける人のためのTips](https://qiita.com/Camypaper/items/de6d576fe5513743a50e#dictionarykv)
 
+### HeavyLightDecomposition
+
+- [絶対に初心者でもわかるHL分解/Heavy-Light-Decomposition](https://qiita.com/ageprocpp/items/8dfe768218da83314989)
+- [【図解】木のパスに関するクエリは HL 分解！](https://qiita.com/Pro_ktmr/items/4e1e051ea0561772afa3)
+- [Heavy-Light Decomposition](https://beet-aizu.hatenablog.com/entry/2017/12/12/235950)
+- [HL分解(Heavy-Light-Decomposition)](https://ei1333.github.io/luzhiled/snippets/tree/heavy-light-decomposition.html)
+
 ### Imos
 
 - [いもす法](https://imoz.jp/algorithms/imos_method.html)
 
 ### LCS (Longest Common Subsequence)
+
+- 蟻本
 
 ### LevenshteinDistance (EditDistance)
 
