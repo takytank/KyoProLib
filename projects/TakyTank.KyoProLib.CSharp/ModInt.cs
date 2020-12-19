@@ -19,8 +19,8 @@ namespace TakyTank.KyoProLib.CSharp
 
 		private long value_;
 
-		public ModInt(long value)
-			=> value_ = value;
+		public static ModInt New(long value, bool mods) => new ModInt(value, mods);
+		public ModInt(long value) => value_ = value;
 		public ModInt(long value, bool mods)
 		{
 			if (mods) {
@@ -317,28 +317,15 @@ namespace TakyTank.KyoProLib.CSharp
 		public override string ToString() => value_.ToString();
 	}
 
-	public struct VModInt
+	public struct DModInt
 	{
 		public static long P { get; set; } = 1000000007;
 
-		public static VModInt Inverse(VModInt value) => Pow(value, P - 2);
-		public static VModInt Pow(VModInt value, long k) => Pow(value.value_, k);
-		public static VModInt Pow(long value, long k)
-		{
-			long ret = 1;
-			for (k %= P - 1; k > 0; k >>= 1, value = value * value % P) {
-				if ((k & 1) == 1) {
-					ret = ret * value % P;
-				}
-			}
-			return new VModInt(ret);
-		}
-
 		private long value_;
 
-		public VModInt(long value)
-			=> value_ = value;
-		public VModInt(long value, bool mods)
+		public static DModInt New(long value, bool mods) => new DModInt(value, mods);
+		public DModInt(long value) => value_ = value;
+		public DModInt(long value, bool mods)
 		{
 			if (mods) {
 				value %= P;
@@ -350,7 +337,7 @@ namespace TakyTank.KyoProLib.CSharp
 			value_ = value;
 		}
 
-		public static VModInt operator +(VModInt lhs, VModInt rhs)
+		public static DModInt operator +(DModInt lhs, DModInt rhs)
 		{
 			lhs.value_ += rhs.value_;
 			if (lhs.value_ >= P) {
@@ -358,7 +345,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 			return lhs;
 		}
-		public static VModInt operator +(long lhs, VModInt rhs)
+		public static DModInt operator +(long lhs, DModInt rhs)
 		{
 			rhs.value_ += lhs;
 			if (rhs.value_ >= P) {
@@ -366,7 +353,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 			return rhs;
 		}
-		public static VModInt operator +(VModInt lhs, long rhs)
+		public static DModInt operator +(DModInt lhs, long rhs)
 		{
 			lhs.value_ += rhs;
 			if (lhs.value_ >= P) {
@@ -375,7 +362,7 @@ namespace TakyTank.KyoProLib.CSharp
 			return lhs;
 		}
 
-		public static VModInt operator -(VModInt lhs, VModInt rhs)
+		public static DModInt operator -(DModInt lhs, DModInt rhs)
 		{
 			lhs.value_ -= rhs.value_;
 			if (lhs.value_ < 0) {
@@ -383,7 +370,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 			return lhs;
 		}
-		public static VModInt operator -(long lhs, VModInt rhs)
+		public static DModInt operator -(long lhs, DModInt rhs)
 		{
 			rhs.value_ -= lhs;
 			if (rhs.value_ < 0) {
@@ -391,7 +378,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 			return rhs;
 		}
-		public static VModInt operator -(VModInt lhs, long rhs)
+		public static DModInt operator -(DModInt lhs, long rhs)
 		{
 			lhs.value_ -= rhs;
 			if (lhs.value_ < 0) {
@@ -400,14 +387,14 @@ namespace TakyTank.KyoProLib.CSharp
 			return lhs;
 		}
 
-		public static VModInt operator *(VModInt lhs, VModInt rhs)
-			=> new VModInt(lhs.value_ * rhs.value_ % P);
-		public static VModInt operator *(long lhs, VModInt rhs)
-			=> new VModInt(lhs * rhs.value_ % P);
-		public static VModInt operator *(VModInt lhs, long rhs)
-			=> new VModInt(lhs.value_ * rhs % P);
+		public static DModInt operator *(DModInt lhs, DModInt rhs)
+			=> new DModInt(lhs.value_ * rhs.value_ % P);
+		public static DModInt operator *(long lhs, DModInt rhs)
+			=> new DModInt(lhs * rhs.value_ % P);
+		public static DModInt operator *(DModInt lhs, long rhs)
+			=> new DModInt(lhs.value_ * rhs % P);
 
-		public static VModInt operator /(VModInt lhs, VModInt rhs)
+		public static DModInt operator /(DModInt lhs, DModInt rhs)
 		{
 			long exp = P - 2;
 			while (exp > 0) {
@@ -422,7 +409,55 @@ namespace TakyTank.KyoProLib.CSharp
 			return lhs;
 		}
 
-		public static implicit operator VModInt(long n) => new VModInt(n, true);
+		public static implicit operator DModInt(long n) => new DModInt(n, true);
+
+		public static DModInt Inverse(DModInt value)
+		{
+			if (Gcd(value.value_, P) != 1) {
+				throw new Exception($"GCD of {value.value_} and {P} is not 1");
+			}
+
+			var (_, x, _) = ExtendedEuclidean(value.value_, P);
+			x %= P;
+			if (x < 0) {
+				x += P;
+			}
+
+			return x;
+
+			static long Gcd(long a, long b)
+			{
+				if (b == 0) {
+					return a;
+				}
+
+				return Gcd(b, a % b);
+			}
+
+			static (long gcd, long x, long y) ExtendedEuclidean(long a, long b)
+			{
+				if (b == 0) {
+					return (a, 1, 0);
+				}
+
+				var (gcd, y, x) = ExtendedEuclidean(b, a % b);
+				y -= a / b * x;
+				return (gcd, x, y);
+			}
+		}
+
+		public static DModInt Pow(DModInt value, long k) => Pow(value.value_, k);
+		public static DModInt Pow(long value, long k)
+		{
+			long ret = 1;
+			for (k %= P - 1; k > 0; k >>= 1, value = value * value % P) {
+				if ((k & 1) == 1) {
+					ret = ret * value % P;
+				}
+			}
+			return new DModInt(ret);
+		}
+
 		public long ToLong() => value_;
 		public override string ToString() => value_.ToString();
 	}
