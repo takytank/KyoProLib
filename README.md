@@ -17,7 +17,7 @@
 
 ### Compression
 
-- 蟻本
+- 蟻本 150p
 - [座標圧縮(Compress)](https://ei1333.github.io/luzhiled/snippets/other/compress.html)
 - [座標圧縮の解説（1次元から2次元の圧縮まで）](https://algo-logic.info/coordinate-compress/)
 
@@ -31,7 +31,7 @@
 
 ### EulerTour
 
-- 蟻本
+- 蟻本 294p
 - [木に対する一般的なテク達](https://www.npca.jp/works/magazine/2015_5/)
 - [2種類のEuler Tourについて](https://beet-aizu.hatenablog.com/entry/2019/07/08/174727)
 - [Euler Tour のお勉強](https://maspypy.com/euler-tour-のお勉強)
@@ -42,7 +42,7 @@
 
 ### FenwickTree
 
-- 蟻本
+- 蟻本 159p
 - [Binary Indexed Tree (BIT) 総まとめ！区間加算や二次元BITまで](https://algo-logic.info/binary-indexed-tree/)
 
 ### Fft
@@ -51,7 +51,7 @@
 
 ### Flow
 
-- 蟻本
+- 蟻本 188p
 - [単一始点最短路(SPFA)](https://ei1333.github.io/luzhiled/snippets/graph/shortest-path-faster-algorithm.html)
 
 ### HashMap
@@ -71,11 +71,11 @@
 
 ### LCS (Longest Common Subsequence)
 
-- 蟻本
+- 蟻本 56p
 
 ### LevenshteinDistance (EditDistance)
 
-- けんちょん本
+- けんちょん本 78p
 - [DP(編集距離)とDPの問題を解くコツ](https://www.slideshare.net/utgw/dpdp-63918394)
 - [意外と解説がない！動的計画法で得た最適解を「復元」する一般的な方法](https://qiita.com/drken/items/0c7bab0384438f285f93)
 
@@ -87,6 +87,7 @@
 ### ModInt
 
 - [「1000000007 で割ったあまり」の求め方を総特集！ 〜 逆元から離散対数まで 〜](https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a)
+- [よくやる二項係数 (nCk mod. p)、逆元 (a^-1 mod. p) の求め方](https://drken1215.hatenablog.com/entry/2018/06/08/210000)
 
 ### NTT
 
@@ -111,7 +112,7 @@
 
 ### SegmentTree
 
-- 蟻本
+- 蟻本 153p
 - [セグメント木を徹底解説！0から遅延評価やモノイドまで](https://algo-logic.info/segment-tree/)
 - [遅延伝播セグメント木について](https://beet-aizu.hatenablog.com/entry/2017/12/01/225955)
 - [セグ木に載せるモノイドまとめ（未完）](https://beet-aizu.hatenablog.com/entry/2019/03/12/171221)
