@@ -104,6 +104,12 @@
 - [ビットを数える x86/x64最適化勉強会1](https://www.slideshare.net/takesako/x86x64-sse42-popcnt)
 - [x86_64でpopcnt / tzcnt / lzcntする【ビット演算テクニック](https://qiita.com/ocxtal/items/01c46b15cb1f2e656887)
 
+### RadixHeap
+
+- [Radix-Heap](https://ei1333.github.io/algorithm/radix-heap.html)
+- [色々なダイクストラ高速化](https://www.slideshare.net/yosupo/ss-46612984)
+- [radix-heap](https://github.com/iwiwi/radix-heap/blob/master/README_ja.md)
+
 ### Scanner
 
 - [chokudai さんの tweet](https://twitter.com/chokudai/status/1051741812501536769?s=20)
