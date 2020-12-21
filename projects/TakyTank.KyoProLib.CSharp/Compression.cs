@@ -41,6 +41,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 		private readonly T[] values_;
 		private readonly Dictionary<T, int> map_;
+		public int Count => values_.Length;
 
 		public Compression(IReadOnlyList<T> values, int offset = 0)
 		{
@@ -125,7 +126,6 @@ namespace TakyTank.KyoProLib.CSharp
 
 		private readonly T[] values_;
 		private readonly Dictionary<T, int> map_;
-
 		public int Length => values_.Length;
 
 		public Compression1D(
