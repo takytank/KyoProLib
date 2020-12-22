@@ -469,23 +469,29 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		private class RadixHeap
 		{
 			private const int MAX_BIT = 64;
-			private readonly List<(long distance, int v)>[] buckets_
-				= new List<(long distance, int v)>[MAX_BIT + 1];
+			private readonly List<(long distance, int v)>[] buckets_;
+			private readonly long[] mins_;
 			private long lastDistance_;
+
+			public int Count { get; private set; }
 
 			public RadixHeap()
 			{
+				buckets_ = new List<(long distance, int v)>[MAX_BIT + 1];
 				for (int i = 0; i < MAX_BIT + 1; i++) {
 					buckets_[i] = new List<(long distance, int vertex)>();
 				}
-			}
 
-			public int Count { get; private set; }
+				mins_ = new long[MAX_BIT + 1];
+				mins_.AsSpan().Fill(long.MaxValue);
+			}
 
 			public void Push(long distance, int v)
 			{
 				++Count;
-				buckets_[GetBit(distance ^ lastDistance_)].Add((distance, v));
+				int bit = GetBit(distance ^ lastDistance_);
+				buckets_[bit].Add((distance, v));
+				mins_[bit] = Math.Min(mins_[bit], distance);
 			}
 
 			public (long distance, int v) Pop()
@@ -496,12 +502,15 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 						++index;
 					}
 
-					lastDistance_ = buckets_[index].Min(x => x.distance);
-					foreach (var p in buckets_[index]) {
-						buckets_[GetBit(p.distance ^ lastDistance_)].Add(p);
+					lastDistance_ = mins_[index];
+					foreach (var item in buckets_[index]) {
+						int bit = GetBit(item.distance ^ lastDistance_);
+						buckets_[bit].Add(item);
+						mins_[bit] = Math.Min(mins_[bit], item.distance);
 					}
 
 					buckets_[index].Clear();
+					mins_[index] = long.MaxValue;
 				}
 
 				--Count;
