@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.Core31
@@ -334,7 +337,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			long minCost = 0;
 			long f = flowLimit;
 			var edgess = flowedEdges_.AsSpan();
-			var que = new HeapQ();
+			var que = new RadixHeap();
 			while (f > 0) {
 				distances.AsSpan().Fill(INF);
 				distances[s] = 0;
@@ -369,9 +372,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 						}
 					}
 				} else {
-					que.Enqueue(0, s);
+					que.Push(0, s);
 					while (que.Count > 0) {
-						var current = que.Dequeue();
+						var current = que.Pop();
 						int v = current.v;
 						if (distances[v] < current.distance) {
 							continue;
@@ -385,7 +388,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 								distances[edge.To] = newDistance;
 								prevVertexes[edge.To] = v;
 								prevEdgeIndexes[edge.To] = j;
-								que.Enqueue(newDistance, edge.To);
+								que.Push(newDistance, edge.To);
 							}
 						}
 					}
@@ -463,69 +466,53 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			}
 		};
 
-		private class HeapQ
+		private class RadixHeap
 		{
-			private (long distance, int v)[] heap_;
+			private const int MAX_BIT = 64;
+			private readonly List<(long distance, int v)>[] buckets_
+				= new List<(long distance, int v)>[MAX_BIT + 1];
+			private long lastDistance_;
 
-			public int Count { get; private set; } = 0;
-			public HeapQ()
+			public RadixHeap()
 			{
-				heap_ = new (long distance, int v)[1024];
+				for (int i = 0; i < MAX_BIT + 1; i++) {
+					buckets_[i] = new List<(long distance, int vertex)>();
+				}
 			}
 
-			public void Enqueue(long distance, int v)
-			{
-				var pair = (distance, v);
-				if (heap_.Length == Count) {
-					var newHeap = new (long distance, int v)[heap_.Length * 2];
-					heap_.CopyTo(newHeap, 0);
-					heap_ = newHeap;
-				}
+			public int Count { get; private set; }
 
-				heap_[Count] = pair;
+			public void Push(long distance, int v)
+			{
 				++Count;
-
-				int c = Count - 1;
-				while (c > 0) {
-					int p = (c - 1) >> 1;
-					if (heap_[p].distance > distance) {
-						heap_[c] = heap_[p];
-						c = p;
-					} else {
-						break;
-					}
-				}
-
-				heap_[c] = pair;
+				buckets_[GetBit(distance ^ lastDistance_)].Add((distance, v));
 			}
 
-			public (long distance, int v) Dequeue()
+			public (long distance, int v) Pop()
 			{
-				(long distance, int v) ret = heap_[0];
-				int n = Count - 1;
-
-				var item = heap_[n];
-				int p = 0;
-				int c = (p << 1) + 1;
-				while (c < n) {
-					if (c != n - 1 && heap_[c + 1].distance < heap_[c].distance) {
-						++c;
+				if (buckets_[0].Count == 0) {
+					int index = 1;
+					while (buckets_[index].Count == 0) {
+						++index;
 					}
 
-					if (item.distance > heap_[c].distance) {
-						heap_[p] = heap_[c];
-						p = c;
-						c = (p << 1) + 1;
-					} else {
-						break;
+					lastDistance_ = buckets_[index].Min(x => x.distance);
+					foreach (var p in buckets_[index]) {
+						buckets_[GetBit(p.distance ^ lastDistance_)].Add(p);
 					}
+
+					buckets_[index].Clear();
 				}
 
-				heap_[p] = item;
-				Count--;
-
+				--Count;
+				var ret = buckets_[0][^1];
+				buckets_[0].RemoveAt(buckets_[0].Count - 1);
 				return ret;
 			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			private int GetBit(long a)
+				=> a != 0 ? MAX_BIT - BitOperations.LeadingZeroCount((ulong)a) : 0;
 		}
 	}
 }
