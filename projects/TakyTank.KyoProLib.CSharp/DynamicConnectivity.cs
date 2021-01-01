@@ -12,8 +12,10 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly List<(int p, int q)>[] edges_;
 		private readonly List<((int left, int right) range, (int p, int q) edge)> pendings_
 			= new List<((int left, int right) range, (int p, int q) edge)>();
-		private readonly Dictionary<(int p, int q), int> counts_ = new Dictionary<(int p, int q), int>();
-		private readonly Dictionary<(int p, int q), int> appears_ = new Dictionary<(int p, int q), int>();
+		private readonly Dictionary<(int p, int q), int> counts_
+			= new Dictionary<(int p, int q), int>();
+		private readonly Dictionary<(int p, int q), int> appears_
+			= new Dictionary<(int p, int q), int>();
 
 		public UndoUnionFindTree UnionFind => uf_;
 
@@ -26,7 +28,7 @@ namespace TakyTank.KyoProLib.CSharp
 				size_ <<= 1;
 			}
 
-			int m = 2 * size_ - 1;
+			int m = 2 * size_;
 			edges_ = new List<(int p, int q)>[m];
 			for (int i = 0; i < m; i++) {
 				edges_[i] = new List<(int p, int q)>();
@@ -77,7 +79,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public void Add(int left, int right, (int p, int q) edge)
 		{
-			Add(left, right, edge, 0, 0, size_);
+			Add(left, right, edge, 1, 0, size_);
 		}
 
 		private void Add(int left, int right, (int p, int q) edge, int v, int l, int r)
@@ -91,21 +93,21 @@ namespace TakyTank.KyoProLib.CSharp
 				return;
 			}
 
-			Add(left, right, edge, (v << 1) + 1, l, (l + r) >> 1);
-			Add(left, right, edge, (v << 1) + 2, (l + r) >> 1, r);
+			Add(left, right, edge, v << 1, l, (l + r) >> 1);
+			Add(left, right, edge, (v << 1) + 1, (l + r) >> 1, r);
 		}
 
-		public void Execute(Action<int> action, int v = 0)
+		public void Execute(Action<int> action, int v = 1)
 		{
 			foreach (var (p, q) in edges_[v]) {
 				uf_.Unite(p, q);
 			}
 
-			if (v < size_ - 1) {
+			if (v < size_) {
+				Execute(action, v << 1);
 				Execute(action, (v << 1) + 1);
-				Execute(action, (v << 1) + 2);
-			} else if (v - (size_ - 1) < queryCount_) {
-				int query_index = v - (size_ - 1);
+			} else if (v - size_ < queryCount_) {
+				int query_index = v - size_;
 				action(query_index);
 			}
 
