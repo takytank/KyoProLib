@@ -29,6 +29,10 @@
 
 - [deque](https://ufcpp.net/study/stl/deque.html)
 
+### DynamicConnectivity
+
+- [ちょっと変わったセグメント木の使い方](https://ei1333.hateblo.jp/entry/2017/12/14/000000)
+
 ### EulerTour
 
 - 蟻本 294p
