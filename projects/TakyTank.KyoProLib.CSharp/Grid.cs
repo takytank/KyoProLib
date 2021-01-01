@@ -9,6 +9,7 @@ namespace TakyTank.KyoProLib.CSharp
 	{
 		private static readonly int[] delta2_ = { 1, 0, 1 };
 		private static readonly int[] delta4_ = { 1, 0, -1, 0, 1 };
+		private static readonly int[] delta5_ = { 1, 0, 0, -1, 0, 1 };
 		private static readonly int[] delta8_ = { 1, 0, -1, 0, 1, 1, -1, -1, 1 };
 
 		private readonly int height_;
@@ -84,6 +85,18 @@ namespace TakyTank.KyoProLib.CSharp
 				int d4j = j + delta4_[dn + 1];
 				if ((uint)d4i < (uint)height_ && (uint)d4j < (uint)width_) {
 					action(d4i, d4j);
+				}
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void DoIn5(int i, int j, Action<int, int> action)
+		{
+			for (int dn = 0; dn < 5; ++dn) {
+				int d5i = i + delta5_[dn];
+				int d5j = j + delta5_[dn + 1];
+				if ((uint)d5i < (uint)height_ && (uint)d5j < (uint)width_) {
+					action(d5i, d5j);
 				}
 			}
 		}
