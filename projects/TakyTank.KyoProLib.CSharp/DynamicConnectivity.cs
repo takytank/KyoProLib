@@ -8,7 +8,7 @@ namespace TakyTank.KyoProLib.CSharp
 	{
 		private readonly UndoUnionFindTree uf_;
 		private readonly int queryCount_;
-		private readonly int size_;
+		private readonly int n_;
 		private readonly List<(int p, int q)>[] edges_;
 		private readonly List<((int left, int right) range, (int p, int q) edge)> pendings_
 			= new List<((int left, int right) range, (int p, int q) edge)>();
@@ -23,12 +23,12 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			queryCount_ = queryCount;
 			uf_ = new UndoUnionFindTree(virtexCount);
-			size_ = 1;
-			while (size_ < queryCount) {
-				size_ <<= 1;
+			n_ = 1;
+			while (n_ < queryCount) {
+				n_ <<= 1;
 			}
 
-			int m = 2 * size_;
+			int m = 2 * n_;
 			edges_ = new List<(int p, int q)>[m];
 			for (int i = 0; i < m; i++) {
 				edges_[i] = new List<(int p, int q)>();
@@ -68,7 +68,7 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			foreach (var p in counts_) {
 				if (p.Value > 0) {
-					pendings_.Add(((appears_[p.Key], size_), p.Key));
+					pendings_.Add(((appears_[p.Key], n_), p.Key));
 				}
 			}
 
@@ -79,22 +79,26 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public void Add(int left, int right, (int p, int q) edge)
 		{
-			Add(left, right, edge, 1, 0, size_);
-		}
-
-		private void Add(int left, int right, (int p, int q) edge, int v, int l, int r)
-		{
-			if (r <= left || right <= l) {
+			if (left > right || right < 0 || left >= queryCount_) {
 				return;
 			}
 
-			if (left <= l && r <= right) {
-				edges_[v].Add(edge);
-				return;
-			}
+			int l = left + n_;
+			int r = right + n_;
+			while (l < r) {
+				if ((l & 1) != 0) {
+					edges_[l].Add(edge);
+					++l;
+				}
 
-			Add(left, right, edge, v << 1, l, (l + r) >> 1);
-			Add(left, right, edge, (v << 1) + 1, (l + r) >> 1, r);
+				if ((r & 1) != 0) {
+					--r;
+					edges_[r].Add(edge);
+				}
+
+				l >>= 1;
+				r >>= 1;
+			}
 		}
 
 		public void Execute(Action<int> action, int v = 1)
@@ -103,12 +107,11 @@ namespace TakyTank.KyoProLib.CSharp
 				uf_.Unite(p, q);
 			}
 
-			if (v < size_) {
+			if (v < n_) {
 				Execute(action, v << 1);
 				Execute(action, (v << 1) + 1);
-			} else if (v - size_ < queryCount_) {
-				int query_index = v - size_;
-				action(query_index);
+			} else if (v - n_ < queryCount_) {
+				action(v - n_);
 			}
 
 			for (int i = 0; i < edges_[v].Count; i++) {
