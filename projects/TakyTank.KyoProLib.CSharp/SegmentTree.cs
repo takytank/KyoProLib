@@ -108,7 +108,7 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private int FindLeftestCore(int left, int right, int v, int l, int r, Func<T, bool> check)
 		{
-			if (check(tree_[v]) == false || r <= left || right <= l) {
+			if (check(tree_[v]) == false || r <= left || right <= l || Count <= left) {
 				return right;
 			} else if (v >= n_) {
 				return v - n_;
@@ -134,7 +134,7 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private int FindRightestCore(int left, int right, int v, int l, int r, Func<T, bool> check)
 		{
-			if (check(tree_[v]) == false || r <= left || right <= l) {
+			if (check(tree_[v]) == false || r <= left || right <= l || Count <= left) {
 				return left - 1;
 			} else if (v >= n_) {
 				return v - n_;
@@ -322,7 +322,7 @@ namespace TakyTank.KyoProLib.CSharp
 		private int FindLeftestCore(int left, int right, int v, int l, int r, Func<T, bool> check)
 		{
 			Propagate(v);
-			if (check(tree_[v]) == false || r <= left || right <= l) {
+			if (check(tree_[v]) == false || r <= left || right <= l || Count <= left) {
 				return right;
 			} else if (v >= n_) {
 				return v - n_;
@@ -349,7 +349,7 @@ namespace TakyTank.KyoProLib.CSharp
 		private int FindRightestCore(int left, int right, int v, int l, int r, Func<T, bool> check)
 		{
 			Propagate(v);
-			if (check(tree_[v]) == false || r <= left || right <= l) {
+			if (check(tree_[v]) == false || r <= left || right <= l || Count <= left) {
 				return left - 1;
 			} else if (v >= n_) {
 				return v - n_;
@@ -587,7 +587,7 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private int FindLeftestCore(int left, int right, int v, int l, int r, Func<TData, bool> check)
 		{
-			if (check(data_[v]) == false || r <= left || right <= l) {
+			if (check(data_[v]) == false || r <= left || right <= l || Count <= left) {
 				return right;
 			} else if (v >= n_) {
 				return v - n_;
@@ -617,7 +617,7 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private int FindRightestCore(int left, int right, int v, int l, int r, Func<TData, bool> check)
 		{
-			if (check(data_[v]) == false || r <= left || right <= l) {
+			if (check(data_[v]) == false || r <= left || right <= l || Count <= left) {
 				return left - 1;
 			} else if (v >= n_) {
 				return v - n_;
