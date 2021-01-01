@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
@@ -35,7 +36,8 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
-		public void Insert(int index, (int p, int q) edge)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void PlanConnect(int index, (int p, int q) edge)
 		{
 			if (edge.p > edge.q) {
 				edge = (edge.q, edge.p);
@@ -52,7 +54,8 @@ namespace TakyTank.KyoProLib.CSharp
 			counts_[edge]++;
 		}
 
-		public void Erase(int index, (int p, int q) edge)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void PlanDisconnect(int index, (int p, int q) edge)
 		{
 			if (edge.p > edge.q) {
 				edge = (edge.q, edge.p);
@@ -64,7 +67,8 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
-		public void Build()
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void BuildPlans()
 		{
 			foreach (var p in counts_) {
 				if (p.Value > 0) {
@@ -73,11 +77,15 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			foreach (var (range, edge) in pendings_) {
-				Add(range.left, range.right, edge);
+				AddConnectionSpan(range.left, range.right, edge);
 			}
 		}
 
-		public void Add(int left, int right, (int p, int q) edge)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void AddConnectionSpan(Range range, (int p, int q) edge)
+			=> AddConnectionSpan(range.Start.Value, range.End.Value, edge);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void AddConnectionSpan(int left, int right, (int p, int q) edge)
 		{
 			if (left > right || right < 0 || left >= queryCount_) {
 				return;
@@ -101,15 +109,15 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
-		public void Execute(Action<int> action, int v = 1)
+		public void ExecuteQueries(Action<int> action, int v = 1)
 		{
 			foreach (var (p, q) in edges_[v]) {
 				uf_.Unite(p, q);
 			}
 
 			if (v < n_) {
-				Execute(action, v << 1);
-				Execute(action, (v << 1) + 1);
+				ExecuteQueries(action, v << 1);
+				ExecuteQueries(action, (v << 1) + 1);
 			} else if (v - n_ < queryCount_) {
 				action(v - n_);
 			}
