@@ -77,6 +77,11 @@
 
 - 蟻本 56p
 
+### LevelAncestor
+
+- [木のu-vパスでuからv側にひとつ動いた頂点を求めるクエリ](https://beet-aizu.hatenablog.com/entry/2020/11/02/162957)
+- [tree/levelancestor.cpp](https://beet-aizu.github.io/library/tree/levelancestor.cpp)
+
 ### LevenshteinDistance (EditDistance)
 
 - けんちょん本 78p

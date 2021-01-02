@@ -81,7 +81,7 @@ namespace TakyTank.KyoProLib.CSharp
 			out_[index] = count;
 		}
 
-		public int LeastAncestor(int v, int k)
+		public int LevelAncestor(int v, int k)
 		{
 			while (true) {
 				int u = head_[v];
