@@ -95,7 +95,7 @@ namespace TakyTank.KyoProLib.CSharp
 					}
 				}
 
-				if (v == next_[v]){ 
+				if (v == next_[v]) {
 					break;
 				}
 			}
