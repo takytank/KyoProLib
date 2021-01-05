@@ -22,6 +22,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public BitFlag OrBit(int bitNumber) => (flags_ | (1 << bitNumber));
 		public BitFlag AndBit(int bitNumber) => (flags_ & (1 << bitNumber));
 		public BitFlag XorBit(int bitNumber) => (flags_ ^ (1 << bitNumber));
+		public BitFlag ComplementOf(BitFlag sub) => flags_ & (~sub.flags_);
 
 		public static BitFlag operator ++(BitFlag src) => new BitFlag(src.flags_ + 1);
 		public static BitFlag operator --(BitFlag src) => new BitFlag(src.flags_ - 1);
@@ -59,8 +60,7 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void ForEachSubBits(Action<BitFlag> action)
 		{
-			for (BitFlag sub = flags_; sub >= 0; --sub) {
-				sub &= flags_;
+			for (BitFlag sub = (flags_ - 1) & flags_; sub > 0; sub = --sub & flags_) {
 				action(sub);
 			}
 		}
