@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -62,6 +63,38 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			for (BitFlag sub = (flags_ - 1) & flags_; sub > 0; sub = --sub & flags_) {
 				action(sub);
+			}
+		}
+
+		public SubBitsEnumerator SubBits => new SubBitsEnumerator(flags_);
+		public struct SubBitsEnumerator : IEnumerable<BitFlag>
+		{
+			private readonly int flags_;
+			public SubBitsEnumerator(int flags)
+			{
+				flags_ = flags;
+			}
+
+			IEnumerator<BitFlag> IEnumerable<BitFlag>.GetEnumerator() => new Enumerator(flags_);
+			IEnumerator IEnumerable.GetEnumerator() => new Enumerator(flags_);
+			public Enumerator GetEnumerator() => new Enumerator(flags_);
+			public struct Enumerator : IEnumerator<BitFlag>
+			{
+				private readonly int src_;
+				public BitFlag Current { get; private set; }
+				object IEnumerator.Current => Current;
+
+				public Enumerator(int flags)
+				{
+					src_ = flags;
+					Current = flags;
+				}
+
+				public void Dispose() { }
+				[MethodImpl(MethodImplOptions.AggressiveInlining)]
+				public bool MoveNext() => (Current = --Current & src_) > 0;
+				[MethodImpl(MethodImplOptions.AggressiveInlining)]
+				public void Reset() => Current = src_;
 			}
 		}
 	}
