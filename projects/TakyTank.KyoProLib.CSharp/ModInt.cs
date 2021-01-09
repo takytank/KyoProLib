@@ -103,11 +103,15 @@ namespace TakyTank.KyoProLib.CSharp
 		public static ModInt Pow(long value, long k)
 		{
 			long ret = 1;
-			for (k %= P - 1; k > 0; k >>= 1, value = value * value % P) {
-				if ((k & 1) == 1) {
+			while (k > 0) {
+				if ((k & 1) != 0) {
 					ret = ret * value % P;
 				}
+
+				value = value * value % P;
+				k >>= 1;
 			}
+
 			return new ModInt(ret);
 		}
 
@@ -450,11 +454,15 @@ namespace TakyTank.KyoProLib.CSharp
 		public static DModInt Pow(long value, long k)
 		{
 			long ret = 1;
-			for (k %= P - 1; k > 0; k >>= 1, value = value * value % P) {
-				if ((k & 1) == 1) {
+			while (k > 0) {
+				if ((k & 1) != 0) {
 					ret = ret * value % P;
 				}
+
+				value = value * value % P;
+				k >>= 1;
 			}
+
 			return new DModInt(ret);
 		}
 
