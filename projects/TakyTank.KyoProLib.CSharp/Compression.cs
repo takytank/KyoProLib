@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
@@ -9,43 +10,39 @@ namespace TakyTank.KyoProLib.CSharp
 		where T : IComparable<T>
 	{
 		public static int Compress(
-			IList<T> raws,
+			Span<T> raws,
 			Func<int, T> cast)
 		{
-			int n = raws.Count;
-			var values = raws.Distinct().OrderBy(x => x).ToArray();
-
-			static int LowerBound(T[] values, T target)
-			{
-				int ng = -1;
-				int ok = values.Length - 1;
-				while (ok - ng > 1) {
-					int mid = (ok + ng) / 2;
-					if (values[mid].CompareTo(target) >= 0) {
-						ok = mid;
-					} else {
-						ng = mid;
-					}
-				}
-
-				return ok;
-			}
-
+			int n = raws.Length;
+			var comp = new Compression<T>(raws);
+			comp.Compress();
 			for (int i = 0; i < n; i++) {
-				T newValue = cast.Invoke(LowerBound(values, raws[i]));
-				raws[i] = newValue;
+				raws[i] = cast.Invoke(comp.Zip(raws[i]));
 			}
 
-			return values.Length;
+			return comp.Count;
 		}
 
-		private readonly T[] values_;
-		private readonly Dictionary<T, int> map_;
+		private readonly HashSet<T> raws_ = new HashSet<T>();
+		private T[] values_;
+		private Dictionary<T, int> map_;
 		public int Count => values_.Length;
 
-		public Compression(IReadOnlyList<T> values, int offset = 0)
+		public Compression() { }
+		public Compression(ReadOnlySpan<T> values)
 		{
-			values_ = values.Distinct().OrderBy(x => x).ToArray();
+			foreach (var value in values) {
+				raws_.Add(value);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(T value) => raws_.Add(value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Compress(int offset = 0)
+		{
+			values_ = raws_.ToArray();
+			Array.Sort(values_);
 			map_ = new Dictionary<T, int>(values_.Length);
 			int number = offset;
 			for (int i = 0; i < values_.Length; ++i, ++number) {
@@ -53,16 +50,12 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
-		public int Zip(T value)
-		{
-			return map_[value];
-		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Zip(T value) => map_[value];
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T UnZip(int index) => values_[index];
 
-		public T UnZip(int index)
-		{
-			return values_[index];
-		}
-
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int LowerBound(T value)
 		{
 			int ng = -1;
