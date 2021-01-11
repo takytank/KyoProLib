@@ -32,7 +32,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public Compression(ReadOnlySpan<T> values)
 		{
 			foreach (var value in values) {
-				raws_.Add(value);
+				Add(value);
 			}
 		}
 
@@ -76,83 +76,50 @@ namespace TakyTank.KyoProLib.CSharp
 	public class Compression1D<T>
 		where T : IComparable<T>
 	{
-		public static int Compress(
-			Span<(T start, T end)> raws,
-			Func<T, T> next,
-			Func<int, T> cast)
+		private readonly HashSet<T> raws_ = new HashSet<T>();
+		private T[] values_;
+		private Dictionary<T, int> map_;
+		public int Length { get; private set; }
+
+		public Compression1D() { }
+		public Compression1D(
+			ReadOnlySpan<(T start, T end)> values,
+			Func<T, T> next)
 		{
-			int n = raws.Length;
-			var temp = new List<T>(n * 2);
-			for (int i = 0; i < n; i++) {
-				temp.Add(raws[i].start);
-				temp.Add(next.Invoke(raws[i].start));
-				temp.Add(raws[i].end);
-				temp.Add(next.Invoke(raws[i].end));
+			foreach (var value in values) {
+				Add(value, next);
 			}
-
-			var values = temp.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
-
-			static int LowerBound(T[] values, T target)
-			{
-				int ng = -1;
-				int ok = values.Length - 1;
-				while (ok - ng > 1) {
-					int mid = (ok + ng) / 2;
-					if (values[mid].CompareTo(target) >= 0) {
-						ok = mid;
-					} else {
-						ng = mid;
-					}
-				}
-
-				return ok;
-			}
-
-			for (int i = 0; i < n; i++) {
-				T ns = cast.Invoke(LowerBound(values, raws[i].start));
-				T ne = cast.Invoke(LowerBound(values, raws[i].end));
-				raws[i] = (ns, ne);
-			}
-
-			return values.Length;
 		}
 
-		private readonly T[] values_;
-		private readonly Dictionary<T, int> map_;
-		public int Length => values_.Length;
-
-		public Compression1D(
-			ReadOnlySpan<(T start, T end)> raws,
-			Func<T, T> next,
-			int offset = 0)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add((T start, T end) range, Func<T, T> next)
 		{
-			int n = raws.Length;
-			var temp = new List<T>(n * 2);
-			for (int i = 0; i < n; i++) {
-				temp.Add(raws[i].start);
-				temp.Add(next.Invoke(raws[i].start));
-				temp.Add(raws[i].end);
-				temp.Add(next.Invoke(raws[i].end));
-			}
+			raws_.Add(range.start);
+			raws_.Add(next.Invoke(range.start));
+			raws_.Add(range.end);
+			raws_.Add(next.Invoke(range.end));
+		}
 
-			values_ = temp.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
-			map_ = new Dictionary<T, int>(values_.Length);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Compress(int offset = 0)
+		{
+			values_ = raws_.ToArray();
+			Array.Sort(values_);
+			Length = values_.Length - 1;
+
+			map_ = new Dictionary<T, int>(Length);
 			int number = offset;
-			for (int i = 0; i < values_.Length; ++i, ++number) {
+			for (int i = 0; i < values_.Length - 1; ++i, ++number) {
 				map_[values_[i]] = number;
 			}
 		}
 
-		public int Zip(T value)
-		{
-			return map_[value];
-		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Zip(T value) => map_[value];
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T UnZip(int index) => values_[index];
 
-		public T UnZip(int index)
-		{
-			return values_[index];
-		}
-
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int LowerBound(T value)
 		{
 			int ng = -1;
@@ -173,107 +140,70 @@ namespace TakyTank.KyoProLib.CSharp
 	public class Compression2D<T>
 		where T : IComparable<T>
 	{
-		public static (int height, int width) Compress(
-			Span<(T x1, T y1, T x2, T y2)> raws,
-			Func<T, T> next,
-			Func<int, T> cast)
+		private readonly HashSet<T> rawsX_ = new HashSet<T>();
+		private readonly HashSet<T> rawsY_ = new HashSet<T>();
+		private T[] valuesX_;
+		private Dictionary<T, int> mapX_;
+		private T[] valuesY_;
+		private Dictionary<T, int> mapY_;
+
+		public int Height { get; private set; }
+		public int Width { get; private set; }
+
+		public Compression2D() { }
+		public Compression2D(
+			ReadOnlySpan<(T x1, T y1, T x2, T y2)> values,
+			Func<T, T> next)
 		{
-			int n = raws.Length;
-			var tempX = new List<T>(n * 4);
-			var tempY = new List<T>(n * 4);
-			for (int i = 0; i < n; i++) {
-				tempX.Add(raws[i].x1);
-				tempX.Add(raws[i].x2);
-				tempY.Add(raws[i].y1);
-				tempY.Add(raws[i].y2);
-				tempX.Add(next(raws[i].x1));
-				tempX.Add(next(raws[i].x2));
-				tempY.Add(next(raws[i].y1));
-				tempY.Add(next(raws[i].y2));
+			foreach (var value in values) {
+				Add(value, next);
 			}
-
-			var valuesX = tempX.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
-			var valuesY = tempY.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
-
-			static int LowerBound(T[] values, T target)
-			{
-				int ng = -1;
-				int ok = values.Length - 1;
-				while (ok - ng > 1) {
-					int mid = (ok + ng) / 2;
-					if (values[mid].CompareTo(target) >= 0) {
-						ok = mid;
-					} else {
-						ng = mid;
-					}
-				}
-
-				return ok;
-			}
-
-			for (int i = 0; i < n; i++) {
-				T nx1 = cast.Invoke(LowerBound(valuesX, raws[i].x1));
-				T nx2 = cast.Invoke(LowerBound(valuesX, raws[i].x2));
-				T ny1 = cast.Invoke(LowerBound(valuesY, raws[i].y1));
-				T ny2 = cast.Invoke(LowerBound(valuesY, raws[i].y2));
-				raws[i] = (nx1, ny1, nx2, ny2);
-			}
-
-			return (valuesY.Length, valuesX.Length);
 		}
 
-		private readonly T[] valuesX_;
-		private readonly Dictionary<T, int> mapX_;
-		private readonly T[] valuesY_;
-		private readonly Dictionary<T, int> mapY_;
-
-		public int Height => valuesY_.Length;
-		public int Width => valuesX_.Length;
-
-		public Compression2D(
-			ReadOnlySpan<(T x1, T y1, T x2, T y2)> raws,
-			Func<T, T> next,
-			int offset = 0)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add((T x1, T y1, T x2, T y2) area, Func<T, T> next)
 		{
-			int n = raws.Length;
-			var tempX = new List<T>(n * 4);
-			var tempY = new List<T>(n * 4);
-			for (int i = 0; i < n; i++) {
-				tempX.Add(raws[i].x1);
-				tempX.Add(raws[i].x2);
-				tempY.Add(raws[i].y1);
-				tempY.Add(raws[i].y2);
-				tempX.Add(next(raws[i].x1));
-				tempX.Add(next(raws[i].x2));
-				tempY.Add(next(raws[i].y1));
-				tempY.Add(next(raws[i].y2));
-			}
+			rawsX_.Add(area.x1);
+			rawsX_.Add(area.x2);
+			rawsY_.Add(area.y1);
+			rawsY_.Add(area.y2);
+			rawsX_.Add(next(area.x1));
+			rawsX_.Add(next(area.x2));
+			rawsY_.Add(next(area.y1));
+			rawsY_.Add(next(area.y2));
+		}
 
-			valuesX_ = tempX.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
-			mapX_ = new Dictionary<T, int>(valuesX_.Length);
-			valuesY_ = tempY.Distinct().OrderBy(x => x).SkipLast(1).ToArray();
-			mapY_ = new Dictionary<T, int>(valuesY_.Length);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Compress(int offset = 0)
+		{
+			valuesX_ = rawsX_.ToArray();
+			Array.Sort(valuesX_);
+			Width = valuesX_.Length - 1;
+
+			valuesY_ = rawsY_.ToArray();
+			Array.Sort(valuesY_);
+			Height = valuesY_.Length - 1;
+
+			mapX_ = new Dictionary<T, int>(Width);
+			mapY_ = new Dictionary<T, int>(Height);
+
 			int number = offset;
-			for (int i = 0; i < valuesX_.Length; ++i, ++number) {
+			for (int i = 0; i < valuesX_.Length - 1; ++i, ++number) {
 				mapX_[valuesX_[i]] = number;
 			}
 
 			number = offset;
-			for (int i = 0; i < valuesY_.Length; ++i, ++number) {
+			for (int i = 0; i < valuesY_.Length - 1; ++i, ++number) {
 				mapY_[valuesY_[i]] = number;
 			}
 		}
 
-		public (int xi, int yi) Zip(T x, T y)
-		{
-			return (mapX_[x], mapY_[y]);
-		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int xi, int yi) Zip(T x, T y) => (mapX_[x], mapY_[y]);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (T x, T y) UnZip(int xi, int yi) => (valuesX_[xi], valuesY_[yi]);
 
-		public (T x, T y) UnZip(int xi, int yi)
-		{
-			return (valuesX_[xi], valuesY_[yi]);
-		}
-
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (int xi, int yi) LowerBound(T x, T y)
 		{
 			int xi;

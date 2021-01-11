@@ -18,9 +18,19 @@
 
 ## Compression
 
+### Compression
+
 - [ABC036 C 座圧](https://atcoder.jp/contests/abc036/tasks/abc036_c)
 - [いろはちゃんコンテスト Day2 C 陽気な妖姫](https://atcoder.jp/contests/iroha2019-day2/tasks/iroha2019_day2_c)
 - [ABC188 D Snuke Prime](https://atcoder.jp/contests/abc188/tasks/abc188_d)
+
+### Compression1D
+
+- [第７回日本情報オリンピック 本選 E ペンキの色](https://atcoder.jp/contests/joi2008ho/tasks/joi2008ho_e)
+
+### Compression2D
+
+- [第７回日本情報オリンピック 本選 E ペンキの色](https://atcoder.jp/contests/joi2008ho/tasks/joi2008ho_e)
 
 ## Deque
 
