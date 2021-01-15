@@ -46,6 +46,10 @@
 
 - [PAST5 N 旅行会社](https://atcoder.jp/contests/past202012-open/submissions/19096937)
 
+## EulerTotient
+
+- [yukicoder 1339 循環小数](https://yukicoder.me/problems/no/1339)
+
 ## EulerTour
 
 - [ABC187 E Through Path](https://atcoder.jp/contests/abc187/tasks/abc187_e)

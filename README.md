@@ -33,6 +33,10 @@
 
 - [ちょっと変わったセグメント木の使い方](https://ei1333.hateblo.jp/entry/2017/12/14/000000)
 
+### EulerTotient
+
+- 蟻本261p
+
 ### EulerTour
 
 - 蟻本 294p
