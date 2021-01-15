@@ -99,6 +99,11 @@
 
 - [ABC187 E Through Path](https://atcoder.jp/contests/abc187/tasks/abc187_e)
 
+## Matrix
+
+- [EDPC R Walk](https://atcoder.jp/contests/dp/tasks/dp_r)
+- [yukicoder 1340 おーじ君をさがせ](https://yukicoder.me/problems/no/1340)
+
 ## ModInt
 
 ### VModInt
