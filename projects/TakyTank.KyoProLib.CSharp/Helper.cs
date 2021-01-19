@@ -10,6 +10,26 @@ namespace TakyTank.KyoProLib.CSharp
 	public static class Helper
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int Pow(int n, int k)
+			=> (int)Pow((long)n, (long)k);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long Pow(long n, long k)
+		{
+			long ret = 1;
+			long mul = n;
+			while (k > 0) {
+				if ((k & 1) != 0) {
+					ret *= mul;
+				}
+
+				k >>= 1;
+				mul *= mul;
+			}
+
+			return ret;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void UpdateMin<T>(this ref T target, T value) where T : struct, IComparable<T>
 			=> target = target.CompareTo(value) > 0 ? value : target;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
