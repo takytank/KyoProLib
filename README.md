@@ -62,6 +62,10 @@
 - 蟻本 188p
 - [単一始点最短路(SPFA)](https://ei1333.github.io/luzhiled/snippets/graph/shortest-path-faster-algorithm.html)
 
+### HadamardMatrix
+
+- [アダマール行列の定義と性質](https://mathtrain.jp/hadamardmatrix)
+
 ### HashMap
 
 - [C#で競技プログラミングをし続ける人のためのTips](https://qiita.com/Camypaper/items/de6d576fe5513743a50e#dictionarykv)
