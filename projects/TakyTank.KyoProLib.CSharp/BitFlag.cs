@@ -23,7 +23,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public BitFlag OrBit(int bitNumber) => (flags_ | (1 << bitNumber));
 		public BitFlag AndBit(int bitNumber) => (flags_ & (1 << bitNumber));
 		public BitFlag XorBit(int bitNumber) => (flags_ ^ (1 << bitNumber));
-		public BitFlag ComplementOf(BitFlag sub) => flags_ & (~sub.flags_);
+		public BitFlag ComplementOf(BitFlag sub) => flags_ ^ sub.flags_;
 
 		public static BitFlag operator ++(BitFlag src) => new BitFlag(src.flags_ + 1);
 		public static BitFlag operator --(BitFlag src) => new BitFlag(src.flags_ - 1);
