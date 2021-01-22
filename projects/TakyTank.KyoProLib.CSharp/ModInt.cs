@@ -82,19 +82,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		public static ModInt operator /(ModInt lhs, ModInt rhs)
-		{
-			long exp = P - 2;
-			while (exp > 0) {
-				if (exp % 2 > 0) {
-					lhs *= rhs;
-				}
-
-				rhs *= rhs;
-				exp /= 2;
-			}
-
-			return lhs;
-		}
+			=> lhs * Inverse(rhs);
 
 		public static implicit operator ModInt(long n) => new ModInt(n, true);
 
@@ -399,19 +387,7 @@ namespace TakyTank.KyoProLib.CSharp
 			=> new DModInt(lhs.value_ * rhs % P);
 
 		public static DModInt operator /(DModInt lhs, DModInt rhs)
-		{
-			long exp = P - 2;
-			while (exp > 0) {
-				if (exp % 2 > 0) {
-					lhs *= rhs;
-				}
-
-				rhs *= rhs;
-				exp /= 2;
-			}
-
-			return lhs;
-		}
+			=> lhs * Inverse(rhs);
 
 		public static implicit operator DModInt(long n) => new DModInt(n, true);
 

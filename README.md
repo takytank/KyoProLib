@@ -96,6 +96,12 @@
 - [DP(編集距離)とDPの問題を解くコツ](https://www.slideshare.net/utgw/dpdp-63918394)
 - [意外と解説がない！動的計画法で得た最適解を「復元」する一般的な方法](https://qiita.com/drken/items/0c7bab0384438f285f93)
 
+### Matrix
+
+- [Gauss-Jordan の掃き出し法と、連立一次方程式の解き方](https://drken1215.hatenablog.com/entry/2019/03/20/202800)
+- [行列分解](https://docs.microsoft.com/ja-jp/archive/msdn-magazine/2012/december/csharp-matrix-decomposition)
+
+
 ### ModCounting
 
 - [「1000000007 で割ったあまり」の求め方を総特集！ 〜 逆元から離散対数まで 〜](https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a)
