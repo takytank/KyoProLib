@@ -11,11 +11,13 @@ namespace TakyTank.KyoProLib.CSharp
 
 		private readonly int length_;
 		private readonly ulong[] bits_;
+		private readonly int extraBits_;
 
 		public int BitCount { get; }
 		public BitSet(int bitCount, bool fillTrue = false)
 		{
 			BitCount = bitCount;
+			extraBits_ = DivideByBits(BitCount).remainder;
 			length_ = ((bitCount - 1) >> SHIFT) + 1;
 			bits_ = new ulong[length_];
 			if (fillTrue) {
@@ -37,6 +39,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public BitSet(int bitCount, long initialValue)
 		{
 			BitCount = bitCount;
+			extraBits_ = DivideByBits(BitCount).remainder;
 			length_ = ((bitCount - 1) >> SHIFT) + 1;
 			bits_ = new ulong[length_];
 			bits_[0] = (ulong)initialValue;
@@ -220,10 +223,9 @@ namespace TakyTank.KyoProLib.CSharp
 			int toIndex = 0;
 			if (shiftBits < BitCount) {
 				var (fromIndex, shiftCount) = DivideByBits(shiftBits);
-				var (_, extraBits) = DivideByBits(BitCount);
 				if (shiftCount == 0) {
 					unchecked {
-						ulong mask = ulong.MaxValue >> (BITS - extraBits);
+						ulong mask = ulong.MaxValue >> (BITS - extraBits_);
 						bits_[length_ - 1] &= mask;
 					}
 
@@ -240,7 +242,7 @@ namespace TakyTank.KyoProLib.CSharp
 							toIndex++;
 						}
 
-						ulong mask = ulong.MaxValue >> (BITS - extraBits);
+						ulong mask = ulong.MaxValue >> (BITS - extraBits_);
 						mask &= bits_[fromIndex];
 						bits_[toIndex] = mask >> shiftCount;
 						toIndex++;
@@ -257,32 +259,32 @@ namespace TakyTank.KyoProLib.CSharp
 				return;
 			}
 
-			int lengthToClear;
+			int shiftBlockCount;
 			if (shiftBits < BitCount) {
 				int lastIndex = (BitCount - 1) >> SHIFT;
-				int shiftCount;
-				(lengthToClear, shiftCount) = DivideByBits(shiftBits);
-				if (shiftCount == 0) {
-					Array.Copy(bits_, 0, bits_, lengthToClear, lastIndex + 1 - lengthToClear);
+				int shiftBitCount;
+				(shiftBlockCount, shiftBitCount) = DivideByBits(shiftBits);
+				if (shiftBitCount == 0) {
+					Array.Copy(bits_, 0, bits_, shiftBlockCount, lastIndex + 1 - shiftBlockCount);
 				} else {
-					int fromIndex = lastIndex - lengthToClear;
+					int fromIndex = lastIndex - shiftBlockCount;
 					unchecked {
 						while (fromIndex > 0) {
-							ulong left = bits_[fromIndex] << shiftCount;
+							ulong left = bits_[fromIndex] << shiftBitCount;
 							--fromIndex;
-							ulong right = bits_[fromIndex] >> (BITS - shiftCount);
+							ulong right = bits_[fromIndex] >> (BITS - shiftBitCount);
 							bits_[lastIndex] = left | right;
 							lastIndex--;
 						}
 
-						bits_[lastIndex] = bits_[fromIndex] << shiftCount;
+						bits_[lastIndex] = bits_[fromIndex] << shiftBitCount;
 					}
 				}
 			} else {
-				lengthToClear = length_;
+				shiftBlockCount = length_;
 			}
 
-			bits_.AsSpan(0, lengthToClear).Clear();
+			bits_.AsSpan(0, shiftBlockCount).Clear();
 		}
 
 		public void OrWithRightShift(int shiftBits)
@@ -294,14 +296,15 @@ namespace TakyTank.KyoProLib.CSharp
 			int toIndex = 0;
 			if (shiftBits < BitCount) {
 				var (fromIndex, shiftCount) = DivideByBits(shiftBits);
-				var (_, extraBits) = DivideByBits(BitCount);
 				if (shiftCount == 0) {
 					unchecked {
-						ulong mask = ulong.MaxValue >> (BITS - extraBits);
+						ulong mask = ulong.MaxValue >> (BITS - extraBits_);
 						bits_[length_ - 1] &= mask;
 					}
 
-					Array.Copy(bits_, fromIndex, bits_, 0, length_ - fromIndex);
+					for (int i = 0; i < length_ - fromIndex; ++i) {
+						bits_[i] |= bits_[i + fromIndex];
+					}
 				} else {
 					int lastIndex = length_ - 1;
 					unchecked {
@@ -313,7 +316,7 @@ namespace TakyTank.KyoProLib.CSharp
 							toIndex++;
 						}
 
-						ulong mask = ulong.MaxValue >> (BITS - extraBits);
+						ulong mask = ulong.MaxValue >> (BITS - extraBits_);
 						mask &= bits_[fromIndex];
 						bits_[toIndex] |= mask >> shiftCount;
 					}
@@ -327,27 +330,34 @@ namespace TakyTank.KyoProLib.CSharp
 				return;
 			}
 
-			int lengthToClear;
+			int shiftBlockCount;
 			if (shiftBits < BitCount) {
 				int lastIndex = (BitCount - 1) >> SHIFT;
-				int shiftCount;
-				(lengthToClear, shiftCount) = DivideByBits(shiftBits);
-				if (shiftCount == 0) {
-					Array.Copy(bits_, 0, bits_, lengthToClear, lastIndex + 1 - lengthToClear);
+				int shiftBitCount;
+				(shiftBlockCount, shiftBitCount) = DivideByBits(shiftBits);
+				if (shiftBitCount == 0) {
+					for (int i = 0; i < lastIndex + 1 - shiftBlockCount; i++) {
+						bits_[lastIndex - i] |= bits_[lastIndex - i - shiftBlockCount];
+					}
 				} else {
-					int fromIndex = lastIndex - lengthToClear;
+					int fromIndex = lastIndex - shiftBlockCount;
 					unchecked {
 						while (fromIndex > 0) {
-							ulong left = bits_[fromIndex] << shiftCount;
+							ulong left = bits_[fromIndex] << shiftBitCount;
 							--fromIndex;
-							ulong right = bits_[fromIndex] >> (BITS - shiftCount);
+							ulong right = bits_[fromIndex] >> (BITS - shiftBitCount);
 							bits_[lastIndex] |= left | right;
-
 							lastIndex--;
 						}
 
-						bits_[lastIndex] |= bits_[fromIndex] << shiftCount;
+						bits_[lastIndex] |= bits_[fromIndex] << shiftBitCount;
 					}
+				}
+
+				unchecked {
+					lastIndex = (BitCount - 1) >> SHIFT;
+					ulong mask = ulong.MaxValue >> (BITS - extraBits_);
+					bits_[lastIndex] &= mask;
 				}
 			}
 		}

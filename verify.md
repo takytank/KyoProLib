@@ -12,6 +12,7 @@
 
 ## BitSet
 
+- [ABC147 E Balanced Path](https://atcoder.jp/contests/abc147/tasks/abc147_e)
 - [AGC041 E Balancing Network](https://atcoder.jp/contests/agc041/tasks/agc041_e)
 - [AGC020 C Median Sum](https://atcoder.jp/contests/agc020/tasks/agc020_c)
 
