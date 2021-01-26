@@ -109,6 +109,20 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
+		public int Vertex(int v) => in_[v];
+		public int OneEdge(int u, int v)
+		{
+			if (in_[u] > in_[v]) {
+				(u, v) = (v, u);
+			}
+
+			if (head_[u] == head_[v]) {
+				return in_[u] + 1;
+			} else {
+				return in_[v];
+			}
+		}
+
 		public void ForEachVertex(int u, int v, Action<int, int> action)
 		{
 			while (true) {
