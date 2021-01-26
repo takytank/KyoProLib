@@ -37,12 +37,12 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public void Build(int root = 0)
 		{
-			DfsSZ(root, -1);
+			DfsSize(root, -1);
 			int t = 0;
 			DfsHld(root, -1, ref t);
 		}
 
-		private void DfsSZ(int index, int p)
+		private void DfsSize(int index, int p)
 		{
 			parent_[index] = p;
 			size_[index] = 1;
@@ -56,7 +56,7 @@ namespace TakyTank.KyoProLib.CSharp
 					continue;
 				}
 
-				DfsSZ(to, index);
+				DfsSize(to, index);
 				size_[index] += size_[to];
 				if (size_[g_[index][0]] < size_[to]) {
 					(g_[index][0], g_[index][i]) = (to, g_[index][0]);
@@ -110,7 +110,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		public int Vertex(int v) => in_[v];
-		public int OneEdge(int u, int v)
+		public int Edge(int u, int v)
 		{
 			if (in_[u] > in_[v]) {
 				(u, v) = (v, u);

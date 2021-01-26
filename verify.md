@@ -45,7 +45,7 @@
 
 ## DynamicConnectivity
 
-- [PAST5 N 旅行会社](https://atcoder.jp/contests/past202012-open/submissions/19096937)
+- [PAST05 N 旅行会社](https://atcoder.jp/contests/past202012-open/submissions/19096937)
 
 ## EulerTotient
 
@@ -79,11 +79,12 @@
 
 ## Grid
 
-- [PAST5 K 的あて](https://atcoder.jp/contests/past202012-open/tasks/past202012_k)
+- [PAST05 K 的あて](https://atcoder.jp/contests/past202012-open/tasks/past202012_k)
 
 ## HeavyLightDecomposition
 
-- [PAST2 O 可変全域木](https://atcoder.jp/contests/past202004-open/tasks/past202004_o)
+- [PAST02 O 可変全域木](https://atcoder.jp/contests/past202004-open/tasks/past202004_o)
+- [PAST04 M 筆塗り](https://atcoder.jp/contests/past202010-open/tasks/past202010_m)
 
 ## Imos
 
@@ -110,7 +111,7 @@
 ### ModMatrix
 
 - [EDPC R Walk](https://atcoder.jp/contests/dp/tasks/dp_r)
-- [ARC054 鯛焼き]()
+- [ARC054 鯛焼き](https://atcoder.jp/contests/arc054/tasks/arc054_c)
 
 ## ModInt
 
@@ -160,7 +161,7 @@
 ### SegmentTree
 
 - [AtCoder Library Practice Contest J Segment Tree](https://atcoder.jp/contests/practice2/tasks/practice2_j)
-- [PAST5 N 旅行会社](https://atcoder.jp/contests/past202012-open/submissions/19096937)
+- [PAST05 N 旅行会社](https://atcoder.jp/contests/past202012-open/submissions/19096937)
 
 ### LazySegmentTree
 
