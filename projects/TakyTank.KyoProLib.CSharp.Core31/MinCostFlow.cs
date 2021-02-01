@@ -7,7 +7,7 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.Core31
 {
-	public class Flow
+	public class MinCostFlow
 	{
 		private const long INF = long.MaxValue;
 		private readonly int n_;
@@ -15,7 +15,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		private readonly List<EdgeInternal>[] edges_;
 		private List<EdgeInternal>[] flowedEdges_;
 
-		public Flow(int n)
+		public MinCostFlow(int n)
 		{
 			n_ = n;
 			position_ = new List<(int first, int second)>();
@@ -54,128 +54,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			return result;
 		}
 
-		public long MaxFlowByFordFulkerson(int s, int t, bool keepsEdges = false)
-		{
-			if (keepsEdges) {
-				CopyEdges();
-			} else {
-				flowedEdges_ = edges_;
-			}
-
-			long Dfs(int s, int t, long f, bool[] done)
-			{
-				if (s == t) {
-					return f;
-				}
-
-				done[s] = true;
-				var edgess = flowedEdges_.AsSpan();
-				var edges = edgess[s].AsSpan();
-				for (int i = 0; i < edges.Length; i++) {
-					ref var edge = ref edges[i];
-					if (done[edge.To] == false && edge.Capacity > 0) {
-						long d = Dfs(edge.To, t, Math.Min(f, edge.Capacity), done);
-						if (d > 0) {
-							edge.Capacity -= d;
-							edgess[edge.To].AsSpan()[edge.ReverseEdgeIndex].Capacity += d;
-							return d;
-						}
-					}
-
-				}
-
-				return 0;
-			}
-
-			long flow = 0;
-			while (true) {
-				var done = new bool[n_];
-				long f = Dfs(s, t, INF, done);
-				if (f == 0 || f == INF) {
-					break;
-				}
-
-				flow += f;
-			}
-
-			return flow;
-		}
-
-		public long MaxFlowByDinic(int s, int t, bool keepsEdges = false)
-		{
-			if (keepsEdges) {
-				CopyEdges();
-			} else {
-				flowedEdges_ = edges_;
-			}
-
-			long[] Bfs(int s)
-			{
-				var d = new long[n_];
-				d.AsSpan().Fill(-1);
-				d[s] = 0;
-				var q = new Queue<int>();
-				q.Enqueue(s);
-				var edgess = flowedEdges_.AsSpan();
-				while (q.Count > 0) {
-					int v = q.Dequeue();
-					for (int i = 0; i < edgess[v].Count; i++) {
-						var edge = edgess[v][i];
-						if (edge.Capacity > 0 && d[edge.To] < 0) {
-							d[edge.To] = d[v] + 1;
-							q.Enqueue(edge.To);
-						}
-					}
-				}
-
-				return d;
-			}
-
-			long Dfs(int s, int t, long f, int[] done, long[] distance)
-			{
-				if (s == t) {
-					return f;
-				}
-
-				var edgess = flowedEdges_.AsSpan();
-				var edges = edgess[s].AsSpan();
-				for (; done[s] < edges.Length; done[s]++) {
-					ref var edge = ref edges[done[s]];
-					if (edge.Capacity > 0 && distance[s] < distance[edge.To]) {
-						long d = Dfs(edge.To, t, Math.Min(f, edge.Capacity), done, distance);
-						if (d > 0) {
-							edge.Capacity -= d;
-							edgess[edge.To].AsSpan()[edge.ReverseEdgeIndex].Capacity += d;
-							return d;
-						}
-					}
-				}
-
-				return 0;
-			}
-
-			long flow = 0;
-			while (true) {
-				var distance = Bfs(s);
-				if (distance[t] < 0) {
-					break;
-				}
-
-				var done = new int[n_];
-				while (true) {
-					long f = Dfs(s, t, INF, done, distance);
-					if (f == 0 || f == INF) {
-						break;
-					}
-
-					flow += f;
-				}
-			}
-
-			return flow;
-		}
-
-		public (long flow, long cost) MinCostFlowByBellmanFord(
+		public (long flow, long cost) BellmanFord(
 			int s, int t, long flowLimit, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -244,7 +123,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			return (flowLimit - f, minCost);
 		}
 
-		public (long flow, long cost) MinCostFlowByFpsa(
+		public (long flow, long cost) Fpsa(
 			int s, int t, long flowLimit, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -319,7 +198,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			return (flowLimit - f, minCost);
 		}
 
-		public (long flow, long cost) MinCostFlowByDijkstra(
+		public (long flow, long cost) Dijkstra(
 			int s, int t, long flowLimit, bool hasMinusCost = false, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
