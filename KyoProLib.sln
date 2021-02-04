@@ -10,9 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakyTank.KyoProLib.CSharp.Core31", "projects\TakyTank.KyoProLib.CSharp.Core31\TakyTank.KyoProLib.CSharp.Core31.csproj", "{2A525B17-10F6-446F-96A0-4D198596F880}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakyTank.KyoProLib.CSharp", "projects\TakyTank.KyoProLib.CSharp\TakyTank.KyoProLib.CSharp.csproj", "{48EA4109-8C53-4B2E-B20B-75F573134464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakyTank.KyoProLib.CSharp", "projects\TakyTank.KyoProLib.CSharp\TakyTank.KyoProLib.CSharp.csproj", "{48EA4109-8C53-4B2E-B20B-75F573134464}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakyTank.KyoProLib.CSharp.Csc360", "projects\TakyTank.KyoProLib.CSharp.Csc360\TakyTank.KyoProLib.CSharp.Csc360.csproj", "{9BE93A8E-36CB-4446-8688-7169FC2BC7B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakyTank.KyoProLib.CSharp.Csc360", "projects\TakyTank.KyoProLib.CSharp.Csc360\TakyTank.KyoProLib.CSharp.Csc360.csproj", "{9BE93A8E-36CB-4446-8688-7169FC2BC7B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarker", "projects\Benchmarker\Benchmarker.csproj", "{CA23779F-1266-4B82-8947-0E5F11CDE1E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{9BE93A8E-36CB-4446-8688-7169FC2BC7B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BE93A8E-36CB-4446-8688-7169FC2BC7B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BE93A8E-36CB-4446-8688-7169FC2BC7B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA23779F-1266-4B82-8947-0E5F11CDE1E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA23779F-1266-4B82-8947-0E5F11CDE1E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA23779F-1266-4B82-8947-0E5F11CDE1E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA23779F-1266-4B82-8947-0E5F11CDE1E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
