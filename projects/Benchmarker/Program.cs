@@ -1,12 +1,14 @@
 ﻿using System;
+using BenchmarkDotNet.Running;
 
 namespace Benchmarker
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static void Main()
 		{
-			Console.WriteLine("Hello World!");
+			//BenchmarkRunner.Run<MeasureLightListFor>();
+			BenchmarkRunner.Run<MeasureLightListAdd>();
 		}
 	}
 }
