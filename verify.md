@@ -91,6 +91,12 @@
 - [PAST02 O 可変全域木](https://atcoder.jp/contests/past202004-open/tasks/past202004_o)
 - [PAST04 M 筆塗り](https://atcoder.jp/contests/past202010-open/tasks/past202010_m)
 
+## Helper
+
+### Merge
+
+- [第14回日本情報オリンピック 予選 F 財宝](https://atcoder.jp/contests/joi2015yo/tasks/joi2015yo_f)
+
 ## Imos
 
 ### Imos1D

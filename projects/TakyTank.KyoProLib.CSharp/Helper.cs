@@ -129,6 +129,37 @@ namespace TakyTank.KyoProLib.CSharp
 		public static Span<T> AsSpan<T>(this T[,,,] array, int i, int j, int k)
 			=> MemoryMarshal.CreateSpan<T>(ref array[i, j, k, 0], array.GetLength(3));
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] Merge<T>(ReadOnlySpan<T> first, ReadOnlySpan<T> second) where T : IComparable<T>
+		{
+			var ret = new T[first.Length + second.Length];
+			int p = 0;
+			int q = 0;
+			while (p < first.Length || q < second.Length) {
+				if (p == first.Length) {
+					ret[p + q] = second[q];
+					q++;
+					continue;
+				}
+
+				if (q == second.Length) {
+					ret[p + q] = first[p];
+					p++;
+					continue;
+				}
+
+				if (first[p].CompareTo(second[q]) < 0) {
+					ret[p + q] = first[p];
+					p++;
+				} else {
+					ret[p + q] = second[q];
+					q++;
+				}
+			}
+
+			return ret;
+		}
+
 		private static readonly int[] delta4_ = { 1, 0, -1, 0, 1 };
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void DoIn4(int i, int j, int imax, int jmax, Action<int, int> action)
