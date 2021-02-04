@@ -11,9 +11,14 @@
 
 このライブラリは、以下の書籍や記事、動画を参考にして作成されています。
 
+### BellmanFord
+
+- 蟻本 95p
+- [ABC137 解説放送 (E問題)](https://www.youtube.com/watch?v=1Z6ofKN03_Y)
+
 ### BitFlag
 
-- [M-SOLUTIONS プロコンオープン 2020 解説 (E問題)](https://atcoder.jp/contests/m-solutions2020/editorial)
+- [M-SOLUTIONS プロコンオープン 2020 解説放送 (E問題)](https://www.youtube.com/watch?v=z6SeLXdwVhA&feature=youtu.be)
 
 ### Compression
 
