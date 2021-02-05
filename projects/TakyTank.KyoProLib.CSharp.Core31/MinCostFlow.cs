@@ -11,17 +11,17 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 	{
 		private const long INF = long.MaxValue;
 		private readonly int n_;
-		private readonly List<(int first, int second)> position_;
-		private readonly List<EdgeInternal>[] edges_;
-		private List<EdgeInternal>[] flowedEdges_;
+		private readonly LightList<(int first, int second)> position_;
+		private readonly LightList<EdgeInternal>[] edges_;
+		private LightList<EdgeInternal>[] flowedEdges_;
 
 		public MinCostFlow(int n)
 		{
 			n_ = n;
-			position_ = new List<(int first, int second)>();
-			edges_ = new List<EdgeInternal>[n];
+			position_ = new LightList<(int first, int second)>();
+			edges_ = new LightList<EdgeInternal>[n];
 			for (int i = 0; i < n; i++) {
-				edges_[i] = new List<EdgeInternal>();
+				edges_[i] = new LightList<EdgeInternal>();
 			}
 		}
 
@@ -40,15 +40,15 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				position_[i].first, to.To, (to.Capacity + from.Capacity), from.Capacity);
 		}
 
-		public IReadOnlyList<Edge> GetFlowedEdges()
+		public ReadOnlySpan<Edge> GetFlowedEdges()
 		{
 			if (flowedEdges_ is null) {
 				flowedEdges_ = edges_;
 			}
 
-			var result = new List<Edge>();
-			for (int i = 0; i < position_.Count; i++) {
-				result.Add(GetFlowedEdge(i));
+			var result = new Edge[position_.Count];
+			for (int i = 0; i < result.Length; i++) {
+				result[i] = GetFlowedEdge(i);
 			}
 
 			return result;
@@ -302,9 +302,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 		private void CopyEdges()
 		{
-			flowedEdges_ = new List<EdgeInternal>[n_];
+			flowedEdges_ = new LightList<EdgeInternal>[n_];
 			for (int i = 0; i < n_; i++) {
-				flowedEdges_[i] = new List<EdgeInternal>();
+				flowedEdges_[i] = new LightList<EdgeInternal>();
 			}
 
 			for (int i = 0; i < n_; i++) {
@@ -348,7 +348,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		private class RadixHeap
 		{
 			private const int MAX_BIT = 64;
-			private readonly List<(long distance, int v)>[] buckets_;
+			private readonly LightList<(long distance, int v)>[] buckets_;
 			private readonly long[] mins_;
 			private long lastDistance_;
 
@@ -356,9 +356,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			public RadixHeap()
 			{
-				buckets_ = new List<(long distance, int v)>[MAX_BIT + 1];
+				buckets_ = new LightList<(long distance, int v)>[MAX_BIT + 1];
 				for (int i = 0; i < MAX_BIT + 1; i++) {
-					buckets_[i] = new List<(long distance, int vertex)>();
+					buckets_[i] = new LightList<(long distance, int vertex)>();
 				}
 
 				mins_ = new long[MAX_BIT + 1];
@@ -382,7 +382,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					}
 
 					lastDistance_ = mins_[index];
-					foreach (var item in buckets_[index]) {
+					foreach (var item in buckets_[index].AsSpan()) {
 						int bit = GetBit(item.distance ^ lastDistance_);
 						buckets_[bit].Add(item);
 						mins_[bit] = Math.Min(mins_[bit], item.distance);
@@ -394,7 +394,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 				--Count;
 				var ret = buckets_[0][^1];
-				buckets_[0].RemoveAt(buckets_[0].Count - 1);
+				buckets_[0].Remove();
 				return ret;
 			}
 

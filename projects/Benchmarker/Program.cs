@@ -7,8 +7,7 @@ namespace Benchmarker
 	{
 		static void Main()
 		{
-			//BenchmarkRunner.Run<MeasureLightListFor>();
-			BenchmarkRunner.Run<MeasureLightListAdd>();
+			BenchmarkRunner.Run<MeasureBitOp>();
 		}
 	}
 }

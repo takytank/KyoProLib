@@ -10,7 +10,6 @@ namespace Benchmarker
 {
 	public class MeasureLightListFor
 	{
-		
 		private readonly int[] array_;
 		private readonly List<int> list_;
 		private readonly LightList<int> lightlist_;

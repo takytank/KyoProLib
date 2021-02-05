@@ -8,17 +8,17 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 	{
 		private const long INF = long.MaxValue;
 		private readonly int n_;
-		private readonly List<(int first, int second)> position_;
-		private readonly List<EdgeInternal>[] edges_;
-		private List<EdgeInternal>[] flowedEdges_;
+		private readonly LightList<(int first, int second)> position_;
+		private readonly LightList<EdgeInternal>[] edges_;
+		private LightList<EdgeInternal>[] flowedEdges_;
 
 		public MaxFlow(int n)
 		{
 			n_ = n;
-			position_ = new List<(int first, int second)>();
-			edges_ = new List<EdgeInternal>[n];
+			position_ = new LightList<(int first, int second)>();
+			edges_ = new LightList<EdgeInternal>[n];
 			for (int i = 0; i < n; i++) {
-				edges_[i] = new List<EdgeInternal>();
+				edges_[i] = new LightList<EdgeInternal>();
 			}
 		}
 
@@ -37,15 +37,15 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				position_[i].first, to.To, (to.Capacity + from.Capacity), from.Capacity);
 		}
 
-		public IReadOnlyList<Edge> GetFlowedEdges()
+		public ReadOnlySpan<Edge> GetFlowedEdges()
 		{
 			if (flowedEdges_ is null) {
 				flowedEdges_ = edges_;
 			}
 
-			var result = new List<Edge>();
-			for (int i = 0; i < position_.Count; i++) {
-				result.Add(GetFlowedEdge(i));
+			var result = new Edge[position_.Count];
+			for (int i = 0; i < result.Length; i++) {
+				result[i] = GetFlowedEdge(i);
 			}
 
 			return result;
@@ -174,9 +174,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 		private void CopyEdges()
 		{
-			flowedEdges_ = new List<EdgeInternal>[n_];
+			flowedEdges_ = new LightList<EdgeInternal>[n_];
 			for (int i = 0; i < n_; i++) {
-				flowedEdges_[i] = new List<EdgeInternal>();
+				flowedEdges_[i] = new LightList<EdgeInternal>();
 			}
 
 			for (int i = 0; i < n_; i++) {

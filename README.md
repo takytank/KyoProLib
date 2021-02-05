@@ -16,9 +16,16 @@
 - 蟻本 95p
 - [ABC137 解説放送 (E問題)](https://www.youtube.com/watch?v=1Z6ofKN03_Y)
 
+### BitComputing
+
+- [ビットを数える・探すアルゴリズム](http://www.nminoru.jp/~nminoru/programming/bitcount.html)
+- [一番右端の立っているビット位置を求める「ものすごい」コード](https://siokoshou.hatenadiary.org/entry/20090704/p1)
+
 ### BitFlag
 
 - [M-SOLUTIONS プロコンオープン 2020 解説放送 (E問題)](https://www.youtube.com/watch?v=z6SeLXdwVhA&feature=youtu.be)
+
+### Bit
 
 ### Compression
 

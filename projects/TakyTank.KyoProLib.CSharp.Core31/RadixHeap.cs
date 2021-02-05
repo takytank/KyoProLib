@@ -69,7 +69,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				}
 
 				lastKey_ = mins_[index];
-				foreach (var item in buckets_[index]) {
+				foreach (var item in buckets_[index].AsSpan()) {
 					int bit = GetBit(item.key ^ lastKey_);
 					buckets_[bit].Add(item);
 					mins_[bit] = Math.Min(mins_[bit], item.key);
@@ -147,7 +147,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				}
 
 				lastKey_ = mins_[index];
-				foreach (var item in buckets_[index]) {
+				foreach (var item in buckets_[index].AsSpan()) {
 					int bit = GetBit(item.key ^ lastKey_);
 					buckets_[bit].Add(item);
 					mins_[bit] = Math.Min(mins_[bit], item.key);
