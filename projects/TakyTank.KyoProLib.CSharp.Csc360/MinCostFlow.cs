@@ -4,21 +4,21 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.Csc360
 {
-	public class Flow
+	public class MinCostFlow
 	{
 		private const long INF = long.MaxValue;
 		private readonly int n_;
-		private readonly List<(int first, int second)> position_;
-		private readonly List<EdgeInternal>[] edges_;
-		private List<EdgeInternal>[] flowedEdges_;
+		private readonly LightList<(int first, int second)> position_;
+		private readonly LightList<EdgeInternal>[] edges_;
+		private LightList<EdgeInternal>[] flowedEdges_;
 
-		public Flow(int n)
+		public MinCostFlow(int n)
 		{
 			n_ = n;
-			position_ = new List<(int first, int second)>();
-			edges_ = new List<EdgeInternal>[n];
+			position_ = new LightList<(int first, int second)>();
+			edges_ = new LightList<EdgeInternal>[n];
 			for (int i = 0; i < n; i++) {
-				edges_[i] = new List<EdgeInternal>();
+				edges_[i] = new LightList<EdgeInternal>();
 			}
 		}
 
@@ -37,134 +37,21 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 				position_[i].first, to.To, (to.Capacity + from.Capacity), from.Capacity);
 		}
 
-		public IReadOnlyList<Edge> GetFlowedEdges()
+		public ReadOnlySpan<Edge> GetFlowedEdges()
 		{
 			if (flowedEdges_ is null) {
 				flowedEdges_ = edges_;
 			}
 
-			var result = new List<Edge>();
-			for (int i = 0; i < position_.Count; i++) {
-				result.Add(GetFlowedEdge(i));
+			var result = new Edge[position_.Count];
+			for (int i = 0; i < result.Length; i++) {
+				result[i] = GetFlowedEdge(i);
 			}
 
 			return result;
 		}
 
-		public long MaxFlowByFordFulkerson(int s, int t, bool keepsEdges = false)
-		{
-			if (keepsEdges) {
-				CopyEdges();
-			} else {
-				flowedEdges_ = edges_;
-			}
-
-			long Dfs(int s, int t, long f, bool[] done)
-			{
-				if (s == t) {
-					return f;
-				}
-
-				done[s] = true;
-				foreach (var edge in flowedEdges_[s]) {
-					if (done[edge.To] == false && edge.Capacity > 0) {
-						long d = Dfs(edge.To, t, Math.Min(f, edge.Capacity), done);
-						if (d > 0) {
-							edge.Capacity -= d;
-							flowedEdges_[edge.To][edge.ReverseEdgeIndex].Capacity += d;
-							return d;
-						}
-					}
-				}
-
-				return 0;
-			}
-
-			long flow = 0;
-			while (true) {
-				var done = new bool[n_];
-				long f = Dfs(s, t, INF, done);
-				if (f == 0 || f == INF) {
-					break;
-				}
-
-				flow += f;
-			}
-
-			return flow;
-		}
-
-		public long MaxFlowByDinic(int s, int t, bool keepsEdges = false)
-		{
-			if (keepsEdges) {
-				CopyEdges();
-			} else {
-				flowedEdges_ = edges_;
-			}
-
-			long[] Bfs(int s)
-			{
-				var d = new long[n_];
-				d.AsSpan().Fill(-1);
-				d[s] = 0;
-				var q = new Queue<int>();
-				q.Enqueue(s);
-				while (q.Count > 0) {
-					int v = q.Dequeue();
-					foreach (var edge in flowedEdges_[v]) {
-						if (edge.Capacity > 0 && d[edge.To] < 0) {
-							d[edge.To] = d[v] + 1;
-							q.Enqueue(edge.To);
-						}
-					}
-				}
-
-				return d;
-			}
-
-			long Dfs(int s, int t, long f, int[] done, long[] distance)
-			{
-				if (s == t) {
-					return f;
-				}
-
-				for (; done[s] < flowedEdges_[s].Count; done[s]++) {
-					var edge = flowedEdges_[s][done[s]];
-					if (edge.Capacity > 0 && distance[s] < distance[edge.To]) {
-						long d = Dfs(edge.To, t, Math.Min(f, edge.Capacity), done, distance);
-						if (d > 0) {
-							edge.Capacity -= d;
-							flowedEdges_[edge.To][edge.ReverseEdgeIndex].Capacity += d;
-							return d;
-						}
-					}
-				}
-
-				return 0;
-			}
-
-			long flow = 0;
-			while (true) {
-				var distance = Bfs(s);
-				if (distance[t] < 0) {
-					break;
-				}
-
-				var done = new int[n_];
-				while (true) {
-					long f = Dfs(s, t, INF, done, distance);
-					if (f == 0 || f == INF) {
-						break;
-					}
-
-					flow += f;
-				}
-			}
-
-			return flow;
-		}
-
-		public (long flow, long cost) MinCostFlowByBellmanFord(
+		public (long flow, long cost) BellmanFord(
 			int s, int t, long flowLimit, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -179,6 +66,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 
 			long minCost = 0;
 			long f = flowLimit;
+			var edgess = flowedEdges_.AsSpan();
 			while (f > 0) {
 				distances.AsSpan().Fill(INF);
 				distances[s] = 0;
@@ -189,8 +77,9 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 							continue;
 						}
 
-						for (int j = 0; j < flowedEdges_[v].Count; j++) {
-							var edge = flowedEdges_[v][j];
+						var edges = edgess[v].AsSpan();
+						for (int j = 0; j < edges.Length; j++) {
+							var edge = edges[j];
 							long newDistance = distances[v] + edge.Cost;
 							if (edge.Capacity > 0 && distances[edge.To] > newDistance) {
 								distances[edge.To] = newDistance;
@@ -216,21 +105,22 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 
 				long d = f;
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					d = Math.Min(d, flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
+					d = Math.Min(d, edgess[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
 				}
 
 				f -= d;
 				minCost += d * distances[t];
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity -= d;
-					flowedEdges_[v][flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].ReverseEdgeIndex].Capacity += d;
+					ref var e = ref edgess[prevVertexes[v]].AsSpan()[prevEdgeIndexes[v]];
+					e.Capacity -= d;
+					edgess[v].AsSpan()[e.ReverseEdgeIndex].Capacity += d;
 				}
 			}
 
 			return (flowLimit - f, minCost);
 		}
 
-		public (long flow, long cost) MinCostFlowByFpsa(
+		public (long flow, long cost) Fpsa(
 			int s, int t, long flowLimit, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -247,6 +137,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 
 			long minCost = 0;
 			long f = flowLimit;
+			var edgess = flowedEdges_.AsSpan();
 			while (f > 0) {
 				var que = new Queue<int>();
 				que.Enqueue(s);
@@ -260,8 +151,9 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 				while (que.Count > 0) {
 					var v = que.Dequeue();
 					pending[v] = false;
-					for (int j = 0; j < flowedEdges_[v].Count; j++) {
-						var edge = flowedEdges_[v][j];
+					var edges = edgess[v].AsSpan();
+					for (int j = 0; j < edges.Length; j++) {
+						var edge = edges[j];
 						var newDistance = distances[v] + edge.Cost;
 						if (edge.Capacity <= 0 || newDistance >= distances[edge.To]) {
 							continue;
@@ -288,21 +180,22 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 
 				long d = f;
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					d = Math.Min(d, flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
+					d = Math.Min(d, edgess[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
 				}
 
 				f -= d;
 				minCost += d * distances[t];
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity -= d;
-					flowedEdges_[v][flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].ReverseEdgeIndex].Capacity += d;
+					ref var e = ref edgess[prevVertexes[v]].AsSpan()[prevEdgeIndexes[v]];
+					e.Capacity -= d;
+					edgess[v].AsSpan()[e.ReverseEdgeIndex].Capacity += d;
 				}
 			}
 
 			return (flowLimit - f, minCost);
 		}
 
-		public (long flow, long cost) MinCostFlowByDijkstra(
+		public (long flow, long cost) Dijkstra(
 			int s, int t, long flowLimit, bool hasMinusCost = false, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -319,6 +212,8 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 			bool first = true;
 			long minCost = 0;
 			long f = flowLimit;
+			var edgess = flowedEdges_.AsSpan();
+			var que = new HeapQ();
 			while (f > 0) {
 				distances.AsSpan().Fill(INF);
 				distances[s] = 0;
@@ -331,8 +226,9 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 								continue;
 							}
 
-							for (int j = 0; j < flowedEdges_[v].Count; j++) {
-								var edge = flowedEdges_[v][j];
+							var edges = edgess[v].AsSpan();
+							for (int j = 0; j < edges.Length; j++) {
+								var edge = edges[j];
 								long newDistance = distances[v] + edge.Cost;
 								if (edge.Capacity > 0 && distances[edge.To] > newDistance) {
 									distances[edge.To] = newDistance;
@@ -352,23 +248,23 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 						}
 					}
 				} else {
-					var pq = new HeapQ();
-					pq.Enqueue(0, s);
-					while (pq.Count > 0) {
-						var current = pq.Dequeue();
+					que.Enqueue(0, s);
+					while (que.Count > 0) {
+						var current = que.Dequeue();
 						int v = current.v;
 						if (distances[v] < current.distance) {
 							continue;
 						}
 
-						for (int j = 0; j < flowedEdges_[v].Count; j++) {
-							var edge = flowedEdges_[v][j];
+						var edges = edgess[v].AsSpan();
+						for (int j = 0; j < edges.Length; j++) {
+							var edge = edges[j];
 							long newDistance = distances[v] + edge.Cost + potentials[v] - potentials[edge.To];
 							if (edge.Capacity > 0 && distances[edge.To] > newDistance) {
 								distances[edge.To] = newDistance;
 								prevVertexes[edge.To] = v;
 								prevEdgeIndexes[edge.To] = j;
-								pq.Enqueue(newDistance, edge.To);
+								que.Enqueue(newDistance, edge.To);
 							}
 						}
 					}
@@ -384,14 +280,15 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 
 				long d = f;
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					d = Math.Min(d, flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
+					d = Math.Min(d, edgess[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
 				}
 
 				f -= d;
 				minCost += d * potentials[t];
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity -= d;
-					flowedEdges_[v][flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].ReverseEdgeIndex].Capacity += d;
+					ref var e = ref edgess[prevVertexes[v]].AsSpan()[prevEdgeIndexes[v]];
+					e.Capacity -= d;
+					edgess[v].AsSpan()[e.ReverseEdgeIndex].Capacity += d;
 				}
 
 				first = false;
@@ -402,19 +299,17 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 
 		private void CopyEdges()
 		{
-			flowedEdges_ = new List<EdgeInternal>[n_];
+			flowedEdges_ = new LightList<EdgeInternal>[n_];
 			for (int i = 0; i < n_; i++) {
-				flowedEdges_[i] = new List<EdgeInternal>();
+				flowedEdges_[i] = new LightList<EdgeInternal>();
 			}
 
 			for (int i = 0; i < n_; i++) {
-				foreach (var e in edges_[i]) {
-					flowedEdges_[i].Add(new EdgeInternal(e.To, e.Capacity, e.Cost, e.ReverseEdgeIndex));
-				}
+				flowedEdges_[i].AddRange(edges_[i].AsSpan());
 			}
 		}
 
-		private class EdgeInternal
+		private struct EdgeInternal
 		{
 			public int To { get; set; }
 			public int ReverseEdgeIndex { get; set; }

@@ -43,6 +43,21 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void AddRange(ReadOnlySpan<T> values)
+		{
+			if (count_ + values.Length < values_.Length) {
+				values.CopyTo(values_.AsSpan().Slice(count_, values.Length));
+				count_ += values.Length;
+			} else {
+				var newArray = new T[count_ + values.Length];
+				values_.CopyTo(newArray.AsSpan().Slice(0, count_));
+				values.CopyTo(newArray.AsSpan().Slice(count_, values.Length));
+				values_ = newArray;
+				count_ += values.Length;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Remove()
 		{
 			if (count_ > 0) {

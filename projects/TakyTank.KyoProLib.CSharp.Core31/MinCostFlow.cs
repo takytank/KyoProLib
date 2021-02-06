@@ -308,10 +308,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			}
 
 			for (int i = 0; i < n_; i++) {
-				var span = edges_[i].AsSpan();
-				for (int j = 0; j < span.Length; j++) {
-					flowedEdges_[i].Add(span[j]);
-				}
+				flowedEdges_[i].AddRange(edges_[i].AsSpan());
 			}
 		}
 
