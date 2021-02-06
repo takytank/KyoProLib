@@ -191,6 +191,30 @@ namespace TakyTank.KyoProLib.CSharp
 			return array;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public decimal Decimal() => decimal.Parse(Next(), CultureInfo.InvariantCulture);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public decimal Decimal(decimal offset) => Decimal() + offset;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (decimal, decimal) Decimal2(decimal offset = 0)
+			=> (Decimal(offset), Decimal(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (decimal, decimal, decimal) Decimal3(decimal offset = 0)
+			=> (Decimal(offset), Decimal(offset), Decimal(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (decimal, decimal, decimal, decimal) Decimal4(decimal offset = 0)
+			=> (Decimal(offset), Decimal(offset), Decimal(offset), Decimal(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public decimal[] ArrayDecimal(int length, decimal offset = 0)
+		{
+			var array = new decimal[length];
+			for (int i = 0; i < length; ++i) {
+				array[i] = Decimal(offset);
+			}
+
+			return array;
+		}
+
 		private byte Read()
 		{
 			if (isEof_) {
