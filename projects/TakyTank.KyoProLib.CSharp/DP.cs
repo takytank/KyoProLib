@@ -35,7 +35,7 @@ namespace TakyTank.KyoProLib.CSharp
 			return dp[n, m];
 		}
 
-		public static (int distance, List<T> edited) LevenshteinDistanceAndSequence<T>(
+		public static (int distance, LightList<T> edited) LevenshteinDistanceAndSequence<T>(
 			ReadOnlySpan<T> a, ReadOnlySpan<T> b)
 			where T : IComparable<T>
 		{
@@ -66,7 +66,7 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
-			var list = new List<T>();
+			var list = new LightList<T>();
 			int ii = n;
 			int jj = m;
 			while (ii > 0 && jj > 0) {
@@ -117,10 +117,10 @@ namespace TakyTank.KyoProLib.CSharp
 			return dp[n, m];
 		}
 
-		public static List<T> LCS<T>(ReadOnlySpan<T> a, ReadOnlySpan<T> b)
+		public static ReadOnlySpan<T> LCS<T>(ReadOnlySpan<T> a, ReadOnlySpan<T> b)
 			where T : IComparable<T>
 			=> LongestCommonSubsequence(a, b);
-		public static List<T> LongestCommonSubsequence<T>(ReadOnlySpan<T> a, ReadOnlySpan<T> b)
+		public static ReadOnlySpan<T> LongestCommonSubsequence<T>(ReadOnlySpan<T> a, ReadOnlySpan<T> b)
 			where T : IComparable<T>
 		{
 			int n = a.Length;
@@ -145,7 +145,7 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
-			var list = new List<T>();
+			var list = new LightList<T>();
 			int ii = n;
 			int jj = m;
 			while (ii > 0 && jj > 0) {
@@ -168,7 +168,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 			list.Reverse();
 
-			return list;
+			return list.AsSpan();
 		}
 	}
 }

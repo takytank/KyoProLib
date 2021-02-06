@@ -50,7 +50,7 @@
 
 ## DynamicConnectivity
 
-- [PAST05 N 旅行会社](https://atcoder.jp/contests/past202012-open/submissions/19096937)
+- [PAST05 N 旅行会社](https://atcoder.jp/contests/past202012-open/tasks/past202012_n)
 
 ## EulerTotient
 

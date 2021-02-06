@@ -10,9 +10,9 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly UndoUnionFindTree uf_;
 		private readonly int queryCount_;
 		private readonly int n_;
-		private readonly List<(int p, int q)>[] edges_;
-		private readonly List<((int left, int right) range, (int p, int q) edge)> pendings_
-			= new List<((int left, int right) range, (int p, int q) edge)>();
+		private readonly LightList<(int p, int q)>[] edges_;
+		private readonly LightList<((int left, int right) range, (int p, int q) edge)> pendings_
+			= new LightList<((int left, int right) range, (int p, int q) edge)>();
 		private readonly Dictionary<(int p, int q), int> counts_
 			= new Dictionary<(int p, int q), int>();
 		private readonly Dictionary<(int p, int q), int> appears_
@@ -30,9 +30,9 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			int m = 2 * n_;
-			edges_ = new List<(int p, int q)>[m];
+			edges_ = new LightList<(int p, int q)>[m];
 			for (int i = 0; i < m; i++) {
-				edges_[i] = new List<(int p, int q)>();
+				edges_[i] = new LightList<(int p, int q)>();
 			}
 		}
 
@@ -76,7 +76,7 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
-			foreach (var (range, edge) in pendings_) {
+			foreach (var (range, edge) in pendings_.AsSpan()) {
 				AddConnectionSpan(range.left, range.right, edge);
 			}
 		}
@@ -111,7 +111,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public void ExecuteQueries(Action<int> action, int v = 1)
 		{
-			foreach (var (p, q) in edges_[v]) {
+			foreach (var (p, q) in edges_[v].AsSpan()) {
 				uf_.Unite(p, q);
 			}
 

@@ -52,6 +52,8 @@ namespace TakyTank.KyoProLib.CSharp
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Clear() => count_ = 0;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Reverse() => Array.Reverse(values_, 0, count_);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Span<T> AsSpan() => values_.AsSpan().Slice(0, Count);
