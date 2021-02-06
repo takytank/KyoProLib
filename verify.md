@@ -136,6 +136,11 @@
 - [AtCoder Typical Contest 001 C 高速フーリエ変換](https://atcoder.jp/contests/atc001/tasks/fft_c)
 - [ARC106 D Powers](https://atcoder.jp/contests/arc106/tasks/arc106_d)
 
+## MinimumWeightCycle
+
+- [ABC142 F Pure](https://atcoder.jp/contests/abc142/tasks/abc142_f)
+- [ABC191 E Come Back Quickly](https://atcoder.jp/contests/abc191/tasks/abc191_e)
+
 ## NumberTheory
 
 ### PrimeFactorsByPollardsRho
