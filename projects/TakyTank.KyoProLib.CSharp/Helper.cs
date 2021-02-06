@@ -10,6 +10,55 @@ namespace TakyTank.KyoProLib.CSharp
 	public static class Helper
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long Sqrt(this long value)
+		{
+			if (value < 0) {
+				return -1;
+			}
+
+			long ok = 0;
+			long ng = 3000000000;
+			while (ng - ok > 1) {
+				long mid = (ng + ok) / 2;
+				if (mid * mid <= value) {
+					ok = mid;
+				} else {
+					ng = mid;
+				}
+			}
+
+			return ok;
+		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long Floor(this long numerator, long denominator)
+			=> numerator >= 0 ? numerator / denominator : (numerator - denominator + 1) / denominator;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long Ceiling(this long numerator, long denominator)
+			=> numerator >= 0 ? (numerator + denominator - 1) / denominator : numerator / denominator;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static decimal Sqrt(this decimal x, decimal epsilon = 0.0M)
+		{
+			if (x < 0) {
+				return -1;
+			}
+
+			decimal current = (decimal)Math.Sqrt((double)x);
+			decimal previous;
+			do {
+				previous = current;
+				if (previous == 0.0M) {
+					return 0;
+				}
+
+				current = (previous + x / previous) / 2;
+			}
+			while (Math.Abs(previous - current) > epsilon);
+
+			return current;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int Pow(int n, int k)
 			=> (int)Pow((long)n, (long)k);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
