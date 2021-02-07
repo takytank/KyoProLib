@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Core31
+namespace TakyTank.KyoProLib.CSharp
 {
 	public class MinCostFlow
 	{
@@ -216,7 +213,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			long minCost = 0;
 			long f = flowLimit;
 			var edgess = flowedEdges_.AsSpan();
-			var que = new RadixHeap();
+			var que = new DijkstraQ();
 			while (f > 0) {
 				distances.AsSpan().Fill(INF);
 				distances[s] = 0;
@@ -251,9 +248,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 						}
 					}
 				} else {
-					que.Push(0, s);
+					que.Enqueue(0, s);
 					while (que.Count > 0) {
-						var current = que.Pop();
+						var current = que.Dequeue();
 						int v = current.v;
 						if (distances[v] < current.distance) {
 							continue;
@@ -267,7 +264,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 								distances[edge.To] = newDistance;
 								prevVertexes[edge.To] = v;
 								prevEdgeIndexes[edge.To] = j;
-								que.Push(newDistance, edge.To);
+								que.Enqueue(newDistance, edge.To);
 							}
 						}
 					}
@@ -341,63 +338,5 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				Flow = flow;
 			}
 		};
-
-		private class RadixHeap
-		{
-			private const int MAX_BIT = 64;
-			private readonly LightList<(long distance, int v)>[] buckets_;
-			private readonly long[] mins_;
-			private long lastDistance_;
-
-			public int Count { get; private set; }
-
-			public RadixHeap()
-			{
-				buckets_ = new LightList<(long distance, int v)>[MAX_BIT + 1];
-				for (int i = 0; i < MAX_BIT + 1; i++) {
-					buckets_[i] = new LightList<(long distance, int vertex)>();
-				}
-
-				mins_ = new long[MAX_BIT + 1];
-				mins_.AsSpan().Fill(long.MaxValue);
-			}
-
-			public void Push(long distance, int v)
-			{
-				++Count;
-				int bit = GetBit(distance ^ lastDistance_);
-				buckets_[bit].Add((distance, v));
-				mins_[bit] = Math.Min(mins_[bit], distance);
-			}
-
-			public (long distance, int v) Pop()
-			{
-				if (buckets_[0].Count == 0) {
-					int index = 1;
-					while (buckets_[index].Count == 0) {
-						++index;
-					}
-
-					lastDistance_ = mins_[index];
-					foreach (var item in buckets_[index].AsSpan()) {
-						int bit = GetBit(item.distance ^ lastDistance_);
-						buckets_[bit].Add(item);
-						mins_[bit] = Math.Min(mins_[bit], item.distance);
-					}
-
-					buckets_[index].Clear();
-					mins_[index] = long.MaxValue;
-				}
-
-				--Count;
-				var ret = buckets_[0][^1];
-				buckets_[0].Remove();
-				return ret;
-			}
-
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			private int GetBit(long a)
-				=> a != 0 ? MAX_BIT - BitOperations.LeadingZeroCount((ulong)a) : 0;
-		}
 	}
 }
