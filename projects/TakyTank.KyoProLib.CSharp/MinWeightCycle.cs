@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
-	public class MinimumWeightCycle
+	public class MinWeightCycle
 	{
 		private readonly int n_;
 		private readonly bool isDirected_;
@@ -13,7 +13,7 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly Dictionary<int, long>[] to_;
 		private int edgeCount_ = 0;
 
-		public MinimumWeightCycle(int n, int m, bool isDirected)
+		public MinWeightCycle(int n, int m, bool isDirected)
 		{
 			n_ = n;
 			isDirected_ = isDirected;
