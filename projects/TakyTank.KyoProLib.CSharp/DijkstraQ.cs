@@ -6,9 +6,10 @@ namespace TakyTank.KyoProLib.CSharp
 {
 	public class DijkstraQ
 	{
+		private int count_ = 0;
 		private (long distance, int v)[] heap_;
 
-		public int Count { get; private set; } = 0;
+		public int Count => count_;
 		public DijkstraQ()
 		{
 			heap_ = new (long distance, int v)[2];
@@ -17,23 +18,23 @@ namespace TakyTank.KyoProLib.CSharp
 		public void Enqueue(long distance, int v)
 		{
 			var pair = (distance, v);
-			if (heap_.Length == Count) {
+			if (heap_.Length == count_) {
 				var newHeap = new (long distance, int v)[heap_.Length * 2];
 				heap_.CopyTo(newHeap, 0);
 				heap_ = newHeap;
 			}
 
-			heap_[Count] = pair;
-			++Count;
+			heap_[count_] = pair;
+			++count_;
 
-			int c = Count - 1;
+			int c = count_ - 1;
 			while (c > 0) {
 				int p = (c - 1) >> 1;
-				if (heap_[p].distance > distance) {
+				if (heap_[p].distance <= distance) {
+					break;
+				} else {
 					heap_[c] = heap_[p];
 					c = p;
-				} else {
-					break;
 				}
 			}
 
@@ -43,7 +44,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public (long distance, int v) Dequeue()
 		{
 			(long distance, int v) ret = heap_[0];
-			int n = Count - 1;
+			int n = count_ - 1;
 
 			var item = heap_[n];
 			int p = 0;
@@ -58,12 +59,12 @@ namespace TakyTank.KyoProLib.CSharp
 					p = c;
 					c = (p << 1) + 1;
 				} else {
-					break;
+					break;	
 				}
 			}
 
 			heap_[p] = item;
-			Count--;
+			--count_;
 
 			return ret;
 		}
