@@ -203,6 +203,11 @@
 
 - [第１４回日本情報オリンピック 予選（オンライン） F 財宝](https://atcoder.jp/contests/joi2015yo/tasks/joi2015yo_f)
 
+## TravelingSalesmanProblem
+
+- [PAST03 M 行商計画問題](https://atcoder.jp/contests/past202005-open/tasks/past202005_m)
+- [ABC190 E Magical Ornament](https://atcoder.jp/contests/abc190/tasks/abc190_e)
+
 ## TrieTree
 
 - [AGC047 B First Second](https://atcoder.jp/contests/agc047/tasks/agc047_b)
