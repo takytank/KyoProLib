@@ -187,6 +187,10 @@
 
 ## ShortestPath
 
+### Bfs
+
+- [ABC190 E Magical Ornament](https://atcoder.jp/contests/abc190/tasks/abc190_e)
+
 ### Dijkstra
 
 - [ABC035 D トレジャーハント](https://atcoder.jp/contests/abc035/tasks/abc035_d)

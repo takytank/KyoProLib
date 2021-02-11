@@ -8,19 +8,28 @@ namespace TakyTank.KyoProLib.CSharp
 	public class ShortestPath
 	{
 		private readonly int n_;
-		private readonly LightList<(int to, long d)>[] edges_;
+		private readonly List<(int to, long d)>[] tempEdges_;
+		private readonly (int to, long d)[][] edges_;
 
 		public ShortestPath(int n)
 		{
 			n_ = n;
-			edges_ = new LightList<(int v, long d)>[n];
+			edges_ = new (int to, long d)[n][];
+			tempEdges_ = new List<(int v, long d)>[n];
 			for (int i = 0; i < n; i++) {
-				edges_[i] = new LightList<(int v, long d)>();
+				tempEdges_[i] = new List<(int v, long d)>();
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdge(int p, int q, long d = 1) => edges_[p].Add((q, d));
+		public void AddEdge(int p, int q, long d = 1) => tempEdges_[p].Add((q, d));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Build()
+		{
+			for (int i = 0; i < n_; i++) {
+				edges_[i] = tempEdges_[i].ToArray();
+			}
+		}
 
 		public ReadOnlySpan<int> GetPath(int s, int t, int[] prevs)
 		{
@@ -46,7 +55,7 @@ namespace TakyTank.KyoProLib.CSharp
 			que.Enqueue(start);
 			while (que.Count > 0) {
 				var cur = que.Dequeue();
-				foreach (var (to, d) in edges_[cur].AsSpan()) {
+				foreach (var (to, d) in edges_[cur]) {
 					long nextDistance = distances[cur] + d;
 					if (nextDistance < distances[to]) {
 						distances[to] = nextDistance;
@@ -69,7 +78,7 @@ namespace TakyTank.KyoProLib.CSharp
 			que.Enqueue(start);
 			while (que.Count > 0) {
 				var cur = que.Dequeue();
-				foreach (var (to, d) in edges_[cur].AsSpan()) {
+				foreach (var (to, d) in edges_[cur]) {
 					long nextDistance = distances[cur] + d;
 					if (nextDistance < distances[to]) {
 						distances[to] = nextDistance;
@@ -99,7 +108,7 @@ namespace TakyTank.KyoProLib.CSharp
 					continue;
 				}
 
-				foreach (var (to, d) in edges_[v].AsSpan()) {
+				foreach (var (to, d) in edges_[v]) {
 					long nextDistance = distances[v] + d;
 					if (nextDistance < distances[to]) {
 						distances[to] = nextDistance;
@@ -133,7 +142,7 @@ namespace TakyTank.KyoProLib.CSharp
 					continue;
 				}
 
-				foreach (var (to, d) in edges_[v].AsSpan()) {
+				foreach (var (to, d) in edges_[v]) {
 					long nextDistance = distances[v] + d;
 					if (nextDistance < distances[to]) {
 						distances[to] = nextDistance;
@@ -166,7 +175,7 @@ namespace TakyTank.KyoProLib.CSharp
 						continue;
 					}
 
-					foreach (var (to, d) in edges_[v].AsSpan()) {
+					foreach (var (to, d) in edges_[v]) {
 						long newDistance = distances[v] + d;
 						if (newDistance < distances[to]) {
 							changes = true;
@@ -204,7 +213,7 @@ namespace TakyTank.KyoProLib.CSharp
 						continue;
 					}
 
-					foreach (var (to, d) in edges_[v].AsSpan()) {
+					foreach (var (to, d) in edges_[v]) {
 						long newDistance = distances[v] + d;
 						if (newDistance < distances[to]) {
 							changes = true;
@@ -240,7 +249,7 @@ namespace TakyTank.KyoProLib.CSharp
 					continue;
 				}
 
-				foreach (var (to, d) in edges_[v].AsSpan()) {
+				foreach (var (to, d) in edges_[v]) {
 					long nextDistance = distances[v] + d;
 					if (nextDistance < distances[to]) {
 						distances[to] = nextDistance;
@@ -267,7 +276,7 @@ namespace TakyTank.KyoProLib.CSharp
 					continue;
 				}
 
-				foreach (var (to, d) in edges_[v].AsSpan()) {
+				foreach (var (to, d) in edges_[v]) {
 					long nextDistance = distances[v] + d;
 					if (nextDistance < distances[to]) {
 						distances[to] = nextDistance;
@@ -292,7 +301,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			for (int i = 0; i < n_; i++) {
-				foreach (var (j, d) in edges_[i].AsSpan()) {
+				foreach (var (j, d) in edges_[i]) {
 					distances[i, j] = Math.Min(distances[i, j], d);
 				}
 			}
@@ -302,7 +311,7 @@ namespace TakyTank.KyoProLib.CSharp
 					for (int j = 0; j < n_; j++) {
 						distances[i, j] = Math.Min(
 							distances[i, j],
-							distances[i, k] + distances[k ,j]);
+							distances[i, k] + distances[k, j]);
 					}
 				}
 			}
