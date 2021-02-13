@@ -10,6 +10,7 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly int[,] indexes_;
 		private readonly T[,] values_;
 		private readonly int k_;
+		private readonly long maxLength_;
 		private readonly T unit_;
 		private readonly Func<T, T, T> merge_;
 
@@ -23,11 +24,12 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			unit_ = unit;
 			merge_ = merge;
-			long temp = m;
 			k_ = 0;
-			while (temp > 0) {
+			maxLength_ = 1;
+			while (m > 0) {
 				++k_;
-				temp >>= 1;
+				maxLength_ <<= 1;
+				m >>= 1;
 			}
 
 			indexes_ = new int[k_, n];
@@ -68,6 +70,27 @@ namespace TakyTank.KyoProLib.CSharp
 					ret = merge_(ret, values_[i, t]);
 					t = indexes_[i, t];
 				}
+			}
+
+			return ret;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long LowerBound(int s, Func<T, bool> checker)
+		{
+			int t = s;
+			long ret = 0;
+			T current = unit_;
+			long length = maxLength_;
+			for (int i = k_ - 1; i >= 0; i--) {
+				T temp = merge_(current, values_[i, t]);
+				if (checker(temp)) {
+					current = temp;
+					t = indexes_[i, t];
+					ret += length;
+				}
+
+				length >>= 1;
 			}
 
 			return ret;
