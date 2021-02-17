@@ -48,9 +48,13 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Build()
 		{
-			for (int i = 1; i < k_; i++) {
+			for (int i = 0; i < k_ - 1; i++) {
 				for (int j = 0; j < n_; j++) {
-					indexes_[i, j] = indexes_[i - 1, indexes_[i - 1, j]];
+					if (indexes_[i, j] < 0) {
+						indexes_[i + 1, j] = -1;
+					} else {
+						indexes_[i + 1, j] = indexes_[i, indexes_[i, j]];
+					}
 				}
 			}
 		}
@@ -75,7 +79,7 @@ namespace TakyTank.KyoProLib.CSharp
 			long ret = 0;
 			for (int i = k_ - 1; i >= 0; i--) {
 				int temp = indexes_[i, current];
-				if (temp < t) {
+				if (temp >= 0 && temp < t) {
 					current = temp;
 					ret += 1L << i;
 				}
@@ -130,12 +134,16 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Build()
 		{
-			for (int i = 1; i < k_; i++) {
+			for (int i = 0; i < k_ - 1; i++) {
 				for (int j = 0; j < n_; j++) {
-					indexes_[i, j] = indexes_[i - 1, indexes_[i - 1, j]];
-					values_[i, j] = merge_(
-						values_[i - 1, j],
-						values_[i - 1, indexes_[i - 1, j]]);
+					if (indexes_[i, j] < 0) {
+						indexes_[i + 1, j] = -1;
+					} else {
+						indexes_[i + 1, j] = indexes_[i, indexes_[i, j]];
+						values_[i + 1, j] = merge_(
+							values_[i, j],
+							values_[i, indexes_[i, j]]);
+					}
 				}
 			}
 		}
@@ -162,10 +170,11 @@ namespace TakyTank.KyoProLib.CSharp
 			long ret = 0;
 			T current = unit_;
 			for (int i = k_ - 1; i >= 0; i--) {
-				T temp = merge_(current, values_[i, t]);
-				if (checker(temp)) {
-					current = temp;
-					t = indexes_[i, t];
+				int tempIndex = t = indexes_[i, t];
+				T tempValue = merge_(current, values_[i, t]);
+				if (tempIndex >= 0 && checker(tempValue)) {
+					current = tempValue;
+					t = tempIndex;
 					ret += 1L << i;
 				}
 			}
@@ -180,9 +189,10 @@ namespace TakyTank.KyoProLib.CSharp
 			long ret = 0;
 			T current = unit_;
 			for (int i = k_ - 1; i >= 0; i--) {
-				T temp = merge_(current, values_[i, t]);
-				if (temp.CompareTo(value) < 0) {
-					current = temp;
+				int tempIndex = t = indexes_[i, t];
+				T tempValue = merge_(current, values_[i, t]);
+				if (tempIndex >= 0 && tempValue.CompareTo(value) < 0) {
+					current = tempValue;
 					t = indexes_[i, t];
 					ret += 1L << i;
 				}
