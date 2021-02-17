@@ -42,6 +42,11 @@
 
 - [ABC176 D Wizard in Maze](https://atcoder.jp/contests/abc176/tasks/abc176_d)
 
+## Doubling
+
+- [ABC175 D Moving Piece](https://atcoder.jp/contests/abc175/tasks/abc175_d)
+- [ARC060 E 高橋君とホテル](https://atcoder.jp/contests/arc060/tasks/arc060_c)
+
 ## DP
 
 ### LevenshteinDistance

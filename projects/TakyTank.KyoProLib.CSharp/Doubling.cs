@@ -1,59 +1,139 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
-	public class Doubling<T>
+	public class Doubling
 	{
+		private readonly int n_;
+		private readonly int[,] indexes_;
+		private readonly int k_;
+
+		public Doubling(
+			int n,
+			long maxStep)
+		{
+			n_ = n;
+			k_ = 0;
+			while (maxStep > 0) {
+				++k_;
+				maxStep >>= 1;
+			}
+
+			indexes_ = new int[k_, n];
+		}
+
+		public Doubling(
+			int[] transitions,
+			long maxStep)
+			: this(transitions.Length, maxStep)
+		{
+			Initialize(transitions);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Initialize(int[] transitions)
+			=> Initialize(x => transitions[x]);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Initialize(Func<int, int> transit)
+		{
+			for (int i = 0; i < n_; i++) {
+				indexes_[0, i] = transit(i);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Build()
+		{
+			for (int i = 1; i < k_; i++) {
+				for (int j = 0; j < n_; j++) {
+					indexes_[i, j] = indexes_[i - 1, indexes_[i - 1, j]];
+				}
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Query(int s, long length)
+		{
+			int t = s;
+			for (int i = k_ - 1; i >= 0; i--) {
+				if (((1 << i) & length) != 0) {
+					t = indexes_[i, t];
+				}
+			}
+
+			return t;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long LowerBound(int s, int t)
+		{
+			int current = s;
+			long ret = 0;
+			for (int i = k_ - 1; i >= 0; i--) {
+				int temp = indexes_[i, current];
+				if (temp < t) {
+					current = temp;
+					ret += 1L << i;
+				}
+			}
+
+			return ret + 1;
+		}
+	}
+
+	public class Doubling<T>
+		where T : struct, IComparable<T>
+	{
+		private readonly int n_;
 		private readonly int[,] indexes_;
 		private readonly T[,] values_;
 		private readonly int k_;
-		private readonly long maxLength_;
 		private readonly T unit_;
 		private readonly Func<T, T, T> merge_;
 
 		public Doubling(
 			int n,
-			long m,
-			Func<int, int> to,
+			long maxStep,
 			T unit,
-			Func<int, T> initial,
 			Func<T, T, T> merge)
 		{
+			n_ = n;
 			unit_ = unit;
 			merge_ = merge;
 			k_ = 0;
-			maxLength_ = 1;
-			while (m > 0) {
+			while (maxStep > 0) {
 				++k_;
-				maxLength_ <<= 1;
-				m >>= 1;
+				maxStep >>= 1;
 			}
 
 			indexes_ = new int[k_, n];
-			for (int i = 0; i < n; i++) {
-				indexes_[0, i] = to(i);
-			}
-
 			values_ = new T[k_, n];
-			for (int i = 0; i < k_; i++) {
-				if (i != 0) {
-					for (int j = 0; j < n; j++) {
-						values_[i, j] = unit;
-					}
-				} else {
-					for (int j = 0; j < n; j++) {
-						values_[i, j] = initial(j);
-					}
-				}
-			}
+			MemoryMarshal.CreateSpan<T>(ref values_[0, 0], values_.Length).Fill(unit);
+		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Initialize(int[] transitions, T[] initialValues)
+			=> Initialize(x => transitions[x], x => initialValues[x]);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Initialize(Func<int, int> transit, Func<int, T> initialize)
+		{
+			for (int i = 0; i < n_; i++) {
+				indexes_[0, i] = transit(i);
+				values_[0, i] = initialize(i);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Build()
+		{
 			for (int i = 1; i < k_; i++) {
-				for (int j = 0; j < n; j++) {
+				for (int j = 0; j < n_; j++) {
 					indexes_[i, j] = indexes_[i - 1, indexes_[i - 1, j]];
-					values_[i, j] = merge(
+					values_[i, j] = merge_(
 						values_[i - 1, j],
 						values_[i - 1, indexes_[i - 1, j]]);
 				}
@@ -76,24 +156,39 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long LowerBound(int s, Func<T, bool> checker)
+		public long FindRightest(int s, Func<T, bool> checker)
 		{
 			int t = s;
 			long ret = 0;
 			T current = unit_;
-			long length = maxLength_;
 			for (int i = k_ - 1; i >= 0; i--) {
 				T temp = merge_(current, values_[i, t]);
 				if (checker(temp)) {
 					current = temp;
 					t = indexes_[i, t];
-					ret += length;
+					ret += 1L << i;
 				}
-
-				length >>= 1;
 			}
 
 			return ret;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long LowerBound(int s, T value)
+		{
+			int t = s;
+			long ret = 0;
+			T current = unit_;
+			for (int i = k_ - 1; i >= 0; i--) {
+				T temp = merge_(current, values_[i, t]);
+				if (temp.CompareTo(value) < 0) {
+					current = temp;
+					t = indexes_[i, t];
+					ret += 1L << i;
+				}
+			}
+
+			return ret + 1;
 		}
 	}
 }
