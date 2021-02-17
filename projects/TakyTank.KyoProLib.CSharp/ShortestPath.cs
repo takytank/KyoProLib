@@ -22,7 +22,14 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdge(int p, int q, long d = 1) => tempEdges_[p].Add((q, d));
+		public void AddEdgeD(int p, int q, long d = 1) => tempEdges_[p].Add((q, d));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void AddEdgeI(int u, int v, long d = 1)
+		{
+			tempEdges_[u].Add((v, d));
+			tempEdges_[v].Add((u, d));
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Build()
 		{
@@ -31,10 +38,10 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ReadOnlySpan<int> GetPath(int s, int t, int[] prevs)
 		{
-			var path = new LightList<int>();
-			path.Add(t);
+			var path = new List<int> { t };
 			int cur = t;
 			while (cur != s) {
 				cur = prevs[cur];
@@ -42,7 +49,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			path.Reverse();
-			return path.AsSpan();
+			return path.ToArray().AsSpan();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -289,6 +296,7 @@ namespace TakyTank.KyoProLib.CSharp
 			return (distances, prevs);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long[,] WarshallFloyd(long inf = long.MaxValue / 2)
 		{
 			var distances = new long[n_, n_];

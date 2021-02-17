@@ -29,9 +29,9 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdge(int u, int v, long d) => tempEdges_[u].Add((d, v));
+		public void AddEdgeD(int u, int v, long d) => tempEdges_[u].Add((d, v));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdge2(int u, int v, long d)
+		public void AddEdgeI(int u, int v, long d)
 		{
 			tempEdges_[u].Add((d, v));
 			tempEdges_[v].Add((d, u));
@@ -136,9 +136,9 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdge(int u, int v, T item) => tempEdges_[u].Add((v, item));
+		public void AddEdgeD(int u, int v, T item) => tempEdges_[u].Add((v, item));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdge2(int u, int v, T item)
+		public void AddEdgeI(int u, int v, T item)
 		{
 			tempEdges_[u].Add((v, item));
 			tempEdges_[v].Add((u, item));
