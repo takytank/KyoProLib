@@ -72,6 +72,10 @@
 - [AtCoder Library Practice Contest B Renwick Tree](https://atcoder.jp/contests/practice2/tasks/practice2_b)
 - [ARC033 C データ構造](https://atcoder.jp/contests/arc033/tasks/arc033_3)
 
+### RangeFenwickTree
+
+- [ARC068 E Snuke Line](https://atcoder.jp/contests/arc068/tasks/arc068_c)
+
 ## Flow
 
 ### MaxFlow
