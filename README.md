@@ -152,6 +152,10 @@
 
 - [平衡二分探索木を使ったsetとmultisetの実装](https://yambe2002.hatenablog.com/entry/2017/02/07/122421)
 
+### RedBlackTree
+
+- [.Net Core SortedSet](https://source.dot.net/#System.Collections/System/Collections/Generic/SortedSet.cs,6f4f66b9b70e07ba)
+
 ### Scanner
 
 - [chokudai さんの tweet](https://twitter.com/chokudai/status/1051741812501536769?s=20)
