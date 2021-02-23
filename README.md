@@ -148,6 +148,10 @@
 - [色々なダイクストラ高速化](https://www.slideshare.net/yosupo/ss-46612984)
 - [radix-heap](https://github.com/iwiwi/radix-heap/blob/master/README_ja.md)
 
+### RandomizedBinarySearchTree
+
+- [平衡二分探索木を使ったsetとmultisetの実装](https://yambe2002.hatenablog.com/entry/2017/02/07/122421)
+
 ### Scanner
 
 - [chokudai さんの tweet](https://twitter.com/chokudai/status/1051741812501536769?s=20)
