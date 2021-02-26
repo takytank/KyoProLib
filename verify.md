@@ -180,6 +180,7 @@
 
 ## Rerooting
 
+- [EDPC V SubTree](https://atcoder.jp/contests/dp/tasks/dp_v)
 - [ABC160 F Distributing Integers](https://atcoder.jp/contests/abc160/tasks/abc160_f)
 
 ## RollingHash

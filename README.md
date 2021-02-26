@@ -156,6 +156,13 @@
 
 - [.Net Core SortedSet](https://source.dot.net/#System.Collections/System/Collections/Generic/SortedSet.cs,6f4f66b9b70e07ba)
 
+### Rerooting
+
+- [明日使える便利な木構造のアルゴリズム](https://qiita.com/keymoon/items/2a52f1b0fb7ef67fb89e)
+- [木DPと全方位木DPを基礎から抽象化まで解説](https://algo-logic.info/tree-dp/)
+- [†全方位木DP†について](https://ei1333.hateblo.jp/entry/2017/04/10/224413)
+- [木と計算量 後編 〜全方位木DP〜](https://snuke.hatenablog.com/entry/2019/01/16/203626)
+
 ### Scanner
 
 - [chokudai さんの tweet](https://twitter.com/chokudai/status/1051741812501536769?s=20)
