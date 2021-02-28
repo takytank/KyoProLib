@@ -6,8 +6,9 @@ namespace TakyTank.KyoProLib.CSharp
 {
 	public struct ModInt
 	{
-		//public const long P = 1000000007;
-		public const long P = 998244353;
+		public const long P = 1000000007;
+		//public const long P = 998244353;
+		//public const long P = 2;
 		public const long ROOT = 3;
 
 		// (924844033, 5)
@@ -109,7 +110,7 @@ namespace TakyTank.KyoProLib.CSharp
 			Span<int> values, bool inverses = false)
 		{
 			var mods = new ModInt[values.Length];
-			for (int i = 0; i < mods.Length; i++) {
+			for (int i = 0; i < mods.Length; ++i) {
 				mods[i] = new ModInt(values[i]);
 			}
 
@@ -122,7 +123,7 @@ namespace TakyTank.KyoProLib.CSharp
 			Span<long> values, bool inverses = false)
 		{
 			var mods = new ModInt[values.Length];
-			for (int i = 0; i < mods.Length; i++) {
+			for (int i = 0; i < mods.Length; ++i) {
 				mods[i] = new ModInt(values[i]);
 			}
 
@@ -171,7 +172,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 			if (inverses) {
 				s = Inverse(n);
-				for (int i = 0; i < n; i++) {
+				for (int i = 0; i < n; ++i) {
 					a[i] = a[i] * s;
 				}
 			}
@@ -204,7 +205,7 @@ namespace TakyTank.KyoProLib.CSharp
 					kp[i + 1] = kp[i] * s;
 				}
 
-				for (int y = 0; y < h; y++) {
+				for (int y = 0; y < h; ++y) {
 					int l = n / 2;
 					for (int i = 1; i < n; i <<= 1, l >>= 1) {
 						r = 0;
@@ -225,15 +226,15 @@ namespace TakyTank.KyoProLib.CSharp
 
 					if (inverses) {
 						s = Inverse(n);
-						for (int i = 0; i < n; i++) {
+						for (int i = 0; i < n; ++i) {
 							a[y, i] = a[y, i] * s;
 						}
 					}
 				}
 			}
 
-			for (int i = 0; i < h; i++) {
-				for (int j = 0; j < w; j++) {
+			for (int i = 0; i < h; ++i) {
+				for (int j = 0; j < w; ++j) {
 					b[h, w] = 0;
 				}
 			}
@@ -251,7 +252,7 @@ namespace TakyTank.KyoProLib.CSharp
 					kp[i + 1] = kp[i] * s;
 				}
 
-				for (int x = 0; x < w; x++) {
+				for (int x = 0; x < w; ++x) {
 					int l = n / 2;
 					for (int i = 1; i < n; i <<= 1, l >>= 1) {
 						r = 0;
@@ -272,7 +273,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 					if (inverses) {
 						s = Inverse(n);
-						for (int i = 0; i < n; i++) {
+						for (int i = 0; i < n; ++i) {
 							a[i, x] = a[i, x] * s;
 						}
 					}
@@ -297,7 +298,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 			var fa = NumberTheoreticTransform(aa);
 			var fb = NumberTheoreticTransform(bb);
-			for (int i = 0; i < nttLenght; i++) {
+			for (int i = 0; i < nttLenght; ++i) {
 				fa[i] *= fb[i];
 			}
 

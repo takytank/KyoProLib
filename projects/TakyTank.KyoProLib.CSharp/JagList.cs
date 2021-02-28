@@ -45,7 +45,7 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			n_ = n;
 			tempValues_ = new List<T>[n];
-			for (int i = 0; i < n; i++) {
+			for (int i = 0; i < n; ++i) {
 				tempValues_[i] = new List<T>();
 			}
 		}
@@ -56,7 +56,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public void Build()
 		{
 			values_ = new T[n_][];
-			for (int i = 0; i < values_.Length; i++) {
+			for (int i = 0; i < values_.Length; ++i) {
 				values_[i] = tempValues_[i].ToArray();
 			}
 		}

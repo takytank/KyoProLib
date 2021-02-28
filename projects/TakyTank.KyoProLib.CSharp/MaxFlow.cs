@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
@@ -8,49 +9,56 @@ namespace TakyTank.KyoProLib.CSharp
 	{
 		private const long INF = long.MaxValue;
 		private readonly int n_;
-		private readonly LightList<(int first, int second)> position_;
-		private readonly LightList<EdgeInternal>[] edges_;
-		private LightList<EdgeInternal>[] flowedEdges_;
+		private readonly List<(int v, int index)> edgeInfos_;
+		private readonly JagList2<EdgeInternal> edges_;
+		private JagList2<EdgeInternal> flowedEdges_;
 
 		public MaxFlow(int n)
 		{
 			n_ = n;
-			position_ = new LightList<(int first, int second)>();
-			edges_ = new LightList<EdgeInternal>[n];
-			for (int i = 0; i < n; i++) {
-				edges_[i] = new LightList<EdgeInternal>();
-			}
+			edgeInfos_ = new List<(int v, int index)>();
+			edges_ = new JagList2<EdgeInternal>(n);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void AddEdge(int from, int to, long capacity)
 		{
-			position_.Add((from, edges_[from].Count));
-			edges_[from].Add(new EdgeInternal(to, capacity, edges_[to].Count));
-			edges_[to].Add(new EdgeInternal(from, 0, edges_[from].Count - 1));
+			edgeInfos_.Add((from, edges_.Raw[from].Count));
+			edges_.Add(from, new EdgeInternal(to, capacity, edges_.Raw[to].Count));
+			edges_.Add(to, new EdgeInternal(from, 0, edges_.Raw[from].Count - 1));
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Build()
+		{
+			edges_.Build();
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private Edge GetFlowedEdge(int i)
 		{
-			var to = flowedEdges_[position_[i].first][position_[i].second];
+			var to = flowedEdges_[edgeInfos_[i].v][edgeInfos_[i].index];
 			var from = flowedEdges_[to.To][to.ReverseEdgeIndex];
 			return new Edge(
-				position_[i].first, to.To, (to.Capacity + from.Capacity), from.Capacity);
+				edgeInfos_[i].v, to.To, (to.Capacity + from.Capacity), from.Capacity);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ReadOnlySpan<Edge> GetFlowedEdges()
 		{
 			if (flowedEdges_ is null) {
 				flowedEdges_ = edges_;
 			}
 
-			var result = new Edge[position_.Count];
-			for (int i = 0; i < result.Length; i++) {
+			var result = new Edge[edgeInfos_.Count];
+			for (int i = 0; i < result.Length; ++i) {
 				result[i] = GetFlowedEdge(i);
 			}
 
 			return result;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long Fulkerson(int s, int t, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -66,19 +74,17 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 
 				done[s] = true;
-				var edgess = flowedEdges_.AsSpan();
-				var edges = edgess[s].AsSpan();
-				for (int i = 0; i < edges.Length; i++) {
+				var edges = flowedEdges_[s];
+				for (int i = 0; i < edges.Length; ++i) {
 					ref var edge = ref edges[i];
 					if (done[edge.To] == false && edge.Capacity > 0) {
 						long d = Dfs(edge.To, t, Math.Min(f, edge.Capacity), done);
 						if (d > 0) {
 							edge.Capacity -= d;
-							edgess[edge.To].AsSpan()[edge.ReverseEdgeIndex].Capacity += d;
+							flowedEdges_[edge.To][edge.ReverseEdgeIndex].Capacity += d;
 							return d;
 						}
 					}
-
 				}
 
 				return 0;
@@ -98,6 +104,7 @@ namespace TakyTank.KyoProLib.CSharp
 			return flow;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long Dinic(int s, int t, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -113,11 +120,10 @@ namespace TakyTank.KyoProLib.CSharp
 				d[s] = 0;
 				var q = new Queue<int>();
 				q.Enqueue(s);
-				var edgess = flowedEdges_.AsSpan();
 				while (q.Count > 0) {
 					int v = q.Dequeue();
-					for (int i = 0; i < edgess[v].Count; i++) {
-						var edge = edgess[v][i];
+					var edges = flowedEdges_[v];
+					foreach (var edge in edges) {
 						if (edge.Capacity > 0 && d[edge.To] < 0) {
 							d[edge.To] = d[v] + 1;
 							q.Enqueue(edge.To);
@@ -134,15 +140,14 @@ namespace TakyTank.KyoProLib.CSharp
 					return f;
 				}
 
-				var edgess = flowedEdges_.AsSpan();
-				var edges = edgess[s].AsSpan();
+				var edges = flowedEdges_[s];
 				for (; done[s] < edges.Length; done[s]++) {
 					ref var edge = ref edges[done[s]];
 					if (edge.Capacity > 0 && distance[s] < distance[edge.To]) {
 						long d = Dfs(edge.To, t, Math.Min(f, edge.Capacity), done, distance);
 						if (d > 0) {
 							edge.Capacity -= d;
-							edgess[edge.To].AsSpan()[edge.ReverseEdgeIndex].Capacity += d;
+							flowedEdges_[edge.To][edge.ReverseEdgeIndex].Capacity += d;
 							return d;
 						}
 					}
@@ -172,19 +177,18 @@ namespace TakyTank.KyoProLib.CSharp
 			return flow;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void CopyEdges()
 		{
-			flowedEdges_ = new LightList<EdgeInternal>[n_];
-			for (int i = 0; i < n_; i++) {
-				flowedEdges_[i] = new LightList<EdgeInternal>();
-			}
-
-			for (int i = 0; i < n_; i++) {
-				var span = edges_[i].AsSpan();
-				for (int j = 0; j < span.Length; j++) {
-					flowedEdges_[i].Add(span[j]);
+			flowedEdges_ = new JagList2<EdgeInternal>(n_);
+			for (int i = 0; i < n_; ++i) {
+				var edges = edges_[i];
+				foreach (var edge in edges) {
+					flowedEdges_.Add(i, edge);
 				}
 			}
+
+			flowedEdges_.Build();
 		}
 
 		private struct EdgeInternal
