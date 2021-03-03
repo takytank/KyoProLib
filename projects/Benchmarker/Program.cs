@@ -7,7 +7,7 @@ namespace Benchmarker
 	{
 		static void Main()
 		{
-			BenchmarkRunner.Run<MeasureBitOp>();
+			BenchmarkRunner.Run<MeasureRedBlackTree>();
 		}
 	}
 }

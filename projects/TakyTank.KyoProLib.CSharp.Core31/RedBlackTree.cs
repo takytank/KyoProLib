@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.Core31
@@ -35,6 +36,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			var arr = InitializeArray(collection);
 			root_ = ConstructRootFromSortedArray(arr, 0, arr.Length - 1, null);
 		}
+
+		public T this[int index] => Find(index);
 
 		public int Count => CountOf(root_);
 		public T Min
@@ -71,63 +74,18 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool Contains(T item) => FindNode(item) is null == false;
-		public Node FindNode(T item)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int IndexOf(T item) => Index(FindNode(item));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T Find(int index)
 		{
-			Node current = root_;
-			while (current is null == false) {
-				int cmp = comparer_(item, current.Item);
-				if (cmp == 0) {
-					return current;
-				}
-
-				current = cmp < 0 ? current.Left : current.Right;
-			}
-
-			return null;
+			var node = FindNodeByIndex(index);
+			return node is null == false ? node.Item : default;
 		}
 
-		public int Index(Node node)
-		{
-			var ret = CountOf(node.Left);
-			Node prev = node;
-			node = node.Parent;
-			while (prev != root_) {
-				if (node.Left != prev) {
-					ret += CountOf(node.Left) + 1;
-				}
-
-				prev = node;
-				node = node.Parent;
-			}
-
-			return ret;
-		}
-		public Node FindByIndex(int index)
-		{
-			var current = root_;
-			var currentIndex = current.Size - CountOf(current.Right) - 1;
-			while (currentIndex != index) {
-				if (currentIndex > index) {
-					current = current.Left;
-					if (current is null) {
-						break;
-					}
-
-					currentIndex -= CountOf(current.Right) + 1;
-				} else {
-					current = current.Right;
-					if (current is null) {
-						break;
-					}
-
-					currentIndex += CountOf(current.Left) + 1;
-				}
-			}
-
-			return current;
-		}
-
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(T item)
 		{
 			if (root_ is null) {
@@ -147,9 +105,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					return;
 				}
 
-				if (Is4Node(current)) {
-					Split4Node(current);
-					if (IsNonNullRed(parent) == true) {
+				if (current.Is4Node()) {
+					current.Split4Node();
+					if (Node.IsNonNullRed(parent) == true) {
 						InsertionBalance(current, ref parent, grandParent, greatGrandParent);
 					}
 				}
@@ -174,7 +132,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			root_.IsRed = false;
 		}
 
-		public bool RemoveAt(int index) => Remove(FindByIndex(index).Item);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool RemoveAt(int index) => Remove(FindNodeByIndex(index).Item);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool Remove(T item)
 		{
 			if (root_ is null) {
@@ -188,16 +148,16 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			Node parentOfMatch = null;
 			bool foundMatch = false;
 			while (current is null == false) {
-				if (Is2Node(current)) {
+				if (current.Is2Node()) {
 					if (parent is null) {
 						current.IsRed = true;
 					} else {
-						Node sibling = GetSibling(current, parent);
+						Node sibling = parent.GetSibling(current);
 						if (sibling.IsRed) {
 							if (parent.Right == sibling) {
-								RotateLeft(parent);
+								parent.RotateLeft();
 							} else {
-								RotateRight(parent);
+								parent.RotateRight();
 							}
 
 							parent.IsRed = true;
@@ -211,11 +171,11 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 							sibling = (parent.Left == current) ? parent.Right : parent.Left;
 						}
 
-						if (Is2Node(sibling)) {
-							Merge2Nodes(parent);
+						if (sibling.Is2Node()) {
+							parent.Merge2Nodes();
 						} else {
-							TreeRotation rotation = GetRotation(parent, current, sibling);
-							Node newGrandParent = Rotate(parent, rotation);
+							TreeRotation rotation = parent.GetRotation(current, sibling);
+							Node newGrandParent = parent.Rotate(rotation);
 							newGrandParent.IsRed = parent.IsRed;
 							parent.IsRed = false;
 							current.IsRed = true;
@@ -250,11 +210,13 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			return foundMatch;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Clear()
 		{
 			root_ = null;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void CopyTo(T[] array, int arrayIndex)
 		{
 			foreach (var item in this) {
@@ -262,13 +224,18 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			}
 		}
 
-		public (Node node, int index) BinarySearch(T item, bool isLowerBound)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, T value) LowerBound(T item) => BinarySearch(item, true);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, T value) UpperBound(T item) => BinarySearch(item, false);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, T value) BinarySearch(T item, bool isLowerBound)
 		{
 			Node right = null;
 			int ri = -1;
 			Node current = root_;
 			if (current is null) {
-				return (right, ri);
+				return (ri, default);
 			}
 
 			ri = 0;
@@ -283,141 +250,77 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				}
 			}
 
-			return (right, ri);
+			return right is null == false ? (ri, right.Item) : (ri, default);
 		}
-		public Node FindNodeLowerBound(T item) => BinarySearch(item, true).node;
-		public Node FindNodeUpperBound(T item) => BinarySearch(item, false).node;
-		public T LowerBoundItem(T item) => BinarySearch(item, true).node.Item;
-		public T UpperBoundItem(T item) => BinarySearch(item, false).node.Item;
-		public int LowerBoundIndex(T item) => BinarySearch(item, true).index;
-		public int UpperBoundIndex(T item) => BinarySearch(item, false).index;
 
-		bool ICollection<T>.IsReadOnly => false;
-		public IEnumerable<T> Reversed()
-		{
-			var e = new Enumerator(this, true, null);
-			while (e.MoveNext()) {
-				yield return e.Current;
-			}
-		}
-		public IEnumerable<T> Enumerate(Node from) => Enumerate(from, false);
-		public IEnumerable<T> Enumerate(Node from, bool reverse)
-		{
-			if (from is null) {
-				yield break;
-			}
-
-			var e = new Enumerator(this, reverse, from);
-			while (e.MoveNext()) {
-				yield return e.Current;
-			}
-		}
-		public Enumerator GetEnumerator() => new Enumerator(this);
-		IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => new Enumerator(this);
-
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static int CountOf(Node node) => node is null ? 0 : node.Size;
-		private static bool Is2Node(Node node) => IsNonNullBlack(node) && IsNullOrBlack(node.Left) && IsNullOrBlack(node.Right);
-		private static bool Is4Node(Node node) => IsNonNullRed(node.Left) && IsNonNullRed(node.Right);
-		private static bool IsNonNullRed(Node node) => node is null == false && node.IsRed;
-		private static bool IsNonNullBlack(Node node) => node is null == false && !node.IsRed;
-		private static bool IsNullOrBlack(Node node) => node is null || !node.IsRed;
 
-		private static void Merge2Nodes(Node parent)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private Node FindNode(T item)
 		{
-			parent.IsRed = false;
-			parent.Left.IsRed = true;
-			parent.Right.IsRed = true;
-		}
-
-		private static void Split4Node(Node node)
-		{
-			node.IsRed = true;
-			node.Left.IsRed = false;
-			node.Right.IsRed = false;
-		}
-
-		private static Node GetSibling(Node node, Node parent)
-		{
-			return parent.Left == node ? parent.Right : parent.Left;
-		}
-
-		private static Node Rotate(Node node, TreeRotation rotation)
-		{
-			switch (rotation) {
-				case TreeRotation.Right:
-					node.Left.Left.IsRed = false;
-					return RotateRight(node);
-
-				case TreeRotation.Left:
-					node.Right.Right.IsRed = false;
-					return RotateLeft(node);
-
-				case TreeRotation.RightLeft:
-					return RotateRightLeft(node);
-
-				case TreeRotation.LeftRight:
-					return RotateLeftRight(node);
-
-				default: throw new InvalidOperationException();
-			}
-		}
-
-		private static Node RotateLeft(Node node)
-		{
-			Node child = node.Right;
-			node.Right = child.Left;
-			child.Left = node;
-			return child;
-		}
-
-		private static Node RotateLeftRight(Node node)
-		{
-			Node child = node.Left;
-			Node grandChild = child.Right;
-			node.Left = grandChild.Right;
-			grandChild.Right = node;
-			child.Right = grandChild.Left;
-			grandChild.Left = child;
-			return grandChild;
-		}
-
-		private static Node RotateRight(Node node)
-		{
-			Node child = node.Left;
-			node.Left = child.Right;
-			child.Right = node;
-			return child;
-		}
-
-		private static Node RotateRightLeft(Node node)
-		{
-			Node child = node.Right;
-			Node grandChild = child.Left;
-			node.Right = grandChild.Left;
-			grandChild.Left = node;
-			child.Left = grandChild.Right;
-			grandChild.Right = child;
-			return grandChild;
-		}
-
-		private static TreeRotation GetRotation(Node parent, Node current, Node sibling)
-		{
-			if (IsNonNullRed(sibling.Left)) {
-				if (parent.Left == current) {
-					return TreeRotation.RightLeft;
+			Node current = root_;
+			while (current is null == false) {
+				int cmp = comparer_(item, current.Item);
+				if (cmp == 0) {
+					return current;
 				}
 
-				return TreeRotation.Right;
-			} else {
-				if (parent.Left == current) {
-					return TreeRotation.Left;
-				}
-
-				return TreeRotation.LeftRight;
+				current = cmp < 0 ? current.Left : current.Right;
 			}
+
+			return null;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private int Index(Node node)
+		{
+			if (node is null) {
+				return -1;
+			}
+
+			var ret = CountOf(node.Left);
+			Node prev = node;
+			node = node.Parent;
+			while (prev != root_) {
+				if (node.Left != prev) {
+					ret += CountOf(node.Left) + 1;
+				}
+
+				prev = node;
+				node = node.Parent;
+			}
+
+			return ret;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private Node FindNodeByIndex(int index)
+		{
+			var current = root_;
+			var currentIndex = current.Size - CountOf(current.Right) - 1;
+			while (currentIndex != index) {
+				if (currentIndex > index) {
+					current = current.Left;
+					if (current is null) {
+						break;
+					}
+
+					currentIndex -= CountOf(current.Right) + 1;
+				} else {
+					current = current.Right;
+					if (current is null) {
+						break;
+					}
+
+					currentIndex += CountOf(current.Left) + 1;
+				}
+			}
+
+			return current;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private T[] InitializeArray(IEnumerable<T> collection)
 		{
 			T[] array;
@@ -439,6 +342,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			return array;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static Node ConstructRootFromSortedArray(T[] arr, int startIndex, int endIndex, Node redNode)
 		{
 			int size = endIndex - startIndex + 1;
@@ -490,6 +394,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			return root;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void ReplaceNode(Node match, Node parentOfMatch, Node succesor, Node parentOfSuccesor)
 		{
 			if (succesor == match) {
@@ -514,15 +419,20 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			ReplaceChildOrRoot(parentOfMatch, match, succesor);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void InsertionBalance(Node current, ref Node parent, Node grandParent, Node greatGrandParent)
 		{
 			bool parentIsOnRight = grandParent.Right == parent;
 			bool currentIsOnRight = parent.Right == current;
 			Node newChildOfGreatGrandParent;
 			if (parentIsOnRight == currentIsOnRight) {
-				newChildOfGreatGrandParent = currentIsOnRight ? RotateLeft(grandParent) : RotateRight(grandParent);
+				newChildOfGreatGrandParent = currentIsOnRight
+					? grandParent.RotateLeft()
+					: grandParent.RotateRight();
 			} else {
-				newChildOfGreatGrandParent = currentIsOnRight ? RotateLeftRight(grandParent) : RotateRightLeft(grandParent);
+				newChildOfGreatGrandParent = currentIsOnRight
+					? grandParent.RotateLeftRight()
+					: grandParent.RotateRightLeft();
 				parent = greatGrandParent;
 			}
 
@@ -531,6 +441,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			ReplaceChildOrRoot(greatGrandParent, grandParent, newChildOfGreatGrandParent);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void ReplaceChildOrRoot(Node parent, Node child, Node newChild)
 		{
 			if (parent is null == false) {
@@ -544,144 +455,20 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			}
 		}
 
-		public struct Enumerator : IEnumerator<T>
+		bool ICollection<T>.IsReadOnly => false;
+		public IEnumerable<T> Reverse()
 		{
-			private readonly RedBlackTree<T> tree_;
-			private readonly Stack<Node> stack_;
-			private readonly bool reverse_;
-			private Node current_;
-
-			internal Enumerator(RedBlackTree<T> set)
-				: this(set, false, null)
-			{
-			}
-
-			internal Enumerator(RedBlackTree<T> set, bool reverse, Node startNode)
-			{
-				tree_ = set;
-				stack_ = new Stack<Node>(2 * Log2(tree_.Count + 1));
-				current_ = null;
-				reverse_ = reverse;
-				if (startNode is null) {
-					IntializeAll();
-				} else {
-					Intialize(startNode);
-				}
-			}
-
-			private void IntializeAll()
-			{
-				var node = tree_.root_;
-				while (node is null == false) {
-					var next = reverse_ ? node.Right : node.Left;
-					stack_.Push(node);
-					node = next;
-				}
-			}
-
-			private void Intialize(Node startNode)
-			{
-				if (startNode is null) {
-					throw new InvalidOperationException(nameof(startNode) + "is null");
-				}
-
-				current_ = null;
-				var node = startNode;
-				var list = new List<Node>(Log2(tree_.Count + 1));
-				var comparer = tree_.comparer_;
-				if (reverse_) {
-					while (node is null == false) {
-						list.Add(node);
-						var parent = node.Parent;
-						if (parent is null || parent.Left == node) {
-							node = parent;
-							break;
-						}
-
-						node = parent;
-					}
-
-					while (node is null == false) {
-						var parent = node.Parent;
-						if (parent is null || parent.Right == node) {
-							node = parent;
-							break;
-						}
-
-						node = parent;
-					}
-
-					while (node is null == false) {
-						if (comparer(startNode.Item, node.Item) >= 0) {
-							list.Add(node);
-						}
-						node = node.Parent;
-					}
-				} else {
-					while (node is null == false) {
-						list.Add(node);
-						var parent = node.Parent;
-						if (parent is null || parent.Right == node) {
-							node = parent;
-							break;
-						}
-
-						node = parent;
-					}
-
-					while (node is null == false) {
-						var parent = node.Parent;
-						if (parent is null || parent.Left == node) {
-							node = parent;
-							break;
-						}
-
-						node = parent;
-					}
-
-					while (node is null == false) {
-						if (comparer(startNode.Item, node.Item) <= 0) {
-							list.Add(node);
-						}
-						node = node.Parent;
-					}
-				}
-
-				list.Reverse();
-				foreach (var n in list) {
-					stack_.Push(n);
-				}
-			}
-
-			private static int Log2(int num) => num == 0 ? 0 : BitOperations.Log2((uint)num) + 1;
-			object System.Collections.IEnumerator.Current => Current;
-			public T Current => current_ is null ? default : current_.Item;
-			public bool MoveNext()
-			{
-				if (stack_.Count == 0) {
-					current_ = null;
-					return false;
-				}
-
-				current_ = stack_.Pop();
-				var node = reverse_ ? current_.Left : current_.Right;
-				while (node is null == false) {
-					var next = reverse_ ? node.Right : node.Left;
-					stack_.Push(node);
-					node = next;
-				}
-
-				return true;
-			}
-
-			public void Reset() => throw new NotSupportedException();
-
-			public void Dispose()
-			{
+			var e = new Enumerator(this, true);
+			while (e.MoveNext()) {
+				yield return e.Current;
 			}
 		}
 
-		public class Node
+		public Enumerator GetEnumerator() => new Enumerator(this);
+		IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => new Enumerator(this);
+
+		private class Node
 		{
 			public bool IsRed { get; set; }
 			public T Item { get; set; }
@@ -690,44 +477,22 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			private Node _Left;
 			public Node Left
 			{
-				get { return _Left; }
+				get => _Left;
 				set
 				{
 					_Left = value;
-					if (value is null == false) {
-						value.Parent = this;
-					}
-					for (var cur = this; cur is null == false; cur = cur.Parent) {
-						if (!cur.UpdateSize()) {
-							break;
-						}
-						if (cur.Parent is null == false && cur.Parent.Left != cur && cur.Parent.Right != cur) {
-							cur.Parent = null;
-							break;
-						}
-					}
+					Update(value);
 				}
 			}
 
 			private Node _Right;
 			public Node Right
 			{
-				get { return _Right; }
+				get => _Right;
 				set
 				{
 					_Right = value;
-					if (value is null == false) {
-						value.Parent = this;
-					}
-					for (var cur = this; cur is null == false; cur = cur.Parent) {
-						if (!cur.UpdateSize()) {
-							break;
-						}
-						if (cur.Parent is null == false && cur.Parent.Left != cur && cur.Parent.Right != cur) {
-							cur.Parent = null;
-							break;
-						}
-					}
+					Update(value);
 				}
 			}
 			public int Size { get; private set; } = 1;
@@ -737,6 +502,28 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				IsRed = isRed;
 			}
 
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public void Update(Node child)
+			{
+				if (child is null == false) {
+					child.Parent = this;
+				}
+
+				for (var cur = this; cur is null == false; cur = cur.Parent) {
+					if (!cur.UpdateSize()) {
+						break;
+					}
+
+					if (cur.Parent is null == false
+						&& cur.Parent.Left != cur
+						&& cur.Parent.Right != cur) {
+						cur.Parent = null;
+						return;
+					}
+				}
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public bool UpdateSize()
 			{
 				var oldsize = Size;
@@ -751,15 +538,189 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				Size = size;
 				return oldsize != size;
 			}
-			public override string ToString() => $"Size = {Size}, Item = {Item}";
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public static bool IsNonNullRed(Node node) => node is null == false && node.IsRed;
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public static bool IsNonNullBlack(Node node) => node is null == false && node.IsRed == false;
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public static bool IsNullOrBlack(Node node) => node is null || node.IsRed == false;
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public bool Is2Node() => IsRed == false && IsNullOrBlack(Left) && IsNullOrBlack(Right);
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public bool Is4Node() => IsNonNullRed(Left) && IsNonNullRed(Right);
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public void Merge2Nodes()
+			{
+				IsRed = false;
+				Left.IsRed = true;
+				Right.IsRed = true;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public void Split4Node()
+			{
+				IsRed = true;
+				Left.IsRed = false;
+				Right.IsRed = false;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public TreeRotation GetRotation(Node current, Node sibling)
+			{
+				if (IsNonNullRed(sibling.Left)) {
+					if (Left == current) {
+						return TreeRotation.RightLeft;
+					}
+
+					return TreeRotation.Right;
+				} else {
+					if (Left == current) {
+						return TreeRotation.Left;
+					}
+
+					return TreeRotation.LeftRight;
+				}
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public Node GetSibling(Node node)
+			{
+				return Left == node ? Right : Left;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public Node Rotate(TreeRotation rotation)
+			{
+				switch (rotation) {
+					default:
+					case TreeRotation.Right:
+						Left.Left.IsRed = false;
+						return RotateRight();
+
+					case TreeRotation.Left:
+						Right.Right.IsRed = false;
+						return RotateLeft();
+
+					case TreeRotation.RightLeft:
+						return RotateRightLeft();
+
+					case TreeRotation.LeftRight:
+						return RotateLeftRight();
+				}
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public Node RotateLeft()
+			{
+				Node child = Right;
+				Right = child.Left;
+				child.Left = this;
+				return child;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public Node RotateLeftRight()
+			{
+				Node child = Left;
+				Node grandChild = child.Right;
+				Left = grandChild.Right;
+				grandChild.Right = this;
+				child.Right = grandChild.Left;
+				grandChild.Left = child;
+				return grandChild;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public Node RotateRight()
+			{
+				Node child = Left;
+				Left = child.Right;
+				child.Right = this;
+				return child;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public Node RotateRightLeft()
+			{
+				Node child = Right;
+				Node grandChild = child.Left;
+				Right = grandChild.Left;
+				grandChild.Left = this;
+				child.Left = grandChild.Right;
+				grandChild.Right = child;
+				return grandChild;
+			}
+
+			public override string ToString() => $"size = {Size}, item = {Item}";
 		}
 
-		private enum TreeRotation : byte
+		public enum TreeRotation : byte
 		{
 			Left = 1,
 			Right = 2,
 			RightLeft = 3,
 			LeftRight = 4,
+		}
+
+		public struct Enumerator : IEnumerator<T>
+		{
+			private readonly RedBlackTree<T> tree_;
+			private readonly Stack<Node> stack_;
+			private readonly bool reverse_;
+			private Node current_;
+
+			internal Enumerator(RedBlackTree<T> tree, bool reverse = false)
+			{
+				tree_ = tree;
+				stack_ = new Stack<Node>(2 * Log2(tree_.Count + 1));
+				current_ = null;
+				reverse_ = reverse;
+				Intialize(tree_.root_);
+			}
+
+			private void Intialize(Node startNode)
+			{
+				current_ = null;
+				Node node = startNode;
+				Node next;
+				while (node != null) {
+					next = (reverse_ ? node.Right : node.Left);
+					stack_.Push(node);
+					node = next;
+				}
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			private static int Log2(int num) => num == 0 ? 0 : BitOperations.Log2((uint)num) + 1;
+			object System.Collections.IEnumerator.Current => Current;
+			public T Current => current_ is null ? default : current_.Item;
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public bool MoveNext()
+			{
+				if (stack_.Count == 0) {
+					current_ = null;
+					return false;
+				}
+
+				current_ = stack_.Pop();
+				var node = reverse_ ? current_.Left : current_.Right;
+				Node next;
+				while (node is null == false) {
+					next = reverse_ ? node.Right : node.Left;
+					stack_.Push(node);
+					node = next;
+				}
+
+				return true;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public void Reset() => throw new NotSupportedException();
+
+			public void Dispose() { }
 		}
 	}
 }
