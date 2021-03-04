@@ -93,6 +93,11 @@
 
 - [いもす法](https://imoz.jp/algorithms/imos_method.html)
 
+### IntervalSet
+
+- [std::setで区間を管理する奴](https://kkt89.hatenablog.com/entry/2020/10/14/std::set%E3%81%A7%E5%8C%BA%E9%96%93%E3%82%92%E7%AE%A1%E7%90%86%E3%81%99%E3%82%8B%E5%A5%B4)
+- [区間をsetで管理するやつ](https://satanic0258.github.io/snippets/data-structure/SegmentMap.html)
+
 ### LCS (Longest Common Subsequence)
 
 - 蟻本 56p
@@ -155,6 +160,10 @@
 ### RedBlackTree
 
 - [.Net Core SortedSet](https://source.dot.net/#System.Collections/System/Collections/Generic/SortedSet.cs,6f4f66b9b70e07ba)
+- [これで分かった赤黒木](http://wwwa.pikara.ne.jp/okojisan/rb-tree/index.html)
+- [赤黒木の本質](https://qiita.com/kgoto/items/b15b9a494deae010d660)
+- [平衡二分探索木(Red-Black-Tree)](https://ei1333.github.io/luzhiled/snippets/structure/red-black-tree.html)
+- [赤黒木を実装してみた](http://shifth.hatenablog.com/entry/2015/05/10/103528)
 
 ### Rerooting
 

@@ -225,6 +225,13 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, T value) Prev((int index, T value) node)
+			=> (node.index - 1, Find(node.index - 1));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, T value) Next((int index, T value) node)
+			=> (node.index + 1, Find(node.index + 1));
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (int index, T value) LowerBound(T item) => BinarySearch(item, true);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (int index, T value) UpperBound(T item) => BinarySearch(item, false);
