@@ -121,6 +121,10 @@
 
 - [ARC067 F Yakiniku Restaurants](https://atcoder.jp/contests/arc067/tasks/arc067_d)
 
+## IntervalSet
+
+- [CODE FESTIVAL 2015 予選B マスと駒と色塗り](https://atcoder.jp/contests/code-festival-2015-qualb/tasks/codefestival_2015_qualB_d)
+
 ## LevelAncestor
 
 - [ABC187 E Through Path](https://atcoder.jp/contests/abc187/tasks/abc187_e)
@@ -170,6 +174,11 @@
 ### RadixHeap32
 
 - [ABC184 E Third Avenue](https://atcoder.jp/contests/abc184/tasks/abc184_e)
+
+## RandomizedBinarySearchTree
+
+- [ABC157 E Simple String Queries](https://atcoder.jp/contests/abc157/tasks/abc157_e)
+- [ABC134 E Sequence Decomposing](https://atcoder.jp/contests/abc134/tasks/abc134_e)
 
 ## RedBlackTree
 

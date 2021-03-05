@@ -40,7 +40,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(long l, long r)
 		{
-			if (r > l) {
+			if (l > r) {
 				(l, r) = (r, l);
 			}
 
@@ -79,7 +79,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Remove(long l, long r)
 		{
-			if (r > l) {
+			if (l > r) {
 				(l, r) = (r, l);
 			}
 
@@ -98,6 +98,29 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			if (r < itR.value.r) {
 				set_.Add((Math.Max(itR.value.l, r), itR.value.r));
 			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, long l, long r) LowerBound(long p)
+		{
+			var lower = set_.LowerBound((p, p));
+			if (lower.value.l == p) {
+				return (lower.index, lower.value.l, lower.value.r);
+			}
+
+			var (index, value) = set_.Prev(lower);
+			if (value.r > p) {
+				return (index, value.l, value.r);
+			} else {
+				return (lower.index, lower.value.l, lower.value.r);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, long l, long r) UpperBound(long p)
+		{
+			var (index, value) = set_.UpperBound((p, p));
+			return (index, value.l, value.r);
 		}
 	}
 }
