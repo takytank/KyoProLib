@@ -124,6 +124,7 @@
 ## IntervalSet
 
 - [CODE FESTIVAL 2015 予選B マスと駒と色塗り](https://atcoder.jp/contests/code-festival-2015-qualb/tasks/codefestival_2015_qualB_d)
+- [ABC194 E Mex Min](https://atcoder.jp/contests/abc194/tasks/abc194_e)
 
 ## LevelAncestor
 

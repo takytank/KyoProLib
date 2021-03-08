@@ -97,6 +97,7 @@
 
 - [std::setで区間を管理する奴](https://kkt89.hatenablog.com/entry/2020/10/14/std::set%E3%81%A7%E5%8C%BA%E9%96%93%E3%82%92%E7%AE%A1%E7%90%86%E3%81%99%E3%82%8B%E5%A5%B4)
 - [区間をsetで管理するやつ](https://satanic0258.github.io/snippets/data-structure/SegmentMap.html)
+- [要素の追加・削除と mex を対数時間で処理するよ](https://rsk0315.hatenablog.com/entry/2020/10/11/125049)
 
 ### LCS (Longest Common Subsequence)
 
