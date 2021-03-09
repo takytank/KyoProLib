@@ -11,6 +11,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		where T : IComparable<T>
 	{
 		private readonly bool isMulti_;
+		private readonly Stack<Node> pool_ = new Stack<Node>();
 		private Node root_;
 
 		public RedBlackTree(bool isMulti = false)
@@ -77,7 +78,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		public void Add(T item)
 		{
 			if (root_ is null) {
-				root_ = new Node(item, false);
+				root_ = NewNode(item, false);
 				return;
 			}
 
@@ -106,7 +107,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				current = (order < 0) ? current.Left : current.Right;
 			}
 
-			Node node = new Node(item, true);
+			Node node = NewNode(item, true);
 			if (order >= 0) {
 				parent.Right = node;
 			} else {
@@ -189,6 +190,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			if (match is null == false) {
 				ReplaceNode(match, parentOfMatch, parent, grandParent);
+				match.Clear();
+				pool_.Push(match);
 			}
 
 			if (root_ is null == false) {
@@ -250,6 +253,19 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static int CountOf(Node node) => node is null ? 0 : node.Size;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private Node NewNode(T item, bool isRed)
+		{
+			if (pool_.Count > 0) {
+				var node = pool_.Pop();
+				node.Item = item;
+				node.IsRed = isRed;
+				return node;
+			} else {
+				return new Node(item, isRed);
+			}
+		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private Node FindNode(T item)
@@ -338,7 +354,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Node ConstructRootFromSortedArray(T[] arr, int startIndex, int endIndex, Node redNode)
+		private Node ConstructRootFromSortedArray(T[] arr, int startIndex, int endIndex, Node redNode)
 		{
 			int size = endIndex - startIndex + 1;
 			Node root;
@@ -347,7 +363,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					return null;
 
 				case 1:
-					root = new Node(arr[startIndex], false);
+					root = NewNode(arr[startIndex], false);
 					if (redNode is null == false) {
 						root.Left = redNode;
 					}
@@ -355,7 +371,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					break;
 
 				case 2:
-					root = new Node(arr[startIndex], false) { Right = new Node(arr[endIndex], true) };
+					root = NewNode(arr[startIndex], false);
+					root.Right = NewNode(arr[endIndex], true);
 					if (redNode is null == false) {
 						root.Left = redNode;
 					}
@@ -363,11 +380,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					break;
 
 				case 3:
-					root = new Node(arr[startIndex + 1], false) {
-						Left = new Node(arr[startIndex], false),
-						Right = new Node(arr[endIndex], false)
-					};
-
+					root = NewNode(arr[startIndex + 1], false);
+					root.Left = NewNode(arr[startIndex], false);
+					root.Right = NewNode(arr[endIndex], false);
 					if (redNode is null == false) {
 						root.Left.Left = redNode;
 					}
@@ -376,12 +391,11 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 				default:
 					int midpt = ((startIndex + endIndex) / 2);
-					root = new Node(arr[midpt], false) {
-						Left = ConstructRootFromSortedArray(arr, startIndex, midpt - 1, redNode),
-						Right = size % 2 == 0
-							? ConstructRootFromSortedArray(arr, midpt + 2, endIndex, new Node(arr[midpt + 1], true))
-							: ConstructRootFromSortedArray(arr, midpt + 1, endIndex, null)
-					};
+					root = NewNode(arr[midpt], false);
+					root.Left = ConstructRootFromSortedArray(arr, startIndex, midpt - 1, redNode);
+					root.Right = size % 2 == 0
+						? ConstructRootFromSortedArray(arr, midpt + 2, endIndex, NewNode(arr[midpt + 1], true))
+						: ConstructRootFromSortedArray(arr, midpt + 1, endIndex, null);
 
 					break;
 			}
@@ -495,6 +509,15 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			{
 				Item = item;
 				IsRed = isRed;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public void Clear()
+			{
+				Parent = null;
+				_Left = null;
+				_Right = null;
+				Size = 1;
 			}
 
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -723,6 +746,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 	{
 		private readonly Comparison<T> comparer_;
 		private readonly bool isMulti_;
+		private readonly Stack<Node> pool_ = new Stack<Node>();
 		private Node root_;
 
 		public RedBlackTreeG(bool isMulti = false)
@@ -801,7 +825,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		public void Add(T item)
 		{
 			if (root_ is null) {
-				root_ = new Node(item, false);
+				root_ = NewNode(item, false);
 				return;
 			}
 
@@ -830,7 +854,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				current = (order < 0) ? current.Left : current.Right;
 			}
 
-			Node node = new Node(item, true);
+			Node node = NewNode(item, true);
 			if (order >= 0) {
 				parent.Right = node;
 			} else {
@@ -913,6 +937,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			if (match is null == false) {
 				ReplaceNode(match, parentOfMatch, parent, grandParent);
+				match.Clear();
+				pool_.Push(match);
 			}
 
 			if (root_ is null == false) {
@@ -974,6 +1000,19 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static int CountOf(Node node) => node is null ? 0 : node.Size;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private Node NewNode(T item, bool isRed)
+		{
+			if (pool_.Count > 0) {
+				var node = pool_.Pop();
+				node.Item = item;
+				node.IsRed = isRed;
+				return node;
+			} else {
+				return new Node(item, isRed);
+			}
+		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private Node FindNode(T item)
@@ -1062,7 +1101,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Node ConstructRootFromSortedArray(T[] arr, int startIndex, int endIndex, Node redNode)
+		private Node ConstructRootFromSortedArray(T[] arr, int startIndex, int endIndex, Node redNode)
 		{
 			int size = endIndex - startIndex + 1;
 			Node root;
@@ -1071,7 +1110,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					return null;
 
 				case 1:
-					root = new Node(arr[startIndex], false);
+					root = NewNode(arr[startIndex], false);
 					if (redNode is null == false) {
 						root.Left = redNode;
 					}
@@ -1079,7 +1118,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					break;
 
 				case 2:
-					root = new Node(arr[startIndex], false) { Right = new Node(arr[endIndex], true) };
+					root = NewNode(arr[startIndex], false);
+					root.Right = NewNode(arr[endIndex], true);
 					if (redNode is null == false) {
 						root.Left = redNode;
 					}
@@ -1087,11 +1127,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					break;
 
 				case 3:
-					root = new Node(arr[startIndex + 1], false) {
-						Left = new Node(arr[startIndex], false),
-						Right = new Node(arr[endIndex], false)
-					};
-
+					root = NewNode(arr[startIndex + 1], false);
+					root.Left = NewNode(arr[startIndex], false);
+					root.Right = NewNode(arr[endIndex], false);
 					if (redNode is null == false) {
 						root.Left.Left = redNode;
 					}
@@ -1100,12 +1138,11 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 				default:
 					int midpt = ((startIndex + endIndex) / 2);
-					root = new Node(arr[midpt], false) {
-						Left = ConstructRootFromSortedArray(arr, startIndex, midpt - 1, redNode),
-						Right = size % 2 == 0
-							? ConstructRootFromSortedArray(arr, midpt + 2, endIndex, new Node(arr[midpt + 1], true))
-							: ConstructRootFromSortedArray(arr, midpt + 1, endIndex, null)
-					};
+					root = NewNode(arr[midpt], false);
+					root.Left = ConstructRootFromSortedArray(arr, startIndex, midpt - 1, redNode);
+					root.Right = size % 2 == 0
+						? ConstructRootFromSortedArray(arr, midpt + 2, endIndex, NewNode(arr[midpt + 1], true))
+						: ConstructRootFromSortedArray(arr, midpt + 1, endIndex, null);
 
 					break;
 			}
@@ -1219,6 +1256,15 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			{
 				Item = item;
 				IsRed = isRed;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public void Clear()
+			{
+				Parent = null;
+				_Left = null;
+				_Right = null;
+				Size = 1;
 			}
 
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
