@@ -5,12 +5,204 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.Core31
 {
-	public class IntervalSet
+	public class IntervalSet32
 	{
 		private readonly RedBlackTree<LR> set_;
 		private readonly bool mergesAdjacentInterval_;
 
-		public IntervalSet(long inf = long.MaxValue, bool mergesAdjacentInterval = true)
+		public IntervalSet32(int inf = int.MaxValue, bool mergesAdjacentInterval = true)
+		{
+			mergesAdjacentInterval_ = mergesAdjacentInterval;
+			set_ = new RedBlackTree<LR>() {
+				new LR(-inf, -inf),
+				new LR(inf, inf),
+			};
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int l, int r) GetInterval(int p)
+		{
+			var (index, value) = set_.LowerBound(new LR(p, p));
+			if (index < 0 || value.R <= p) {
+				return set_[^1].ToTuple();
+			} else {
+				return value.ToTuple();
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool IncludesSameInterval(int p, int q)
+		{
+			var (l, r) = GetInterval(p);
+			return l <= q && q < r;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(int p)
+		{
+			var right = set_.UpperBound(new LR(p, p));
+			var (_, left) = set_.Prev(right);
+			if (left.L <= p && p < left.R) {
+				return;
+			}
+
+			if (left.R == p) {
+				if (right.value.L != p + 1) {
+					set_.Remove(left);
+					set_.Add(new LR(left.L, p + 1));
+				} else {
+					set_.Remove(left);
+					set_.Remove(right.value);
+					set_.Add(new LR(left.L, right.value.R));
+				}
+			} else {
+				if (right.value.L != p + 1) {
+					set_.Add(new LR(p, p + 1));
+				} else {
+					set_.Remove(right.value);
+					set_.Add(new LR(p, right.value.R));
+				}
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(int l, int r)
+		{
+			if (l > r) {
+				(l, r) = (r, l);
+			}
+
+			var it = set_.LowerBound(new LR(l, r));
+			var t = set_[it.index - 1];
+			if (t.L <= l && l <= t.R) {
+				l = Math.Min(l, t.L);
+				r = Math.Max(r, t.R);
+				set_.RemoveAt(it.index - 1);
+			}
+
+			it = set_.LowerBound(new LR(l, r));
+			while (true) {
+				if (mergesAdjacentInterval_) {
+					if (l <= it.value.L && it.value.L <= r) {
+						r = Math.Max(r, it.value.R);
+						set_.RemoveAt(it.index);
+						it = (it.index, set_[it.index]);
+					} else {
+						break;
+					}
+				} else {
+					if (l < it.value.L && it.value.L < r) {
+						r = Math.Max(r, it.value.R);
+						set_.RemoveAt(it.index);
+						it = (it.index, set_[it.index]);
+					} else {
+						break;
+					}
+				}
+			}
+
+			set_.Add(new LR(l, r));
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Remove(int p)
+		{
+			var (_, value) = set_.Prev(set_.UpperBound(new LR(p, p)));
+			if (value.R <= p) {
+				return;
+			}
+
+			set_.Remove(value);
+			if (value.L < p) {
+				set_.Add(new LR(value.L, p));
+			}
+
+			if (p + 1 < value.R) {
+				set_.Add(new LR(p + 1, value.R));
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Remove(int l, int r)
+		{
+			if (l > r) {
+				(l, r) = (r, l);
+			}
+
+			var itL = set_.LowerBound(new LR(l, l));
+			var itR = set_.UpperBound(new LR(r, r));
+			itL = set_.Prev(itL);
+			itR = set_.Prev(itR);
+			for (int i = itR.index; i >= itL.index; i--) {
+				set_.RemoveAt(i);
+			}
+
+			if (itL.value.L < l) {
+				set_.Add(new LR(itL.value.L, Math.Min(itL.value.R, l)));
+			}
+
+			if (r < itR.value.R) {
+				set_.Add(new LR(Math.Max(itR.value.L, r), itR.value.R));
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Mex(int p = 0)
+		{
+			var (index, value) = set_.LowerBound(new LR(p, p));
+			if (index < 0 || value.L > p) {
+				return p;
+			} else {
+				return value.R;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, int l, int r) LowerBound(int p)
+		{
+			var lower = set_.LowerBound(new LR(p, p));
+			if (lower.value.L == p) {
+				return (lower.index, lower.value.L, lower.value.R);
+			}
+
+			var (index, value) = set_.Prev(lower);
+			if (value.R > p) {
+				return (index, value.L, value.R);
+			} else {
+				return (lower.index, lower.value.L, lower.value.R);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, int l, int r) UpperBound(int p)
+		{
+			var (index, value) = set_.UpperBound(new LR(p, p));
+			return (index, value.L, value.R);
+		}
+
+		private struct LR : IComparable<LR>
+		{
+			public int L { get; set; }
+			public int R { get; set; }
+			public LR(int l, int r)
+			{
+				L = l;
+				R = r;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public (int l, int r) ToTuple() => (L, R);
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public int CompareTo(LR other) => L.CompareTo(other.L);
+		}
+	}
+
+	public class IntervalSet64
+	{
+		private readonly RedBlackTree<LR> set_;
+		private readonly bool mergesAdjacentInterval_;
+
+		public IntervalSet64(long inf = long.MaxValue, bool mergesAdjacentInterval = true)
 		{
 			mergesAdjacentInterval_ = mergesAdjacentInterval;
 			set_ = new RedBlackTree<LR>() {
@@ -38,7 +230,33 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Add(long p) => Add(p, p + 1);
+		public void Add(long p)
+		{
+			var right = set_.UpperBound(new LR(p, p));
+			var (_, left) = set_.Prev(right);
+			if (left.L <= p && p < left.R) {
+				return;
+			}
+
+			if (left.R == p) {
+				if (right.value.L != p + 1) {
+					set_.Remove(left);
+					set_.Add(new LR(left.L, p + 1));
+				} else {
+					set_.Remove(left);
+					set_.Remove(right.value);
+					set_.Add(new LR(left.L, right.value.R));
+				}
+			} else {
+				if (right.value.L != p + 1) {
+					set_.Add(new LR(p, p + 1));
+				} else {
+					set_.Remove(right.value);
+					set_.Add(new LR(p, right.value.R));
+				}
+			}
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(long l, long r)
 		{
@@ -79,7 +297,23 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Remove(long p) => Remove(p, p + 1);
+		public void Remove(long p)
+		{
+			var (_, value) = set_.Prev(set_.UpperBound(new LR(p, p)));
+			if (value.R <= p) {
+				return;
+			}
+
+			set_.Remove(value);
+			if (value.L < p) {
+				set_.Add(new LR(value.L, p));
+			}
+
+			if (p + 1 < value.R) {
+				set_.Add(new LR(p + 1, value.R));
+			}
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Remove(long l, long r)
 		{
