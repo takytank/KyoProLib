@@ -9,6 +9,8 @@ namespace TakyTank.KyoProLib.CSharp
 {
 	public static class Helper
 	{
+		public static long INF => 1L << 60;
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static long Sqrt(this long value)
 		{
@@ -76,6 +78,20 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			return ret;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T Clamp<T>(this T value, T min, T max) where T : struct, IComparable<T>
+		{
+			if (value.CompareTo(min) <= 0) {
+				return min;
+			}
+
+			if (value.CompareTo(max) >= 0) {
+				return max;
+			}
+
+			return value;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

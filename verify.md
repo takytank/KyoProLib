@@ -202,7 +202,7 @@
 ### SegmentTree
 
 - [AtCoder Library Practice Contest J Segment Tree](https://atcoder.jp/contests/practice2/tasks/practice2_j)
-- [PAST05 N 旅行会社](https://atcoder.jp/contests/past202012-open/submissions/19096937)
+- [PAST05 N 旅行会社](https://atcoder.jp/contests/past202012-open/tasks/past202012_n)
 
 ### LazySegmentTree
 
@@ -227,6 +227,12 @@
 ## SlidingWindowAggregation
 
 - [第１４回日本情報オリンピック 予選（オンライン） F 財宝](https://atcoder.jp/contests/joi2015yo/tasks/joi2015yo_f)
+
+## SubArray
+
+### Kadane
+
+- [yukicoder No.1433 Two color sequence](https://yukicoder.me/problems/no/1433)
 
 ## TravelingSalesmanProblem
 
