@@ -83,7 +83,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Span<FftModInt<TMod>> Convolve<TMod>(Span<FftModInt<TMod>> a, Span<FftModInt<TMod>> b, int n, int m, int z)
+		private static Span<FftModInt<TMod>> Convolve<TMod>(
+			Span<FftModInt<TMod>> a, Span<FftModInt<TMod>> b, int n, int m, int z)
 			where TMod : struct, IFftMod
 		{
 			FftModInt<TMod>.Butterfly(a);
@@ -227,8 +228,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					int w = 1 << (ph - 1);
 					int p = 1 << (h - ph);
 					var now = Raw(1);
+					int shift = h - ph + 1;
 					for (int s = 0; s < w; s++) {
-						int offset = s << (h - ph + 1);
+						int offset = s << shift;
 						for (int i = 0; i < p; i++) {
 							var l = a[i + offset];
 							var r = a[i + offset + p] * now;
@@ -249,18 +251,19 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				for (int ph = h; ph >= 1; ph--) {
 					int w = 1 << (ph - 1);
 					int p = 1 << (h - ph);
-					var iNow = Raw(1);
+					var inverseNow = Raw(1);
+					int shift = h - ph + 1;
 					for (int s = 0; s < w; s++) {
-						int offset = s << (h - ph + 1);
+						int offset = s << shift;
 						for (int i = 0; i < p; i++) {
 							var l = a[i + offset];
 							var r = a[i + offset + p];
 							a[i + offset] = l + r;
 							a[i + offset + p] = Raw(
-								unchecked((int)((ulong)(default(T).Mod + l.Value - r.Value) * (ulong)iNow.Value % default(T).Mod)));
+								unchecked((int)((ulong)(default(T).Mod + l.Value - r.Value) * (ulong)inverseNow.Value % default(T).Mod)));
 						}
 
-						iNow *= sumIE_[BitScanForward(~(uint)s)];
+						inverseNow *= sumIE_[BitScanForward(~(uint)s)];
 					}
 				}
 			}
