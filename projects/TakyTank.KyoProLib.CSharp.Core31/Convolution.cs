@@ -278,7 +278,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				var n = a.Length;
 				var h = CeilPow2(n);
 				var registerLength = Vector<uint>.Count;
-				var modVector = new Vector<uint>(default(T).Mod);
+				var modVector = new Vector<uint>(mod_);
 				for (int ph = h; ph >= 1; ph--) {
 					int w = 1 << (ph - 1);
 					int p = 1 << (h - ph);
@@ -292,7 +292,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 								var r = a[i + offset + p];
 								a[i + offset] = l + r;
 								a[i + offset + p] = Raw(
-									unchecked((int)((ulong)(default(T).Mod + l.Value - r.Value)
+									unchecked((int)((ulong)(mod_ + l.Value - r.Value)
 										* (ulong)inverseNow.Value % default(T).Mod)));
 							}
 						} else {
@@ -331,7 +331,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			{
 				var x = v % default(T).Mod;
 				if (x < 0) {
-					x += default(T).Mod;
+					x += mod_;
 				}
 				return (uint)x;
 			}
@@ -339,7 +339,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			public static FftModInt<T> operator ++(FftModInt<T> value)
 			{
 				var v = value.v_ + 1;
-				if (v == default(T).Mod) {
+				if (v == mod_) {
 					v = 0;
 				}
 				return new FftModInt<T>(v);
@@ -349,7 +349,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			{
 				var v = value.v_;
 				if (v == 0) {
-					v = default(T).Mod;
+					v = mod_;
 				}
 				return new FftModInt<T>(v - 1);
 			}
@@ -357,8 +357,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			public static FftModInt<T> operator +(FftModInt<T> lhs, FftModInt<T> rhs)
 			{
 				var v = lhs.v_ + rhs.v_;
-				if (v >= default(T).Mod) {
-					v -= default(T).Mod;
+				if (v >= mod_) {
+					v -= mod_;
 				}
 				return new FftModInt<T>(v);
 			}
@@ -367,8 +367,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			{
 				unchecked {
 					var v = lhs.v_ - rhs.v_;
-					if (v >= default(T).Mod) {
-						v += default(T).Mod;
+					if (v >= mod_) {
+						v += mod_;
 					}
 					return new FftModInt<T>(v);
 				}
@@ -379,7 +379,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				return new FftModInt<T>((uint)((ulong)lhs.v_ * rhs.v_ % default(T).Mod));
 			}
 
-			public static FftModInt<T> operator /(FftModInt<T> lhs, FftModInt<T> rhs) => lhs * rhs.Inv();
+			public static FftModInt<T> operator /(FftModInt<T> lhs, FftModInt<T> rhs)
+				=> lhs * rhs.Inv();
 
 			public static FftModInt<T> operator +(FftModInt<T> value) => value;
 			public static FftModInt<T> operator -(FftModInt<T> value) => new FftModInt<T>() - value;
@@ -411,7 +412,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				if (default(T).IsPrime) {
 					return Pow(default(T).Mod - 2);
 				} else {
-					var (_, x) = InverseGCD(v_, default(T).Mod);
+					var (_, x) = InverseGCD(v_, mod_);
 					return new FftModInt<T>(x);
 				}
 			}
