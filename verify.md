@@ -38,6 +38,10 @@
 
 - [第７回日本情報オリンピック 本選 E ペンキの色](https://atcoder.jp/contests/joi2008ho/tasks/joi2008ho_e)
 
+## Convolution
+
+- [ABC196 F Substring 2](https://atcoder.jp/contests/abc196/submissions/21127433)
+
 ## Deque
 
 - [ABC176 D Wizard in Maze](https://atcoder.jp/contests/abc176/tasks/abc176_d)
