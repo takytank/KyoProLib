@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.Core31
@@ -207,23 +208,26 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		private readonly struct FftModInt<T> where T : struct, IFftMod
 		{
 			private readonly uint v_;
-			public int Value => (int)v_;
-			public static int Mod => (int)default(T).Mod;
-
+			private static readonly uint mod_ = default(T).Mod;
 			private static readonly FftModInt<T>[] sumE_ = CalcurateSumE();
 			private static readonly FftModInt<T>[] sumIE_ = CalcurateSumIE();
 
+			public int Value => (int)v_;
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public static FftModInt<T> Raw(int v)
 			{
 				var u = unchecked((uint)v);
 				return new FftModInt<T>(u);
 			}
 
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public static void Butterfly(Span<FftModInt<T>> a)
 			{
 				var n = a.Length;
 				var h = CeilPow2(n);
-
+				var registerLength = Vector<uint>.Count;
+				var modVector = new Vector<uint>(mod_);
 				for (int ph = 1; ph <= h; ph++) {
 					int w = 1 << (ph - 1);
 					int p = 1 << (h - ph);
@@ -231,11 +235,36 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					int shift = h - ph + 1;
 					for (int s = 0; s < w; s++) {
 						int offset = s << shift;
-						for (int i = 0; i < p; i++) {
-							var l = a[i + offset];
-							var r = a[i + offset + p] * now;
-							a[i + offset] = l + r;
-							a[i + offset + p] = l - r;
+						if (p < registerLength) {
+							for (int i = 0; i < p; i++) {
+								var l = a[i + offset];
+								var r = a[i + offset + p] * now;
+								a[i + offset] = l + r;
+								a[i + offset + p] = l - r;
+							}
+						} else {
+							var spanL = a.Slice(offset, p);
+							var spanR = a.Slice(offset + p, p);
+							foreach (ref var r in spanR) {
+								r *= now;
+							}
+
+							var spanL_u = MemoryMarshal.Cast<FftModInt<T>, uint>(spanL);
+							var spanR_u = MemoryMarshal.Cast<FftModInt<T>, uint>(spanR);
+							for (int i = 0; i < spanL_u.Length; i += registerLength) {
+								var targetL = spanL_u[i..];
+								var targetR = spanR_u[i..];
+								var l = new Vector<uint>(targetL);
+								var r = new Vector<uint>(targetR);
+								var add = l + r;
+								var sub = l - r;
+								var condition = Vector.GreaterThanOrEqual(add, modVector);
+								add = Vector.ConditionalSelect(condition, add - modVector, add);
+								condition = Vector.GreaterThanOrEqual(sub, modVector);
+								sub = Vector.ConditionalSelect(condition, sub + modVector, sub);
+								add.CopyTo(targetL);
+								sub.CopyTo(targetR);
+							}
 						}
 
 						now *= sumE_[BitScanForward(~(uint)s)];
@@ -243,11 +272,13 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				}
 			}
 
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public static void ButterflyInv(Span<FftModInt<T>> a)
 			{
 				var n = a.Length;
 				var h = CeilPow2(n);
-
+				var registerLength = Vector<uint>.Count;
+				var modVector = new Vector<uint>(default(T).Mod);
 				for (int ph = h; ph >= 1; ph--) {
 					int w = 1 << (ph - 1);
 					int p = 1 << (h - ph);
@@ -255,12 +286,37 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					int shift = h - ph + 1;
 					for (int s = 0; s < w; s++) {
 						int offset = s << shift;
-						for (int i = 0; i < p; i++) {
-							var l = a[i + offset];
-							var r = a[i + offset + p];
-							a[i + offset] = l + r;
-							a[i + offset + p] = Raw(
-								unchecked((int)((ulong)(default(T).Mod + l.Value - r.Value) * (ulong)inverseNow.Value % default(T).Mod)));
+						if (p < registerLength) {
+							for (int i = 0; i < p; i++) {
+								var l = a[i + offset];
+								var r = a[i + offset + p];
+								a[i + offset] = l + r;
+								a[i + offset + p] = Raw(
+									unchecked((int)((ulong)(default(T).Mod + l.Value - r.Value)
+										* (ulong)inverseNow.Value % default(T).Mod)));
+							}
+						} else {
+							var spanL = a.Slice(offset, p);
+							var spanR = a.Slice(offset + p, p);
+							var spanL_u = MemoryMarshal.Cast<FftModInt<T>, uint>(spanL);
+							var spanR_u = MemoryMarshal.Cast<FftModInt<T>, uint>(spanR);
+							for (int i = 0; i < spanL_u.Length; i += registerLength) {
+								var targetL = spanL_u[i..];
+								var targetR = spanR_u[i..];
+								var l = new Vector<uint>(targetL);
+								var r = new Vector<uint>(targetR);
+								var add = l + r;
+								var sub = l - r;
+								var condition = Vector.GreaterThanOrEqual(add, modVector);
+								add = Vector.ConditionalSelect(condition, add - modVector, add);
+								sub += modVector;
+								add.CopyTo(targetL);
+								sub.CopyTo(targetR);
+							}
+
+							foreach (ref var r in spanR) {
+								r *= inverseNow;
+							}
 						}
 
 						inverseNow *= sumIE_[BitScanForward(~(uint)s)];
@@ -270,6 +326,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			public FftModInt(long v) : this(Round(v)) { }
 			private FftModInt(uint v) => v_ = v;
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			private static uint Round(long v)
 			{
 				var x = v % default(T).Mod;
@@ -331,6 +388,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			public static implicit operator FftModInt<T>(int value) => new FftModInt<T>(value);
 			public static implicit operator FftModInt<T>(long value) => new FftModInt<T>(value);
 
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public FftModInt<T> Pow(long n)
 			{
 				var x = this;
@@ -347,6 +405,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				return r;
 			}
 
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public FftModInt<T> Inv()
 			{
 				if (default(T).IsPrime) {
@@ -356,11 +415,12 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					return new FftModInt<T>(x);
 				}
 			}
-
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public override string ToString() => v_.ToString();
 			public override bool Equals(object obj) => obj is FftModInt<T> value && this == value;
 			public override int GetHashCode() => v_.GetHashCode();
 
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			private static FftModInt<T>[] CalcurateSumE()
 			{
 				int g = default(T).PrimitiveRoot;
@@ -389,6 +449,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				return sumE;
 			}
 
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			private static FftModInt<T>[] CalcurateSumIE()
 			{
 				int g = default(T).PrimitiveRoot;
