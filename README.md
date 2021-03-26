@@ -45,6 +45,13 @@
 
 - [ちょっと変わったセグメント木の使い方](https://ei1333.hateblo.jp/entry/2017/12/14/000000)
 
+### DynamicLazySegmentTree
+
+- [Dynamic Segment Tree の ACL 風実装](https://lorent-kyopro.hatenablog.com/entry/2021/03/12/025644)
+- [動的な Segment Tree のテクニック](https://kazuma8128.hatenablog.com/entry/2018/11/29/093827)
+- [LorentさんのTweet](https://twitter.com/lorent_kyopro/status/1375031645623873538)
+- [↑のリンク先](https://atcoder.jp/contests/arc115/submissions/21244628)
+
 ### EulerTotient
 
 - 蟻本261p

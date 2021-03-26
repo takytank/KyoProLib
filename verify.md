@@ -61,6 +61,12 @@
 
 - [PAST05 N 旅行会社](https://atcoder.jp/contests/past202012-open/tasks/past202012_n)
 
+## DynamicSegmentTree
+
+### DynamicLazySegmentTree
+
+- [ARC115 E LEQ and NEQ](https://atcoder.jp/contests/arc115/tasks/arc115_e)
+
 ## EulerTotient
 
 - [yukicoder 1339 循環小数](https://yukicoder.me/problems/no/1339)
