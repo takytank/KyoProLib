@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
 	public struct ModInt
 	{
-		public const long P = 1000000007;
-		//public const long P = 998244353;
+		//public const long P = 1000000007;
+		public const long P = 998244353;
 		//public const long P = 2;
 		public const long ROOT = 3;
 
@@ -87,8 +88,11 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public static implicit operator ModInt(long n) => new ModInt(n, true);
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ModInt Inverse(ModInt value) => Pow(value, P - 2);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ModInt Pow(ModInt value, long k) => Pow(value.value_, k);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ModInt Pow(long value, long k)
 		{
 			long ret = 1;
@@ -104,40 +108,60 @@ namespace TakyTank.KyoProLib.CSharp
 			return new ModInt(ret);
 		}
 
-		public static Span<ModInt> NTT(Span<int> values, bool inverses = false)
-			=> NumberTheoreticTransform(values, inverses);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<ModInt> NTT(Span<int> values, bool inverses = false, bool extends = false)
+			=> NumberTheoreticTransform(values, inverses, extends);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<ModInt> NumberTheoreticTransform(
-			Span<int> values, bool inverses = false)
+			Span<int> values, bool inverses = false, bool extends = false)
 		{
-			var mods = new ModInt[values.Length];
-			for (int i = 0; i < mods.Length; ++i) {
+			int n = extends == false ? values.Length : CeilPow2(values.Length);
+			var mods = new ModInt[n];
+			for (int i = 0; i < values.Length; ++i) {
 				mods[i] = new ModInt(values[i]);
 			}
 
-			return NumberTheoreticTransform(mods, inverses);
+			return NumberTheoreticTransform(mods, inverses, false, true);
 		}
 
-		public static Span<ModInt> NTT(Span<long> values, bool inverses = false)
-			=> NumberTheoreticTransform(values, inverses);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<ModInt> NTT(Span<long> values, bool inverses = false, bool extends = false)
+			=> NumberTheoreticTransform(values, inverses, extends);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<ModInt> NumberTheoreticTransform(
-			Span<long> values, bool inverses = false)
+			Span<long> values, bool inverses = false, bool extends = false)
 		{
-			var mods = new ModInt[values.Length];
-			for (int i = 0; i < mods.Length; ++i) {
+			int n = extends == false ? values.Length : CeilPow2(values.Length);
+			var mods = new ModInt[n];
+			for (int i = 0; i < values.Length; ++i) {
 				mods[i] = new ModInt(values[i]);
 			}
 
-			return NumberTheoreticTransform(mods, inverses);
+			return NumberTheoreticTransform(mods, inverses, false, true);
 		}
 
-		public static Span<ModInt> NTT(Span<ModInt> values, bool inverses = false)
-			=> NumberTheoreticTransform(values, inverses);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<ModInt> NTT(
+			Span<ModInt> values, bool inverses = false, bool extends = false, bool inplaces = true)
+			=> NumberTheoreticTransform(values, inverses, extends, inplaces);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<ModInt> NumberTheoreticTransform(
-			Span<ModInt> a, bool inverses = false)
+			Span<ModInt> a, bool inverses = false, bool extends = false, bool inplaces = true)
 		{
 			int n = a.Length;
+			if (extends) {
+				n = CeilPow2(n);
+				inplaces = false;
+			}
+
+			var ret = a;
+			if (inplaces == false) {
+				ret = new ModInt[n];
+				a.CopyTo(ret);
+			}
+
 			if (n == 1) {
-				return a;
+				return ret;
 			}
 
 			var b = new ModInt[n].AsSpan();
@@ -158,36 +182,58 @@ namespace TakyTank.KyoProLib.CSharp
 				for (int j = 0; j < l; ++j, r += i) {
 					s = kp[i * j];
 					for (int k = 0; k < i; ++k) {
-						var p = a[k + r];
-						var q = a[k + r + n / 2];
+						var p = ret[k + r];
+						var q = ret[k + r + n / 2];
 						b[k + 2 * r] = p + q;
 						b[k + 2 * r + i] = (p - q) * s;
 					}
 				}
 
-				var temp = a;
-				a = b;
+				var temp = ret;
+				ret = b;
 				b = temp;
 			}
 
 			if (inverses) {
 				s = Inverse(n);
 				for (int i = 0; i < n; ++i) {
-					a[i] = a[i] * s;
+					ret[i] = ret[i] * s;
 				}
 			}
 
-			return a;
+			return ret;
 		}
 
-		public static ModInt[,] Ntt2D(ModInt[,] a, bool inverses = false)
-			=> NumberTheoreticTransform2D(a, inverses);
-		public static ModInt[,] NumberTheoreticTransform2D(ModInt[,] a, bool inverses = false)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ModInt[,] Ntt2D(
+			ModInt[,] a, bool inverses = false, bool extends = false, bool inplaces = true)
+			=> NumberTheoreticTransform2D(a, inverses, extends, inplaces);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ModInt[,] NumberTheoreticTransform2D(
+			ModInt[,] a, bool inverses = false, bool extends = false, bool inplaces = true)
 		{
 			int h = a.GetLength(0);
 			int w = a.GetLength(1);
+			if (extends) {
+				h = CeilPow2(h);
+				w = CeilPow2(w);
+				inplaces = false;
+			}
+
+			var ret = a;
+			if (inplaces == false) {
+				ret = new ModInt[h, w];
+				int hh = a.GetLength(0);
+				int ww = a.GetLength(1);
+				for (int i = 0; i < hh; i++) {
+					for (int j = 0; j < ww; j++) {
+						ret[i, j] = a[i, j];
+					}
+				}
+			}
+
 			if (h == 1 && w == 1) {
-				return a;
+				return ret;
 			}
 
 			var b = new ModInt[h, w];
@@ -212,22 +258,22 @@ namespace TakyTank.KyoProLib.CSharp
 						for (int j = 0; j < l; ++j, r += i) {
 							s = kp[i * j];
 							for (int k = 0; k < i; ++k) {
-								var p = a[y, k + r];
-								var q = a[y, k + r + n / 2];
+								var p = ret[y, k + r];
+								var q = ret[y, k + r + n / 2];
 								b[y, k + 2 * r] = p + q;
 								b[y, k + 2 * r + i] = (p - q) * s;
 							}
 						}
 
-						var temp = a;
-						a = b;
+						var temp = ret;
+						ret = b;
 						b = temp;
 					}
 
 					if (inverses) {
 						s = Inverse(n);
 						for (int i = 0; i < n; ++i) {
-							a[y, i] = a[y, i] * s;
+							ret[y, i] = ret[y, i] * s;
 						}
 					}
 				}
@@ -235,7 +281,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 			for (int i = 0; i < h; ++i) {
 				for (int j = 0; j < w; ++j) {
-					b[h, w] = 0;
+					b[i, j] = 0;
 				}
 			}
 
@@ -259,46 +305,44 @@ namespace TakyTank.KyoProLib.CSharp
 						for (int j = 0; j < l; ++j, r += i) {
 							s = kp[i * j];
 							for (int k = 0; k < i; ++k) {
-								var p = a[k + r, x];
-								var q = a[k + r + n / 2, x];
+								var p = ret[k + r, x];
+								var q = ret[k + r + n / 2, x];
 								b[k + 2 * r, x] = p + q;
 								b[k + 2 * r + i, x] = (p - q) * s;
 							}
 						}
 
-						var temp = a;
-						a = b;
+						var temp = ret;
+						ret = b;
 						b = temp;
 					}
 
 					if (inverses) {
 						s = Inverse(n);
 						for (int i = 0; i < n; ++i) {
-							a[i, x] = a[i, x] * s;
+							ret[i, x] = ret[i, x] * s;
 						}
 					}
 				}
 			}
 
-			return a;
+			return ret;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<ModInt> Convolve(ReadOnlySpan<ModInt> a, ReadOnlySpan<ModInt> b)
 		{
 			int resultLength = a.Length + b.Length - 1;
-			int nttLenght = 1;
-			while (nttLenght < resultLength) {
-				nttLenght <<= 1;
-			}
+			int nttLength = CeilPow2(resultLength);
 
-			var aa = new ModInt[nttLenght];
+			var aa = new ModInt[nttLength];
 			a.CopyTo(aa);
-			var bb = new ModInt[nttLenght];
+			var bb = new ModInt[nttLength];
 			b.CopyTo(bb);
 
 			var fa = NumberTheoreticTransform(aa);
 			var fb = NumberTheoreticTransform(bb);
-			for (int i = 0; i < nttLenght; ++i) {
+			for (int i = 0; i < nttLength; ++i) {
 				fa[i] *= fb[i];
 			}
 
@@ -306,6 +350,18 @@ namespace TakyTank.KyoProLib.CSharp
 			return convolved.Slice(0, resultLength);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static int CeilPow2(int n)
+		{
+			int pow2 = 1;
+			while (pow2 < n) {
+				pow2 <<= 1;
+			}
+
+			return pow2;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long ToLong() => value_;
 		public override string ToString() => value_.ToString();
 	}

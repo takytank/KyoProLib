@@ -117,6 +117,7 @@
 
 - [PAST02 O 可変全域木](https://atcoder.jp/contests/past202004-open/tasks/past202004_o)
 - [PAST04 M 筆塗り](https://atcoder.jp/contests/past202010-open/tasks/past202010_m)
+- [Library-Checker Vertex Add Path Sum](https://judge.yosupo.jp/problem/vertex_add_path_sum)
 
 ## Helper
 
