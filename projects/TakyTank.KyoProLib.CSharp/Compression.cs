@@ -31,13 +31,18 @@ namespace TakyTank.KyoProLib.CSharp
 		public Compression() { }
 		public Compression(ReadOnlySpan<T> values)
 		{
-			foreach (var value in values) {
-				Add(value);
-			}
+			Add(values);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(T value) => raws_.Add(value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(ReadOnlySpan<T> values)
+		{
+			foreach (var value in values) {
+				raws_.Add(value);
+			}
+		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Compress(int offset = 0)
 		{

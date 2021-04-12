@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
-	static class Permutation
+	public static class Permutation
 	{
 		public static IEnumerable<int[]> All(int n, int offset = 0)
 		{
