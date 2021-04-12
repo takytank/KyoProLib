@@ -11,6 +11,7 @@ namespace TakyTank.KyoProLib.CSharp
 		private static ModInt[] factorial_;
 		private static ModInt[] inverseFactorial_;
 		private static ModInt[] inverse_;
+		private static ModInt[] montmort_;
 
 		public static void InitializeFactorial(long max, bool withInverse = false)
 		{
@@ -43,6 +44,16 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
+		public static void InitializeMontmort(long max)
+		{
+			montmort_ = new ModInt[Math.Max(3, max + 1)];
+			montmort_[0] = 1;
+			montmort_[1] = 0;
+			for (int i = 2; i < max + 1; i++) {
+				montmort_[i] = (i - 1) * (montmort_[i - 1] + montmort_[i - 2]);
+			}
+		}
+
 		public static ModInt Factorial(long n)
 		{
 			if (n < 0) {
@@ -68,6 +79,15 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			return inverse_[n];
+		}
+
+		public static ModInt Montmort(long n)
+		{
+			if (n < 0) {
+				return 0;
+			}
+
+			return montmort_[n];
 		}
 
 		public static ModInt Permutation(long n, long k)
@@ -104,7 +124,7 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			ModInt ret = 1;
 			for (int i = 0; i < k; i++) {
-				ret *= (n - i);
+				ret *= (n - i) % p_;
 				ret *= inverse_[i + 1];
 			}
 
@@ -128,6 +148,7 @@ namespace TakyTank.KyoProLib.CSharp
 		private static long[] factorial_;
 		private static long[] inverseFactorial_;
 		private static long[] inverse_;
+		private static long[] montmort_;
 
 		public static void InitializeFactorial(long max, long p, bool withInverse = false)
 		{
@@ -171,6 +192,16 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
+		public static void InitializeMontmort(long max)
+		{
+			montmort_ = new long[Math.Max(3, max + 1)];
+			montmort_[0] = 1;
+			montmort_[1] = 0;
+			for (int i = 2; i < max + 1; i++) {
+				montmort_[i] = (i - 1) * (montmort_[i - 1] + montmort_[i - 2]);
+			}
+		}
+
 		public static long Factorial(long n)
 		{
 			if (n < 0) {
@@ -196,6 +227,15 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			return inverse_[n];
+		}
+
+		public static long Montmort(long n)
+		{
+			if (n < 0) {
+				return 0;
+			}
+
+			return montmort_[n];
 		}
 
 		public static long Permutation(long n, long k)
@@ -232,7 +272,7 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			long ret = 1;
 			for (int i = 0; i < k; i++) {
-				ret = (ret * (n - i)) % p_;
+				ret = (ret * ((n - i) % p_)) % p_;
 				ret = (ret * inverse_[i + 1]) % p_;
 			}
 

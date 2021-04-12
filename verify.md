@@ -160,6 +160,10 @@
 
 ## ModInt
 
+### Counting
+
+- [ARC009 C 高橋君、24歳](https://atcoder.jp/contests/arc009/tasks/arc009_3)
+
 ### VModInt
 
 - [パナソニックプログラミングコンテスト (ABC 186) E Throne](https://atcoder.jp/contests/abc186/tasks/abc186_e)
