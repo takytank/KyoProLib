@@ -274,6 +274,29 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void Swap(this string str, int i, int j)
+		{
+			var span = str.AsWriteableSpan();
+			(span[i], span[j]) = (span[j], span[i]);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static char Replace(this string str, int index, char c)
+		{
+			var span = str.AsWriteableSpan();
+			char old = span[index];
+			span[index] = c;
+			return old;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<char> AsWriteableSpan(this string str)
+		{
+			var span = str.AsSpan();
+			return MemoryMarshal.CreateSpan(ref MemoryMarshal.GetReference(span), span.Length);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static string Join<T>(this IEnumerable<T> values, string separator = "")
 			=> string.Join(separator, values);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
