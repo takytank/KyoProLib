@@ -103,7 +103,16 @@
 
 ## Fourier
 
+### FFT
+
 - [AtCoder Typical Contest 001 C 高速フーリエ変換](https://atcoder.jp/contests/atc001/tasks/fft_c)
+
+### NTT
+
+- [AtCoder Library Practice Contest F Convolution](https://atcoder.jp/contests/practice2/tasks/practice2_f)
+- [AtCoder Typical Contest 001 C 高速フーリエ変換](https://atcoder.jp/contests/atc001/tasks/fft_c)
+- [ARC106 D Powers](https://atcoder.jp/contests/arc106/tasks/arc106_d)
+- [ABC196 F Substring2](https://atcoder.jp/contests/abc196/tasks/abc196_f)
 
 ## Graph
 
@@ -167,12 +176,6 @@
 ### VModInt
 
 - [パナソニックプログラミングコンテスト (ABC 186) E Throne](https://atcoder.jp/contests/abc186/tasks/abc186_e)
-
-### NTT
-
-- [AtCoder Library Practice Contest F Convolution](https://atcoder.jp/contests/practice2/tasks/practice2_f)
-- [AtCoder Typical Contest 001 C 高速フーリエ変換](https://atcoder.jp/contests/atc001/tasks/fft_c)
-- [ARC106 D Powers](https://atcoder.jp/contests/arc106/tasks/arc106_d)
 
 ## MinimumWeightCycle
 
