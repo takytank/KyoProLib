@@ -166,6 +166,7 @@
 
 - [EDPC R Walk](https://atcoder.jp/contests/dp/tasks/dp_r)
 - [ARC054 鯛焼き](https://atcoder.jp/contests/arc054/tasks/arc054_c)
+- [第二回日本最強プログラマー学生選手権 G Spanning Tree](https://atcoder.jp/contests/jsc2021/tasks/jsc2021_g)
 
 ## ModInt
 

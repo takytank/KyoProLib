@@ -122,11 +122,38 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
-			var (_, dst) = GaussJordan(temp);
-
 			ModInt det = 1;
-			for (int i = 0; i < n; ++i) {
-				det *= dst[i, i];
+			ModInt m1 = new ModInt(-1, true);
+			for (int i = 0; i < n; i++) {
+				if (temp[i, i].ToLong() == 0) {
+					for (int j = i + 1; j < n; j++) {
+						if (temp[j, i].ToLong() != 0) {
+							for (int k = 0; k < n; k++) {
+								(temp[i, k], temp[j, k]) = (temp[j, k], temp[i, k]);
+							}
+
+							det *= m1;
+							break;
+						}
+					}
+
+					if (temp[i, i].ToLong() == 0) {
+						return 0;
+					}
+				}
+
+				det *= temp[i, i];
+				var div = ModInt.Inverse(temp[i, i]);
+				for (int j = 0; j < n; j++) {
+					temp[i, j] *= div;
+				}
+
+				for (int j = i + 1; j < n; j++) {
+					var mul = temp[j, i];
+					for (int k = 0; k < n; k++) {
+						temp[j, k] -= temp[i, k] * mul;
+					}
+				}
 			}
 
 			return det;
