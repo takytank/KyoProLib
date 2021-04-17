@@ -171,6 +171,12 @@
 
 - [平衡二分探索木を使ったsetとmultisetの実装](https://yambe2002.hatenablog.com/entry/2017/02/07/122421)
 
+### Rational
+
+- [有理数を分数精度のまま計算するクラス](https://yudachi-shinko.blogspot.com/2020/05/c.html)
+- [有理数型を実装する](https://qiita.com/naminodarie/items/d7fc80a85914c8bfda4b)
+- [有理数](https://shabonlearning.com/cSharp/rational.html)
+
 ### RedBlackTree
 
 - [.Net Core SortedSet](https://source.dot.net/#System.Collections/System/Collections/Generic/SortedSet.cs,6f4f66b9b70e07ba)
