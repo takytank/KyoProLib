@@ -256,6 +256,10 @@
 
 - [yukicoder No.1433 Two color sequence](https://yukicoder.me/problems/no/1433)
 
+## TopologicalSort
+
+- [yukicoder No.1477 Lamps on Graph](https://yukicoder.me/problems/no/1477)
+
 ## TravelingSalesmanProblem
 
 - [PAST03 M 行商計画問題](https://atcoder.jp/contests/past202005-open/tasks/past202005_m)

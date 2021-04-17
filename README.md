@@ -227,6 +227,10 @@
 - [１次元配列中の連続した部分配列で和が最大となるものを求める](https://uru.hatenablog.com/entry/2016/05/13/011223)
 - [Maximum subarray problem](https://en.wikipedia.org/wiki/Maximum_subarray_problem#Kadane's_algorithm)
 
+### TopologicalSort
+
+- [トポロジカルソートのアルゴリズム](https://algo-logic.info/topological-sort/)
+
 ### UnionFindTree
 
 - [Union find(素集合データ構造)](https://www.slideshare.net/chokudai/union-find-49066733)
