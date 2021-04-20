@@ -127,6 +127,11 @@
 - [DP(編集距離)とDPの問題を解くコツ](https://www.slideshare.net/utgw/dpdp-63918394)
 - [意外と解説がない！動的計画法で得た最適解を「復元」する一般的な方法](https://qiita.com/drken/items/0c7bab0384438f285f93)
 
+### Lucas
+
+- [二項係数(nCk)を素数(p)で割った余りの計算](https://algo-logic.info/binomial-coefficient-lucas/)
+- [二項係数(nCk)の偶奇判定のアルゴリズム](https://algo-logic.info/is-nck-odd-even/)
+
 ### Matrix
 
 - [Gauss-Jordan の掃き出し法と、連立一次方程式の解き方](https://drken1215.hatenablog.com/entry/2019/03/20/202800)

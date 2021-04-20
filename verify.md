@@ -70,6 +70,7 @@
 ### DynamicLazySegmentTree
 
 - [ARC115 E LEQ and NEQ](https://atcoder.jp/contests/arc115/tasks/arc115_e)
+- [第二回日本最強プログラマー学生選手権 F Max Matrix](https://atcoder.jp/contests/jsc2021/tasks/jsc2021_f)
 
 ## EulerTotient
 
@@ -154,6 +155,10 @@
 
 - [ABC187 E Through Path](https://atcoder.jp/contests/abc187/tasks/abc187_e)
 - [ABC133 F Colorful Tree](https://atcoder.jp/contests/abc133/tasks/abc133_f)
+
+## Lucas
+
+- [ARC117 C Tricolor Pyramid](https://atcoder.jp/contests/arc117/tasks/arc117_c)
 
 ## Matrix
 
