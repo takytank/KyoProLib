@@ -47,22 +47,29 @@ namespace TakyTank.KyoProLib.CSharp
 			var counts = new int[n_];
 			Array.Copy(inCounts_, counts, n_);
 
+			var done = new bool[n_];
 			var list = new List<int>(n_);
 			var que = new Queue<int>();
 			for (int i = 0; i < n_; i++) {
 				if (counts[i] == 0) {
 					que.Enqueue(i);
 					list.Add(i);
+					done[i] = true;
 				}
 			}
 
 			while (que.Count > 0) {
 				int cur = que.Dequeue();
 				foreach (var next in edges_[cur]) {
+					if (done[next]) {
+						return null;
+					}
+
 					counts[next]--;
 					if (counts[next] == 0) {
 						que.Enqueue(next);
 						list.Add(next);
+						done[next] = true;
 					}
 				}
 			}
