@@ -256,6 +256,11 @@
 
 - [第１４回日本情報オリンピック 予選（オンライン） F 財宝](https://atcoder.jp/contests/joi2015yo/tasks/joi2015yo_f)
 
+## StronglyConnectedComponent
+
+- [AtCoder Library Practice Contest G SCC](https://atcoder.jp/contests/practice2/tasks/practice2_g)
+- [競プロ典型 90 問 21 Come Back in One Piece](https://atcoder.jp/contests/typical90/tasks/typical90_u)
+
 ## SubArray
 
 ### Kadane
@@ -274,6 +279,10 @@
 ## TrieTree
 
 - [AGC047 B First Second](https://atcoder.jp/contests/agc047/tasks/agc047_b)
+
+## TwoSat
+
+- [AtCoder Library Practice Contest H Two SAT](https://atcoder.jp/contests/practice2/tasks/practice2_h)
 
 ## UnionFindTree
 

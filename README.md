@@ -233,6 +233,12 @@
 - [Sliding Window Aggregation](https://scrapbox.io/data-structures/Sliding_Window_Aggregation)
 - [SWAG(Sliding Window Aggregation)の実装についての提案](https://motsu-xe.hatenablog.com/entry/2019/12/06/192424)
 
+### StronglyConnectedComponent
+
+- [ac-library-cs](https://github.com/key-moon/ac-library-cs)
+- [強連結成分分解](https://ei1333.github.io/luzhiled/snippets/graph/strongly-connected-components.html)
+- [強連結成分（SCC）](https://hkawabata.github.io/technical-note/note/Algorithm/graph/scc.html)
+
 ### SubArray
 
 - [１次元配列中の連続した部分配列で和が最大となるものを求める](https://uru.hatenablog.com/entry/2016/05/13/011223)
