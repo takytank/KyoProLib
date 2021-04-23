@@ -10,6 +10,7 @@ namespace TakyTank.KyoProLib.CSharp
 	public class Imos1D
 	{
 		private readonly long[] map_;
+		private readonly long[] accum_;
 		private readonly int n_;
 
 		public long this[int index] => map_[index];
@@ -20,6 +21,7 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			n_ = n;
 			map_ = new long[n + 1];
+			accum_ = new long[n + 1];
 		}
 
 		public void Add(int l, int r, long value)
@@ -37,6 +39,10 @@ namespace TakyTank.KyoProLib.CSharp
 			for (int i = 0; i < n_; i++) {
 				map_[i + 1] += map_[i];
 			}
+
+			for (int i = 0; i < n_; i++) {
+				accum_[i + 1] = accum_[i] + map_[i];
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -49,20 +55,14 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			--l;
-			--r;
-			long ret = map_[r];
-			if (l >= 0) {
-				ret -= map_[l];
-			}
-
-			return ret;
+			return accum_[r] - accum_[l];;
 		}
 	}
 
 	public class Imos1D<T> where T : struct
 	{
 		private readonly T[] map_;
+		private readonly T[] accum_;
 		private readonly int n_;
 		private readonly T defaultValue_;
 		private readonly Func<T, T, T> add_;
@@ -78,6 +78,8 @@ namespace TakyTank.KyoProLib.CSharp
 			defaultValue_ = defaultValue;
 			map_ = new T[n + 1];
 			map_.AsSpan().Fill(defaultValue);
+			accum_ = new T[n + 1];
+			accum_.AsSpan().Fill(defaultValue);
 			add_ = add;
 			subtract_ = subtract;
 		}
@@ -97,6 +99,10 @@ namespace TakyTank.KyoProLib.CSharp
 			for (int i = 0; i < n_; i++) {
 				map_[i + 1] = add_(map_[i + 1], map_[i]);
 			}
+
+			for (int i = 0; i < n_; i++) {
+				accum_[i + 1] = add_(accum_[i], map_[i]);
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -109,14 +115,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return defaultValue_;
 			}
 
-			--l;
-			--r;
-			T ret = map_[r];
-			if (l >= 0) {
-				ret = subtract_(ret, map_[l]);
-			}
-
-			return ret;
+			return subtract_(accum_[r], accum_[l]); ;
 		}
 	}
 
@@ -124,6 +123,7 @@ namespace TakyTank.KyoProLib.CSharp
 	{
 		private readonly long[] raw_;
 		private readonly long[] built_;
+		private readonly long[] accum_;
 		private readonly int n_;
 
 		public long this[int index] => built_[index + 1];
@@ -135,6 +135,7 @@ namespace TakyTank.KyoProLib.CSharp
 			n_ = n;
 			raw_ = new long[n + 1];
 			built_ = new long[n + 1];
+			accum_ = new long[n + 1];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -154,7 +155,11 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			built_[0] = 0;
 			for (int i = 0; i < n_; i++) {
-				built_[i + 1] += raw_[i] + built_[i];
+				built_[i + 1] = raw_[i] + built_[i];
+			}
+
+			for (int i = 0; i < n_; i++) {
+				accum_[i + 1] = accum_[i] + built_[i];
 			}
 		}
 
@@ -167,7 +172,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return built_[r] - built_[l];
+			return accum_[r] - accum_[l];
 		}
 	}
 
@@ -175,6 +180,7 @@ namespace TakyTank.KyoProLib.CSharp
 	{
 		private readonly T[] raw_;
 		private readonly T[] built_;
+		private readonly T[] accum_;
 		private readonly int n_;
 		private readonly T defaultValue_;
 		private readonly Func<T, T, T> add_;
@@ -192,6 +198,8 @@ namespace TakyTank.KyoProLib.CSharp
 			raw_.AsSpan().Fill(defaultValue);
 			built_ = new T[n + 1];
 			built_.AsSpan().Fill(defaultValue);
+			accum_ = new T[n + 1];
+			accum_.AsSpan().Fill(defaultValue);
 			add_ = add;
 			subtract_ = subtract;
 		}
@@ -215,6 +223,10 @@ namespace TakyTank.KyoProLib.CSharp
 			for (int i = 0; i < n_; i++) {
 				built_[i + 1] = add_(built_[i + 1], add_(raw_[i], built_[i]));
 			}
+
+			for (int i = 0; i < n_; i++) {
+				accum_[i + 1] = add_(accum_[i], built_[i]);
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -226,13 +238,14 @@ namespace TakyTank.KyoProLib.CSharp
 				return defaultValue_;
 			}
 
-			return subtract_(built_[r], built_[l]);
+			return subtract_(accum_[r], accum_[l]);
 		}
 	}
 
 	public class Imos2D
 	{
 		private readonly long[,] map_;
+		private readonly long[,] accum_;
 		private readonly int w_;
 		private readonly int h_;
 
@@ -242,6 +255,7 @@ namespace TakyTank.KyoProLib.CSharp
 			w_ = w;
 			h_ = h;
 			map_ = new long[h + 1, w + 1];
+			accum_ = new long[h + 1, w + 1];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -273,6 +287,13 @@ namespace TakyTank.KyoProLib.CSharp
 					map_[i + 1, j] += map_[i, j];
 				}
 			}
+
+			for (int i = 0; i < h_; i++) {
+				for (int j = 0; j < w_; j++) {
+					accum_[i + 1, j + 1]
+						+= accum_[i + 1, j] + accum_[i, j + 1] - accum_[i, j] + map_[i, j];
+				}
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -285,31 +306,14 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			y1--;
-			x1--;
-			y2--;
-			x2--;
-
-			long ret = map_[y2, x2];
-			if (y1 >= 0) {
-				ret -= map_[y1, x2];
-			}
-
-			if (x1 >= 0) {
-				ret -= map_[y2, x1];
-			}
-
-			if (y1 >= 0 && x1 >= 0) {
-				ret += map_[y1, x1];
-			}
-
-			return ret;
+			return accum_[y2, x2] - accum_[y1, x2] - accum_[y2, x1] + accum_[y1, x1];
 		}
 	}
 
 	public class Imos2D<T> where T : struct
 	{
 		private readonly T[,] map_;
+		private readonly T[,] accum_;
 		private readonly int w_;
 		private readonly int h_;
 		private readonly T defaultValue_;
@@ -325,6 +329,8 @@ namespace TakyTank.KyoProLib.CSharp
 			defaultValue_ = defaultValue;
 			map_ = new T[h + 1, w + 1];
 			MemoryMarshal.CreateSpan(ref map_[0, 0], map_.Length).Fill(defaultValue);
+			accum_ = new T[h + 1, w + 1];
+			MemoryMarshal.CreateSpan(ref accum_[0, 0], accum_.Length).Fill(defaultValue);
 			add_ = add;
 			subtract_ = subtract;
 		}
@@ -358,6 +364,13 @@ namespace TakyTank.KyoProLib.CSharp
 					map_[i + 1, j] = add_(map_[i + 1, j], map_[i, j]);
 				}
 			}
+
+			for (int i = 0; i < h_; i++) {
+				for (int j = 0; j < w_; j++) {
+					accum_[i + 1, j + 1]
+						= add_(accum_[i + 1, j], subtract_(accum_[i, j + 1], add_(accum_[i, j], map_[i, j])));
+				}
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -370,25 +383,13 @@ namespace TakyTank.KyoProLib.CSharp
 				return defaultValue_;
 			}
 
-			y1--;
-			x1--;
-			y2--;
-			x2--;
-
-			T ret = map_[y2, x2];
-			if (y1 >= 0) {
-				ret = subtract_(ret, map_[y1, x2]);
-			}
-
-			if (x1 >= 0) {
-				ret = subtract_(ret, map_[y2, x1]);
-			}
-
-			if (y1 >= 0 && x1 >= 0) {
-				ret = add_(ret, map_[y1, x1]);
-			}
-
-			return ret;
+			return subtract_(
+				accum_[y2, x2], 
+				subtract_(
+					accum_[y1, x2], 
+					add_(
+						accum_[y2, x1],
+						accum_[y1, x1])));
 		}
 	}
 
@@ -396,6 +397,7 @@ namespace TakyTank.KyoProLib.CSharp
 	{
 		private readonly long[,] raw_;
 		private readonly long[,] built_;
+		private readonly long[,] accum_;
 		private readonly int w_;
 		private readonly int h_;
 
@@ -406,6 +408,7 @@ namespace TakyTank.KyoProLib.CSharp
 			h_ = h;
 			raw_ = new long[h + 1, w + 1];
 			built_ = new long[h + 1, w + 1];
+			accum_ = new long[h + 1, w + 1];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -439,6 +442,13 @@ namespace TakyTank.KyoProLib.CSharp
 					built_[i + 1, j] += built_[i, j];
 				}
 			}
+
+			for (int i = 0; i < h_; i++) {
+				for (int j = 0; j < w_; j++) {
+					accum_[i + 1, j + 1]
+						+= accum_[i + 1, j] + accum_[i, j + 1] - accum_[i, j] + built_[i, j];
+				}
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -451,7 +461,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return raw_[y2, x2] - raw_[y1, x2] - raw_[y2, x1] + raw_[y1, x1];
+			return accum_[y2, x2] - accum_[y1, x2] - accum_[y2, x1] + accum_[y1, x1];
 		}
 	}
 
@@ -459,6 +469,7 @@ namespace TakyTank.KyoProLib.CSharp
 	{
 		private readonly T[,] raw_;
 		private readonly T[,] built_;
+		private readonly T[,] accum_;
 		private readonly int w_;
 		private readonly int h_;
 		private readonly T defaultValue_;
@@ -476,6 +487,8 @@ namespace TakyTank.KyoProLib.CSharp
 			MemoryMarshal.CreateSpan(ref raw_[0, 0], raw_.Length).Fill(defaultValue);
 			built_ = new T[h + 1, w + 1];
 			MemoryMarshal.CreateSpan(ref built_[0, 0], built_.Length).Fill(defaultValue);
+			accum_ = new T[h + 1, w + 1];
+			MemoryMarshal.CreateSpan(ref accum_[0, 0], accum_.Length).Fill(defaultValue);
 			add_ = add;
 			subtract_ = subtract;
 		}
@@ -513,6 +526,13 @@ namespace TakyTank.KyoProLib.CSharp
 					built_[i + 1, j] = add_(built_[i + 1, j], built_[i, j]);
 				}
 			}
+
+			for (int i = 0; i < h_; i++) {
+				for (int j = 0; j < w_; j++) {
+					accum_[i + 1, j + 1]
+						= add_(accum_[i + 1, j], subtract_(accum_[i, j + 1], add_(accum_[i, j], built_[i, j])));
+				}
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -525,7 +545,13 @@ namespace TakyTank.KyoProLib.CSharp
 				return defaultValue_;
 			}
 
-			return subtract_(raw_[y2, x2], subtract_(raw_[y1, x2], add_(raw_[y2, x1], raw_[y1, x1])));
+			return subtract_(
+				accum_[y2, x2],
+				subtract_(
+					accum_[y1, x2],
+					add_(
+						accum_[y2, x1],
+						accum_[y1, x1])));
 		}
 	}
 }
