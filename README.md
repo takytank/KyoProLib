@@ -155,6 +155,10 @@
 
 - [Fast Number Theoretic Transform](https://kopricky.github.io/code/FFTs/ntt.html)
 
+### PairMod
+
+- [mod で計算するときに零の重複度も持つテク](https://kimiyuki.net/blog/2021/04/23/modulo-with-zero/)
+
 ### Permutation
 
 - [std::next_permutation](https://cpprefjp.github.io/reference/algorithm/next_permutation.html)

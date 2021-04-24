@@ -145,6 +145,7 @@
 ### Imos2D
 
 - [ARC067 F Yakiniku Restaurants](https://atcoder.jp/contests/arc067/tasks/arc067_d)
+- [yukicoder 1490 スライムと爆弾](https://yukicoder.me/problems/no/1490)
 
 ## IntervalSet
 
@@ -197,6 +198,10 @@
 ### ChineseRemainderTheorem
 
 - [ACL Contest1 B Sum is Multiple](https://atcoder.jp/contests/acl1/tasks/acl1_b)
+
+## PairMod
+
+- [ARC117 C Tricolor Pyramid](https://atcoder.jp/contests/arc117/tasks/arc117_c)
 
 ## RadixHeap
 
