@@ -22,9 +22,9 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdgeD(int p, int q, long d = 1) => tempEdges_[p].Add((q, d));
+		public void AddEdge(int p, int q, long d = 1) => tempEdges_[p].Add((q, d));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdgeI(int u, int v, long d = 1)
+		public void AddEdge2W(int u, int v, long d = 1)
 		{
 			tempEdges_[u].Add((v, d));
 			tempEdges_[v].Add((u, d));
@@ -325,6 +325,42 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			return distances;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (long diameter, int[] path) TreeDiameter(
+			Func<int, (long[] distances, int[] prevs)> getShortestPath)
+		{
+			var (firstDistances, _) = getShortestPath(0);
+			long max = 0;
+			int fi = 0;
+			for (int i = 0; i < n_; i++) {
+				if (firstDistances[i] > max) {
+					max = firstDistances[i];
+					fi = i;
+				}
+			}
+
+			var (distances, prevs) = getShortestPath(fi);
+			max = 0;
+			int si = 0;
+			for (int i = 0; i < n_; i++) {
+				if (distances[i] > max) {
+					max = distances[i];
+					si = i;
+				}
+			}
+
+			long diameter = max;
+			var tempPath = new List<int>();
+			tempPath.Add(si);
+			while (si != fi) {
+				si = prevs[si];
+				tempPath.Add(si);
+			}
+
+			var path = tempPath.ToArray();
+			return (diameter, path);
 		}
 	}
 }
