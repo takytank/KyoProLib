@@ -100,7 +100,11 @@ namespace TakyTank.KyoProLib.CSharp
 				return default;
 			}
 
+			if (back_ < 0) {
+				back_ += capacity_;
+			}
 			T ret = ringBuffer_[back_];
+
 			back_ -= 1;
 			if (back_ < 0) {
 				back_ += capacity_;
