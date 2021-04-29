@@ -272,6 +272,11 @@
 
 - [yukicoder No.1433 Two color sequence](https://yukicoder.me/problems/no/1433)
 
+## TernarySearch
+
+- [ARC054 B ムーアの法則](https://atcoder.jp/contests/arc054/tasks/arc054_b)
+- [競プロ典型 90 問 07 CP Classes](https://atcoder.jp/contests/typical90/tasks/typical90_g)
+
 ## TopologicalSort
 
 - [yukicoder No.1477 Lamps on Graph](https://yukicoder.me/problems/no/1477)
