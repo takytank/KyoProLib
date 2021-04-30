@@ -5,6 +5,11 @@
 
 実質ネタバレなので、見るときは注意して下さい。
 
+## ArgumentSort
+
+- [ABC139 F Engines](https://atcoder.jp/contests/abc139/tasks/abc139_f)
+- [競プロ典型 90 問 09 Three Point Angle](https://atcoder.jp/contests/typical90/tasks/typical90_i)
+
 ## BellmanFord
 
 - [ABC137 E Coins Respawn](https://atcoder.jp/contests/m-solutions2020/tasks/m_solutions2020_e)
