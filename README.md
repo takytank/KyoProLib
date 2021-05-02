@@ -25,8 +25,6 @@
 
 - [M-SOLUTIONS プロコンオープン 2020 解説放送 (E問題)](https://www.youtube.com/watch?v=z6SeLXdwVhA&feature=youtu.be)
 
-### Bit
-
 ### CartesianTree
 
 - [Cartesian tree](https://en.wikipedia.org/wiki/Cartesian_tree)
@@ -106,6 +104,10 @@
 
 - [いもす法](https://imoz.jp/algorithms/imos_method.html)
 
+### Integer
+
+- [ac-library-cs](https://github.com/key-moon/ac-library-cs)
+
 ### IntervalSet
 
 - [std::setで区間を管理する奴](https://kkt89.hatenablog.com/entry/2020/10/14/std::set%E3%81%A7%E5%8C%BA%E9%96%93%E3%82%92%E7%AE%A1%E7%90%86%E3%81%99%E3%82%8B%E5%A5%B4)
@@ -151,6 +153,13 @@
 - [「1000000007 で割ったあまり」の求め方を総特集！ 〜 逆元から離散対数まで 〜](https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a)
 - [よくやる二項係数 (nCk mod. p)、逆元 (a^-1 mod. p) の求め方](https://drken1215.hatenablog.com/entry/2018/06/08/210000)
 
+### Modular
+
+- [ac-library-cs](https://github.com/key-moon/ac-library-cs)
+- [中国剰余定理 (CRT) の解説と、それを用いる問題のまとめ](https://qiita.com/drken/items/ae02240cd1f8edfc86fd)
+- [拡張互除法と中国剰余定理（Garnerのアルゴリズム）](https://www.creativ.xyz/ect-gcd-crt-garner-927/)
+
+
 ### NTT
 
 - [Fast Number Theoretic Transform](https://kopricky.github.io/code/FFTs/ntt.html)
@@ -169,6 +178,12 @@
 - [ビットを数える・探すアルゴリズム](http://www.nminoru.jp/~nminoru/programming/bitcount.html)
 - [ビットを数える x86/x64最適化勉強会1](https://www.slideshare.net/takesako/x86x64-sse42-popcnt)
 - [x86_64でpopcnt / tzcnt / lzcntする【ビット演算テクニック](https://qiita.com/ocxtal/items/01c46b15cb1f2e656887)
+
+### Prime
+
+- [ミラーラビン素数判定法とロー法](https://joisino.hatenablog.com/entry/2017/08/03/210000)
+- [Deterministic variants of the Miller-Rabin primality test](http://miller-rabin.appspot.com)
+- [ポラード・ロー素因数分解法](https://qiita.com/gushwell/items/561afde2e00bf3380c98)
 
 ### RadixHeap
 

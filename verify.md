@@ -29,7 +29,7 @@
 ## CartesianTree
 
 - [ARC115 E LEQ and NEQ](https://atcoder.jp/contests/arc115/submissions/me)
-- [Library-Checker Cartesian Tree](https://judge.yosupo.jp/problem/cartesian_tree)
+- [yosupo-judge Cartesian Tree](https://judge.yosupo.jp/problem/cartesian_tree)
 
 ## Compression
 
@@ -132,7 +132,7 @@
 
 - [PAST02 O 可変全域木](https://atcoder.jp/contests/past202004-open/tasks/past202004_o)
 - [PAST04 M 筆塗り](https://atcoder.jp/contests/past202010-open/tasks/past202010_m)
-- [Library-Checker Vertex Add Path Sum](https://judge.yosupo.jp/problem/vertex_add_path_sum)
+- [yosupo-judge Vertex Add Path Sum](https://judge.yosupo.jp/problem/vertex_add_path_sum)
 
 ## Helper
 
@@ -151,6 +151,12 @@
 
 - [ARC067 F Yakiniku Restaurants](https://atcoder.jp/contests/arc067/tasks/arc067_d)
 - [yukicoder 1490 スライムと爆弾](https://yukicoder.me/problems/no/1490)
+
+## Integer
+
+### FloorSum
+
+- [AtCoder Library Practice Contest C Floor Sum](https://atcoder.jp/contests/practice2/tasks/practice2_c)
 
 ## IntervalSet
 
@@ -179,6 +185,11 @@
 - [ARC054 鯛焼き](https://atcoder.jp/contests/arc054/tasks/arc054_c)
 - [第二回日本最強プログラマー学生選手権 G Spanning Tree](https://atcoder.jp/contests/jsc2021/tasks/jsc2021_g)
 
+## MinimumWeightCycle
+
+- [ABC142 F Pure](https://atcoder.jp/contests/abc142/tasks/abc142_f)
+- [ABC191 E Come Back Quickly](https://atcoder.jp/contests/abc191/tasks/abc191_e)
+
 ## ModInt
 
 ### Counting
@@ -189,16 +200,7 @@
 
 - [パナソニックプログラミングコンテスト (ABC 186) E Throne](https://atcoder.jp/contests/abc186/tasks/abc186_e)
 
-## MinimumWeightCycle
-
-- [ABC142 F Pure](https://atcoder.jp/contests/abc142/tasks/abc142_f)
-- [ABC191 E Come Back Quickly](https://atcoder.jp/contests/abc191/tasks/abc191_e)
-
-## NumberTheory
-
-### PrimeFactorsByPollardsRho
-
-- [ACL Contest1 B Sum is Multiple](https://atcoder.jp/contests/acl1/tasks/acl1_b)
+## Modular
 
 ### ChineseRemainderTheorem
 
@@ -207,6 +209,12 @@
 ## PairMod
 
 - [ARC117 C Tricolor Pyramid](https://atcoder.jp/contests/arc117/tasks/arc117_c)
+
+## Prime
+
+### PrimeFactorsByPollardsRho
+
+- [ACL Contest1 B Sum is Multiple](https://atcoder.jp/contests/acl1/tasks/acl1_b)
 
 ## RadixHeap
 
@@ -261,6 +269,10 @@
 ### WarshallFloyd
 
 - [ABC073 D joisino's travel](https://atcoder.jp/contests/abc073/tasks/abc073_d)
+
+## Sieve
+
+- [yosupo-judge Enumerate Primes](https://judge.yosupo.jp/problem/enumerate_primes)
 
 ## SlidingWindowAggregation
 
