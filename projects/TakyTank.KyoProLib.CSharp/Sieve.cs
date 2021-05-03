@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Core31
+namespace TakyTank.KyoProLib.CSharp
 {
 	public class Eratosthenes
 	{
