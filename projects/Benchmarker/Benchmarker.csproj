@@ -10,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TakyTank.KyoProLib.CSharp.Core31\TakyTank.KyoProLib.CSharp.Core31.csproj" />
     <ProjectReference Include="..\TakyTank.KyoProLib.CSharp\TakyTank.KyoProLib.CSharp.csproj" />
   </ItemGroup>
 

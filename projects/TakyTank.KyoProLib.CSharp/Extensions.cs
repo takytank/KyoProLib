@@ -5,14 +5,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Core31
+namespace TakyTank.KyoProLib.CSharp
 {
 	public static class Extensions
 	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int PopCount(this BitFlag bit)
-			=> (int)BitOperations.PopCount((uint)bit.Flag);
-
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<T> AsSpan<T>(this List<T> list)
 		{
