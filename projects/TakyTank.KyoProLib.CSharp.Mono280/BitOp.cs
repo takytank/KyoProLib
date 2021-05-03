@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Linq;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Csc360
+namespace TakyTank.KyoProLib.CSharp.Mono280
 {
-	public static class Extensions
+	public static class BitOp
 	{
 		public static uint PopCount(uint bits)
 		{
@@ -26,9 +26,5 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 			bits = ((bits & 0xffffffff00000000) >> 32) + (bits & 0x00000000ffffffff);
 			return (int)bits;
 		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int PopCount(this BitFlag bit)
-			=> (int)PopCount((uint)bit.Flag);
 	}
 }
