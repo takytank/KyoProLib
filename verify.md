@@ -206,6 +206,10 @@
 
 - [ACL Contest1 B Sum is Multiple](https://atcoder.jp/contests/acl1/tasks/acl1_b)
 
+## NoshiBasis
+
+- [ZONeエナジー プログラミングコンテスト “HELLO SPACE” F 出会いと別れ](https://atcoder.jp/contests/zone2021/tasks/zone2021_f)
+
 ## PairMod
 
 - [ARC117 C Tricolor Pyramid](https://atcoder.jp/contests/arc117/tasks/arc117_c)

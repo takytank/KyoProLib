@@ -159,6 +159,10 @@
 - [中国剰余定理 (CRT) の解説と、それを用いる問題のまとめ](https://qiita.com/drken/items/ae02240cd1f8edfc86fd)
 - [拡張互除法と中国剰余定理（Garnerのアルゴリズム）](https://www.creativ.xyz/ect-gcd-crt-garner-927/)
 
+### NoshiBasis
+
+- [xor の掃き出しすごい簡単に出来るんですね](https://twitter.com/noshi91/status/1200702280128856064?s=20)
+- [ZONeエナジー プログラミングコンテスト “HELLO SPACE” F 解説](https://atcoder.jp/contests/zone2021/editorial/1203)
 
 ### NTT
 
