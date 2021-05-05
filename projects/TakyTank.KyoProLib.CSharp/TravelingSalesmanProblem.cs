@@ -23,7 +23,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void SetEdge(int u, int v, long distance) => distances_[u, v] = distance;
+		public void AddEdge(int u, int v, long distance) => distances_[u, v] = distance;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long MinDistance(int start = -1)
@@ -46,6 +46,10 @@ namespace TakyTank.KyoProLib.CSharp
 
 					for (int j = 0; j < n_; j++) {
 						int nextFlag = flag | (1 << j);
+						if (nextFlag == flag) {
+							continue;
+						}
+
 						dp[nextFlag, j] = Math.Min(
 							dp[nextFlag, j],
 							dp[flag, i] + distances_[i, j]);
@@ -55,7 +59,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 			long ans = inf_;
 			for (int i = 0; i < n_; i++) {
-				ans.UpdateMin(dp[(1 << n_) - 1, i]);
+				ans = Math.Min(ans, dp[(1 << n_) - 1, i]);
 			}
 
 			return ans >= inf_ ? -1 : ans;
