@@ -296,14 +296,14 @@ namespace TakyTank.KyoProLib.CSharp
 			PropagateTopDown(r - 1);
 			while (l < r) {
 				if ((l & 1) != 0) {
-					tree_[l] = operate_(tree_[l], value);
+					tree_[l] = operate_(value, tree_[l]);
 					should_[l] = true;
 					++l;
 				}
 
 				if ((r & 1) != 0) {
 					--r;
-					tree_[r] = operate_(tree_[r], value);
+					tree_[r] = operate_(value, tree_[r]);
 					should_[r] = true;
 				}
 
@@ -381,9 +381,9 @@ namespace TakyTank.KyoProLib.CSharp
 				if (v < n_) {
 					int lc = v << 1;
 					int rc = (v << 1) + 1;
-					tree_[lc] = operate_(tree_[lc], tree_[v]);
+					tree_[lc] = operate_(tree_[v], tree_[lc]);
 					should_[lc] = true;
-					tree_[rc] = operate_(tree_[rc], tree_[v]);
+					tree_[rc] = operate_(tree_[v], tree_[rc]);
 					should_[rc] = true;
 					tree_[v] = unit_;
 				}
