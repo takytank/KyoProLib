@@ -231,6 +231,10 @@
 - [ABC157 E Simple String Queries](https://atcoder.jp/contests/abc157/tasks/abc157_e)
 - [ABC134 E Sequence Decomposing](https://atcoder.jp/contests/abc134/tasks/abc134_e)
 
+## Rational
+
+- [yukicoder No.1501 酔歩](https://yukicoder.me/problems/no/1501)
+
 ## RedBlackTree
 
 - [ABC157 E Simple String Queries](https://atcoder.jp/contests/abc157/tasks/abc157_e)
