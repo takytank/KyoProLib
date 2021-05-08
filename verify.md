@@ -315,6 +315,11 @@
 
 - [AGC047 B First Second](https://atcoder.jp/contests/agc047/tasks/agc047_b)
 
+## TwoPointers
+
+- [ABC130 D Enough Array](https://atcoder.jp/contests/abc130/tasks/abc130_d)
+- [競プロ典型 90 問 34 There are few types of elements](https://atcoder.jp/contests/typical90/tasks/typical90_ah)
+
 ## TwoSat
 
 - [AtCoder Library Practice Contest H Two SAT](https://atcoder.jp/contests/practice2/tasks/practice2_h)
