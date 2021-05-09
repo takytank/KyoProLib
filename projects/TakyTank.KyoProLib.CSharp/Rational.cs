@@ -63,10 +63,10 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public bool Equals(Rational other)
 			=> sign_ == other.sign_ && n_ == other.n_ && d_ == other.d_;
-
 		public override bool Equals(object obj) => obj is Rational x && Equals(x);
+		public int CompareTo(Rational other)
+			=> (sign_ * n_ * other.d_).CompareTo(other.sign_ * other.n_ * d_);
 
-		public int CompareTo(Rational other) => (n_ * d_).CompareTo(n_ * d_);
 		public override int GetHashCode() => HashCode.Combine(sign_, n_, d_);
 		public override string ToString() => n_ == 0
 			? "0"
@@ -164,8 +164,8 @@ namespace TakyTank.KyoProLib.CSharp
 			=> sign_ == other.sign_ && n_ == other.n_ && d_ == other.d_;
 
 		public override bool Equals(object obj) => obj is BigRational x && Equals(x);
-
-		public int CompareTo(BigRational other) => (n_ * d_).CompareTo(n_ * d_);
+		public int CompareTo(BigRational other)
+			=> (sign_ * n_ * other.d_).CompareTo(other.sign_ * other.n_ * d_);
 		public override int GetHashCode() => HashCode.Combine(sign_, n_, d_);
 		public override string ToString() => n_ == 0
 			? "0"
