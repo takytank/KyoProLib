@@ -53,9 +53,14 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static long Lcm(long a, long b)
+		public static long Lcm(long a, long b, long limit = 1000000000000000000L)
 		{
-			return a / Gcd(a, b) * b;
+			long gcd = Gcd(a, b);
+			if (limit / (a / gcd) < b) {
+				return -1;
+			} else {
+				return a / gcd * b;
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -67,7 +72,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 			long lcm = values[0];
 			for (int i = 1; i < values.Length; i++) {
-				lcm = Lcm(lcm, values[i]);
+				lcm = Lcm(lcm, values[i], limit);
 				if (lcm > limit || lcm < 0) {
 					return -1;
 				}
