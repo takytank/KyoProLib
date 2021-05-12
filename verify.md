@@ -84,6 +84,7 @@
 ## EulerTour
 
 - [ABC187 E Through Path](https://atcoder.jp/contests/abc187/tasks/abc187_e)
+- [競プロ典型 90 問 35 Preserve Connectivity](https://atcoder.jp/contests/typical90/tasks/typical90_ai)
 
 ## FenwickTree
 

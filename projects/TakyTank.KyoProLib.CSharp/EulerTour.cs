@@ -14,6 +14,7 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly int[] tour_;
 		private readonly int[] discovery_;
 		private readonly int[] finish_;
+		private readonly int[] depth_;
 		private readonly List<int>[] graph_;
 		private readonly Dictionary<(int p, int q), int> edgeMap_;
 		private readonly (int depth, int v)[] depthTree_;
@@ -31,6 +32,7 @@ namespace TakyTank.KyoProLib.CSharp
 			tour_ = new int[tourCount_];
 			discovery_ = new int[vertexCount_];
 			finish_ = new int[vertexCount_];
+			depth_ = new int[vertexCount_];
 			graph_ = new List<int>[vertexCount_];
 			for (int i = 0; i < n; i++) {
 				graph_[i] = new List<int>();
@@ -54,6 +56,7 @@ namespace TakyTank.KyoProLib.CSharp
 				discovery_[v] = index;
 				tour_[index] = v;
 				depthTree_[index + depthCount_] = (depth, v);
+				depth_[v] = depth;
 				++index;
 				for (int i = 0; i < graph_[v].Count; i++) {
 					if (graph_[v][i] == parent) {
@@ -139,7 +142,7 @@ namespace TakyTank.KyoProLib.CSharp
 			=> action.Invoke(IndexOfPathEdge(p, q));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int LCA(int u, int v) => LeastCommonAnsestor(u, v);
+		public int Lca(int u, int v) => LeastCommonAnsestor(u, v);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int LeastCommonAnsestor(int u, int v)
 		{
@@ -171,6 +174,70 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			return valL.depth < valR.depth ? valL.v : valR.v;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Distance(int u, int v)
+			=> depth_[u] + depth_[v] - depth_[Lca(u, v)] * 2;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int root, Dictionary<int, List<(int v, int d)>> tree) AuxiliaryTree(int[] vertices)
+		{
+			int n = vertices.Length;
+			Array.Sort(vertices, (x, y) => discovery_[x].CompareTo(discovery_[y]));
+
+			var stack = new Stack<int>();
+			stack.Push(vertices[0]);
+			var tree = new Dictionary<int, List<(int v, int d)>> {
+				[vertices[0]] = new List<(int v, int d)>()
+			};
+
+			void AddEdge(int p, int q)
+			{
+				int d = Math.Abs(depth_[p] - depth_[q]);
+				tree[p].Add((q, d));
+				tree[q].Add((p, d));
+			}
+
+			for (int i = 0; i < n - 1; ++i) {
+				int lca = Lca(vertices[i], vertices[i + 1]);
+				if (tree.ContainsKey(lca) == false) {
+					tree[lca] = new List<(int v, int d)>();
+				}
+
+				if (lca != vertices[i]) {
+					int last = stack.Pop();
+					while (stack.Count > 0 && depth_[lca] < depth_[stack.Peek()]) {
+						int top = stack.Peek();
+						if (tree.ContainsKey(top) == false) {
+							tree[top] = new List<(int v, int d)>();
+						}
+
+						AddEdge(top, last);
+						last = stack.Pop();
+					}
+
+					if (stack.Count == 0 || stack.Peek() != lca) {
+						stack.Push(lca);
+					}
+
+					AddEdge(lca, last);
+				}
+
+				stack.Push(vertices[i + 1]);
+				if (tree.ContainsKey(vertices[i + 1]) == false) {
+					tree[vertices[i + 1]] = new List<(int v, int d)>();
+				}
+			}
+
+			while (stack.Count > 1) {
+				int v = stack.Pop();
+				if (stack.Count > 0) {
+					AddEdge(v, stack.Peek());
+				}
+			}
+
+			return (stack.Peek(), tree);
 		}
 	}
 }

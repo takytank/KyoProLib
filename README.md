@@ -66,6 +66,7 @@
 - [木に対する一般的なテク達](https://www.npca.jp/works/magazine/2015_5/)
 - [2種類のEuler Tourについて](https://beet-aizu.hatenablog.com/entry/2019/07/08/174727)
 - [Euler Tour のお勉強](https://maspypy.com/euler-tour-のお勉強)
+- [LCAをベースに構築するAuxiliary Treeのメモ](https://smijake3.hatenablog.com/entry/2019/09/15/200200)
 
 ### FakeList
 
