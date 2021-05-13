@@ -291,6 +291,7 @@
 
 - [AtCoder Library Practice Contest G SCC](https://atcoder.jp/contests/practice2/tasks/practice2_g)
 - [競プロ典型 90 問 21 Come Back in One Piece](https://atcoder.jp/contests/typical90/tasks/typical90_u)
+- [ARC030 C 有向グラフ](https://atcoder.jp/contests/arc030/tasks/arc030_3)
 
 ## SubArray
 

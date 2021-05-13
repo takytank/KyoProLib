@@ -82,23 +82,28 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public List<int>[] Decompose()
+		public int[][] Decompose()
 		{
 			var counts = new int[groupCount_];
 			foreach (var x in components_) {
 				++counts[x];
 			}
 
-			var groups = new List<int>[groupCount_];
+			var temp = new List<int>[groupCount_];
 			for (int i = 0; i < groupCount_; ++i) {
-				groups[i] = new List<int>(counts[i]);
+				temp[i] = new List<int>(counts[i]);
 			}
 
 			for (int i = 0; i < components_.Length; ++i) {
-				groups[components_[i]].Add(i);
+				temp[components_[i]].Add(i);
 			}
 
-			return groups;
+			var group = new int[groupCount_][];
+			for (int i = 0; i < groupCount_; ++i) {
+				group[i] = temp[i].ToArray();
+			}
+
+			return group;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -109,16 +114,14 @@ namespace TakyTank.KyoProLib.CSharp
 				temp[i] = new List<int>();
 			}
 
-			for (int i = 0; i < n_; i++) {
-				foreach (var e in edges_) {
-					int x = components_[e.From];
-					int y = components_[e.To];
-					if (x == y) {
-						continue;
-					}
-
-					temp[x].Add(y);
+			foreach (var e in edges_) {
+				int x = components_[e.From];
+				int y = components_[e.To];
+				if (x == y) {
+					continue;
 				}
+
+				temp[x].Add(y);
 			}
 
 			var graph = new int[groupCount_][];
