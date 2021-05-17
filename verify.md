@@ -336,3 +336,7 @@
 ### PotentialUnionFind
 
 - [ABC087 D People on a Line](https://atcoder.jp/contests/abc087/tasks/arc090_b)
+
+### ZetaTransform
+
+- [ARC100 E Or Plus Max](https://atcoder.jp/contests/arc100/tasks/arc100_c)

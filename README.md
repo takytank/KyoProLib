@@ -281,3 +281,13 @@
 ### WalshHadamard
 
 - [色々な畳み込み](https://kazuma8128.hatenablog.com/entry/2018/05/31/144519)
+
+### ZetaTransform
+
+- [ゼータ変換・メビウス変換を理解する](https://qiita.com/convexineq/items/afc84dfb9ee4ec4a67d5)
+- [色々な畳み込み](https://kazuma8128.hatenablog.com/entry/2018/05/31/144519)
+- [高速ゼータ変換／高速メビウス変換](https://naoyat.hatenablog.jp/entry/zeta-moebius)
+- [高速ゼータ変換の約数版 O(N log(log(N)))](https://noshi91.hatenablog.com/entry/2018/12/27/121649)
+- [約数集合でのゼータ変換・メビウス変換的なやつと畳み込み](https://kazuma8128.hatenablog.com/entry/2018/07/29/231819)
+- [高速ゼータ変換 高速メビウス変換](https://ikatakos.com/pot/programming_algorithm/dynamic_programming/subset_convolution)
+- [高速ゼータ変換について](https://qiita.com/Euglenese/items/260f9ddf513f772d7e42)
