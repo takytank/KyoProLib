@@ -5,7 +5,6 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using BenchmarkDotNet.Attributes;
-using TakyTank.KyoProLib.CSharp.Core31;
 
 namespace Benchmarker
 {
