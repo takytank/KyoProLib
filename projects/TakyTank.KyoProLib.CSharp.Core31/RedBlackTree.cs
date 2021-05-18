@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp
+namespace TakyTank.KyoProLib.CSharp.Core31
 {
 	public class RedBlackTree<T> : ICollection<T>, IReadOnlyCollection<T>
 		where T : IComparable<T>

@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp
+namespace TakyTank.KyoProLib.CSharp.Core31
 {
 	public static class Prime
 	{

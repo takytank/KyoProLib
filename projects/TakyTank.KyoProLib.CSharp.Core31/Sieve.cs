@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp
+
+namespace TakyTank.KyoProLib.CSharp.Core31
 {
 	public class Eratosthenes
 	{
@@ -195,14 +196,14 @@ namespace TakyTank.KyoProLib.CSharp
 
 			long sqrt = (long)Math.Ceiling(Math.Sqrt(x) + 0.1) / 30 + 1;
 			for (long i = 0; i < sqrt; ++i) {
-				for (int flag = flags_[i]; flag > 0; flag &= (flag - 1)) {
-					int lsb = flag & (-flag);
+				for (int flag = flags_[i]; flag > 0; flag &= flag - 1) {
+					int lsb = flag & -flag;
 					int ibit = BitToIndex((byte)lsb);
 					int m = MOD30[ibit];
 					long pm = 30 * i + 2 * m;
-					for (long j = i * pm + (m * m) / 30, k = ibit;
+					for (long j = i * pm + m * m / 30, k = ibit;
 						j < flags_.Length;
-						j += i * C1[k] + C0[ibit, k], k = (k + 1) & 7) {
+						j += i * C1[k] + C0[ibit, k], k = k + 1 & 7) {
 						flags_[j] &= MASK[ibit, k];
 					}
 				}

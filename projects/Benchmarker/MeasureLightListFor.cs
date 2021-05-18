@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using TakyTank.KyoProLib.CSharp;
+using TakyTank.KyoProLib.CSharp.Core31;
 
 namespace Benchmarker
 {

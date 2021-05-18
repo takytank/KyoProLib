@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp
+namespace TakyTank.KyoProLib.CSharp.Core31
 {
 	public class IntervalSet32
 	{

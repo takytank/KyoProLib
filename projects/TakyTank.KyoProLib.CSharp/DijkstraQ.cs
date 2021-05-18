@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
@@ -8,87 +7,63 @@ namespace TakyTank.KyoProLib.CSharp
 	public class DijkstraQ
 	{
 		private int count_ = 0;
-		private long[] distanceHeap_;
-		private int[] vertexHeap_;
+		private (long distance, int v)[] heap_;
 
 		public int Count => count_;
 		public DijkstraQ()
 		{
-			distanceHeap_ = new long[8];
-			vertexHeap_ = new int[8];
+			heap_ = new (long distance, int v)[2];
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Enqueue(long distance, int v)
 		{
-			if (distanceHeap_.Length == count_) {
-				var newDistanceHeap = new long[distanceHeap_.Length << 1];
-				var newVertexHeap = new int[vertexHeap_.Length << 1];
-				Unsafe.CopyBlock(
-					ref Unsafe.As<long, byte>(ref newDistanceHeap[0]),
-					ref Unsafe.As<long, byte>(ref distanceHeap_[0]),
-					(uint)(8 * count_));
-				Unsafe.CopyBlock(
-					ref Unsafe.As<int, byte>(ref newVertexHeap[0]),
-					ref Unsafe.As<int, byte>(ref vertexHeap_[0]),
-					(uint)(4 * count_));
-				distanceHeap_ = newDistanceHeap;
-				vertexHeap_ = newVertexHeap;
+			var pair = (distance, v);
+			if (heap_.Length == count_) {
+				var newHeap = new (long distance, int v)[heap_.Length * 2];
+				heap_.CopyTo(newHeap, 0);
+				heap_ = newHeap;
 			}
 
-			ref var dRef = ref distanceHeap_[0];
-			ref var vRef = ref vertexHeap_[0];
-			Unsafe.Add(ref dRef, count_) = distance;
-			Unsafe.Add(ref vRef, count_) = v;
+			heap_[count_] = pair;
 			++count_;
 
 			int c = count_ - 1;
 			while (c > 0) {
 				int p = (c - 1) >> 1;
-				var tempD = Unsafe.Add(ref dRef, p);
-				if (tempD <= distance) {
+				if (heap_[p].distance <= distance) {
 					break;
 				} else {
-					Unsafe.Add(ref dRef, c) = tempD;
-					Unsafe.Add(ref vRef, c) = Unsafe.Add(ref vRef, p);
+					heap_[c] = heap_[p];
 					c = p;
 				}
 			}
 
-			Unsafe.Add(ref dRef, c) = distance;
-			Unsafe.Add(ref vRef, c) = v;
+			heap_[c] = pair;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (long distance, int v) Dequeue()
 		{
-			ref var dRef = ref distanceHeap_[0];
-			ref var vRef = ref vertexHeap_[0];
-			(long distance, int v) ret = (dRef, vRef);
+			(long distance, int v) ret = heap_[0];
 			int n = count_ - 1;
 
-			var distance = Unsafe.Add(ref dRef, n);
-			var vertex = Unsafe.Add(ref vRef, n);
+			var item = heap_[n];
 			int p = 0;
 			int c = (p << 1) + 1;
 			while (c < n) {
-				if (c != n - 1 && Unsafe.Add(ref dRef, c + 1) < Unsafe.Add(ref dRef, c)) {
+				if (c != n - 1 && heap_[c + 1].distance < heap_[c].distance) {
 					++c;
 				}
 
-				var tempD = Unsafe.Add(ref dRef, c);
-				if (distance > tempD) {
-					Unsafe.Add(ref dRef, p) = tempD;
-					Unsafe.Add(ref vRef, p) = Unsafe.Add(ref vRef, c);
+				if (item.distance > heap_[c].distance) {
+					heap_[p] = heap_[c];
 					p = c;
 					c = (p << 1) + 1;
 				} else {
-					break;
+					break;	
 				}
 			}
 
-			Unsafe.Add(ref dRef, p) = distance;
-			Unsafe.Add(ref vRef, p) = vertex;
+			heap_[p] = item;
 			--count_;
 
 			return ret;

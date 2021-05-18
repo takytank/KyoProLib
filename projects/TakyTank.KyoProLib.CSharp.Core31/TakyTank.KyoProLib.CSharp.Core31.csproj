@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TakyTank.KyoProLib.CSharp\TakyTank.KyoProLib.CSharp.csproj" />
+  </ItemGroup>
+
 </Project>
