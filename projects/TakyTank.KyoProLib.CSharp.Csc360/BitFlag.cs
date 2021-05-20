@@ -39,6 +39,12 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 			=> new BitFlag(lhs.flags_ & rhs);
 		public static BitFlag operator &(int lhs, BitFlag rhs)
 			=> new BitFlag(lhs & rhs.flags_);
+		public static BitFlag operator ^(BitFlag lhs, BitFlag rhs)
+			=> new BitFlag(lhs.flags_ ^ rhs.flags_);
+		public static BitFlag operator ^(BitFlag lhs, int rhs)
+			=> new BitFlag(lhs.flags_ ^ rhs);
+		public static BitFlag operator ^(int lhs, BitFlag rhs)
+			=> new BitFlag(lhs ^ rhs.flags_);
 
 		public static bool operator <(BitFlag lhs, BitFlag rhs) => lhs.flags_ < rhs.flags_;
 		public static bool operator <(BitFlag lhs, int rhs) => lhs.flags_ < rhs;
@@ -61,7 +67,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void ForEachSubBits(Action<BitFlag> action)
 		{
-			for (BitFlag sub = (flags_ - 1) & flags_; sub > 0; sub = --sub & flags_) {
+			for (BitFlag sub = flags_; sub > 0; sub = --sub & flags_) {
 				action(sub);
 			}
 		}
@@ -87,7 +93,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 				public Enumerator(int flags)
 				{
 					src_ = flags;
-					Current = flags;
+					Current = flags + 1;
 				}
 
 				public void Dispose() { }
