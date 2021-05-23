@@ -173,6 +173,10 @@
 
 - [mod で計算するときに零の重複度も持つテク](https://kimiyuki.net/blog/2021/04/23/modulo-with-zero/)
 
+### PascalTriangle
+
+- [パスカルの三角形による二項係数(nCk)の計算](https://algo-logic.info/pascal-triangle/)
+
 ### Permutation
 
 - [std::next_permutation](https://cpprefjp.github.io/reference/algorithm/next_permutation.html)

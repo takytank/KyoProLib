@@ -215,6 +215,11 @@
 
 - [ARC117 C Tricolor Pyramid](https://atcoder.jp/contests/arc117/tasks/arc117_c)
 
+## PascalTriangle
+
+- [エイシングプログラミングコンテスト2021 (ABC202) D aab aba baa](https://atcoder.jp/contests/abc202/tasks/abc202_d)
+- [ABC001 D 大ジャンプ](https://atcoder.jp/contests/abc011/tasks/abc011_4)
+
 ## Prime
 
 ### PrimeFactorsByPollardsRho
