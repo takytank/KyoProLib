@@ -205,6 +205,21 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static string Exchange(string src, char a, char b)
+		{
+			var chars = src.ToCharArray();
+			for (int i = 0; i < chars.Length; i++) {
+				if (chars[i] == a) {
+					chars[i] = b;
+				} else if (chars[i] == b) {
+					chars[i] = a;
+				}
+			}
+
+			return new string(chars);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Swap(this string str, int i, int j)
 		{
 			var span = str.AsWriteableSpan();
