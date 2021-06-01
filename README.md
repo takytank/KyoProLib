@@ -225,6 +225,12 @@
 - [†全方位木DP†について](https://ei1333.hateblo.jp/entry/2017/04/10/224413)
 - [木と計算量 後編 〜全方位木DP〜](https://snuke.hatenablog.com/entry/2019/01/16/203626)
 
+### RollingHash
+
+- 蟻本 332p
+- [安全で爆速なRollingHashの話](https://qiita.com/keymoon/items/11fac5627672a6d6a9f6#fn1)
+- [ローリングハッシュ(Rolling-Hash)](https://ei1333.github.io/luzhiled/snippets/string/rolling-hash.html)
+
 ### Scanner
 
 - [chokudai さんの tweet](https://twitter.com/chokudai/status/1051741812501536769?s=20)

@@ -256,6 +256,8 @@
 ## RollingHash
 
 - [AGC047 B First Second](https://atcoder.jp/contests/agc047/tasks/agc047_b)
+- [競プロ典型 90 問 47 Monochromatic Diagonal](https://atcoder.jp/contests/typical90/tasks/typical90_au)
+
 
 ## SegmentTree
 
