@@ -191,6 +191,10 @@
 - [ABC142 F Pure](https://atcoder.jp/contests/abc142/tasks/abc142_f)
 - [ABC191 E Come Back Quickly](https://atcoder.jp/contests/abc191/tasks/abc191_e)
 
+## MinimumSpanningTree
+
+- [競プロ典型 90 問 49 Flip Digits 2](https://atcoder.jp/contests/typical90/tasks/typical90_aw)
+
 ## ModInt
 
 ### Counting
