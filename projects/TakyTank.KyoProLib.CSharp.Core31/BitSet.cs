@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp
+namespace TakyTank.KyoProLib.CSharp.Core31
 {
-	public class BitSet
+	public class BitSet : IComparable<BitSet>
 	{
 		private const int SHIFT = 6;
 		private const int BITS = 64;
@@ -51,6 +52,33 @@ namespace TakyTank.KyoProLib.CSharp
 			set => bits_[i >> 6]
 				= (bits_[i >> SHIFT] & (ulong.MaxValue ^ (1ul << i)))
 				| ((ulong)(value ? 1 : 0) << i);
+		}
+
+		public static BitSet[] GetBasisOf(
+			ReadOnlySpan<BitSet> values, bool isRawValues = false)
+		{
+			int n = values.Length;
+			var eliminateds = new List<BitSet>();
+			var raws = new List<BitSet>();
+			var zero = new BitSet(1);
+			for (int j = n - 1; j >= 0; j--) {
+				BitSet v = values[j];
+				foreach (var b in eliminateds) {
+					var next = v ^ b;
+					if (v > next) {
+						v = next;
+					}
+				}
+
+				if (v > zero) {
+					eliminateds.Add(v);
+					raws.Add(values[j]);
+				}
+			}
+
+			return isRawValues
+				? raws.ToArray()
+				: eliminateds.ToArray();
 		}
 
 		public static BitSet operator &(BitSet lhs, BitSet rhs)
@@ -156,25 +184,33 @@ namespace TakyTank.KyoProLib.CSharp
 			return ret;
 		}
 
-		public static bool operator ==(BitSet lhs, BitSet rhs)
+		public static bool operator ==(BitSet x1, BitSet x2) => x1.Equals(x2);
+		public static bool operator !=(BitSet x1, BitSet x2) => !x1.Equals(x2);
+		public static bool operator >(BitSet x1, BitSet x2) => x1.CompareTo(x2) > 0;
+		public static bool operator <(BitSet x1, BitSet x2) => x1.CompareTo(x2) < 0;
+		public static bool operator >=(BitSet x1, BitSet x2) => x1.CompareTo(x2) >= 0;
+		public static bool operator <=(BitSet x1, BitSet x2) => x1.CompareTo(x2) <= 0;
+
+		public override bool Equals(object obj) => obj is BitSet x && Equals(x);
+		public bool Equals(BitSet other)
 		{
-			int max = Math.Max(lhs.length_, rhs.length_);
-			int min = Math.Min(lhs.length_, rhs.length_);
+			int max = Math.Max(length_, other.length_);
+			int min = Math.Min(length_, other.length_);
 			for (int i = 0; i < min; i++) {
-				if (lhs.bits_[i] != rhs.bits_[i]) {
+				if (bits_[i] != other.bits_[i]) {
 					return false;
 				}
 			}
 
-			if (lhs.length_ > rhs.length_) {
+			if (length_ > other.length_) {
 				for (int i = min; i < max; i++) {
-					if (lhs.bits_[i] != 0) {
+					if (bits_[i] != 0) {
 						return false;
 					}
 				}
 			} else {
 				for (int i = min; i < max; i++) {
-					if (rhs.bits_[i] != 0) {
+					if (other.bits_[i] != 0) {
 						return false;
 					}
 				}
@@ -183,14 +219,33 @@ namespace TakyTank.KyoProLib.CSharp
 			return true;
 		}
 
-		public static bool operator !=(BitSet lhs, BitSet rhs)
+		public int CompareTo(BitSet other)
 		{
-			return !(lhs == rhs);
-		}
+			int max = Math.Max(length_, other.length_);
+			int min = Math.Min(length_, other.length_);
+			if (length_ > other.length_) {
+				for (int i = min; i < max; i++) {
+					if (bits_[i] != 0) {
+						return 1;
+					}
+				}
+			} else {
+				for (int i = min; i < max; i++) {
+					if (other.bits_[i] != 0) {
+						return -1;
+					}
+				}
+			}
 
-		public override bool Equals(object obj)
-		{
-			return false;
+			for (int i = min - 1; i >= 0; --i) {
+				if (bits_[i] > other.bits_[i]) {
+					return 1;
+				} else if (bits_[i] < other.bits_[i]) {
+					return -1;
+				}
+			}
+
+			return 0;
 		}
 
 		public void Or(BitSet target)
@@ -360,6 +415,17 @@ namespace TakyTank.KyoProLib.CSharp
 					bits_[lastIndex] &= mask;
 				}
 			}
+		}
+
+		public int Msb()
+		{
+			for (int i = length_ - 1; i >= 0; i--) {
+				if (bits_[i] != 0) {
+					return BITS - BitOperations.LeadingZeroCount(bits_[i]) + BITS * i;
+				}
+			}
+
+			return 0;
 		}
 
 		public override int GetHashCode()
