@@ -8,7 +8,7 @@ namespace TakyTank.KyoProLib.CSharp
 	public static class TernarySearch
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static double MinDouble(double left, double right, Func<double, double> f, double delta)
+		public static (double i, double min) MinDouble(double left, double right, Func<double, double> f, double delta)
 		{
 			while (right - left > delta) {
 				double cl = (left * 2 + right) / 3;
@@ -20,11 +20,11 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
-			return left;
+			return (left, f(left));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static double MaxDouble(double left, double right, Func<double, double> f, double delta)
+		public static (double i, double max) MaxDouble(double left, double right, Func<double, double> f, double delta)
 		{
 			while (right - left > delta) {
 				double cl = (left * 2 + right) / 3;
@@ -36,11 +36,11 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
-			return left;
+			return (left, f(left));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int Min(int left, int right, Func<int, long> f)
+		public static (int i, long min) Min(int left, int right, Func<int, long> f)
 		{
 			while (right - left > 1) {
 				int cl = (left * 2 + right) / 3;
@@ -62,15 +62,17 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
-			if (f(left) < f(right)) {
-				return left;
+			long lv = f(left);
+			long rv = f(right);
+			if (lv < rv) {
+				return (left, lv);
 			} else {
-				return right;
+				return (right, rv);
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int Max(int left, int right, Func<int, long> f)
+		public static (int i, long max) Max(int left, int right, Func<int, long> f)
 		{
 			while (right - left > 1) {
 				int cl = (left * 2 + right) / 3;
@@ -92,10 +94,12 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
-			if (f(left) > f(right)) {
-				return left;
+			long lv = f(left);
+			long rv = f(right);
+			if (lv > rv) {
+				return (left, lv);
 			} else {
-				return right;
+				return (right, rv);
 			}
 		}
 	}
