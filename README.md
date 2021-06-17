@@ -186,6 +186,12 @@
 - [std::next_permutation](https://cpprefjp.github.io/reference/algorithm/next_permutation.html)
 - [順列の列挙](http://www.tbasic.org/reference/old/Permutation.html)
 
+### Point
+
+- 蟻本 226p
+- [2線分の交差判定手法](https://qiita.com/zu_rin/items/e04fdec4e3dec6072104)
+- [三角形の外接円の半径と中心座標(外心)を求める](https://qiita.com/tatesuke/items/59133758ec25146766c3)
+
 ### PopCount
 
 - [ビットを数える・探すアルゴリズム](http://www.nminoru.jp/~nminoru/programming/bitcount.html)
