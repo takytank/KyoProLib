@@ -74,6 +74,10 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
+			if (list.Count != n_) {
+				return null;
+			}
+
 			var sorted = list.ToArray();
 			return sorted;
 		}
