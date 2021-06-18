@@ -37,6 +37,12 @@
 - [座標圧縮(Compress)](https://ei1333.github.io/luzhiled/snippets/other/compress.html)
 - [座標圧縮の解説（1次元から2次元の圧縮まで）](https://algo-logic.info/coordinate-compress/)
 
+### ConvexHull
+
+- 蟻本 233p
+- [凸包](https://ei1333.github.io/algorithm/convex-hull.html)
+- [2次元の凸包を求めるアルゴリズムと応用について](https://matsu7874.hatenablog.com/entry/2018/12/17/025713)
+
 ### Convolution
 
 - [ac-library-cs](https://github.com/key-moon/ac-library-cs)

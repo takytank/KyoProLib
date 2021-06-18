@@ -48,6 +48,10 @@
 
 - [第７回日本情報オリンピック 本選 E ペンキの色](https://atcoder.jp/contests/joi2008ho/tasks/joi2008ho_e)
 
+## ConvexHull
+
+- [競プロ典型 90 問 41 Piles in AtCoder Farm](https://atcoder.jp/contests/typical90/tasks/typical90_ao)
+
 ## Convolution
 
 - [ABC196 F Substring 2](https://atcoder.jp/contests/abc196/submissions/21127433)
