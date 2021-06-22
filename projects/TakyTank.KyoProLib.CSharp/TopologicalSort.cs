@@ -42,6 +42,9 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int InCountOf(int v) => inCounts_[v];
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int[] Sort()
 		{
 			var counts = new int[n_];
