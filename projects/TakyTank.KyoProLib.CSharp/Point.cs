@@ -16,6 +16,13 @@ namespace TakyTank.KyoProLib.CSharp
 			Y = y;
 		}
 
+		public static long Length2(Ipt p, Ipt q)
+		{
+			long x = p.X - q.X;
+			long y = p.Y - q.Y;
+			return x * x + y * y;
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsOnSegment(Ipt p1, Ipt p2, Ipt q)
 			=> (p1 - q).Det(p2 - q) == 0 && (p1 - q).Dot(p2 - q) <= 0;
@@ -42,16 +49,16 @@ namespace TakyTank.KyoProLib.CSharp
 		public static Ipt operator +(Ipt lhs, Ipt rhs)
 			=> new Ipt(lhs.X + rhs.X, lhs.Y + rhs.Y);
 		public static Ipt operator -(Ipt lhs, Ipt rhs)
-			=> new Ipt(lhs.X - rhs.X, lhs.Y -rhs.Y);
+			=> new Ipt(lhs.X - rhs.X, lhs.Y - rhs.Y);
 		public static Ipt operator *(Ipt src, long value)
 			=> new Ipt(src.X * value, src.Y * value);
 		public static Ipt operator *(long value, Ipt src)
 			=> new Ipt(src.X * value, src.Y * value);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public double Dot(Ipt target) => X * target.X + Y * target.Y;
+		public long Dot(Ipt target) => X * target.X + Y * target.Y;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public double Det(Ipt target) => X * target.Y - Y * target.X;
+		public long Det(Ipt target) => X * target.Y - Y * target.X;
 
 		public override int GetHashCode() => HashCode.Combine(X, Y);
 	}
