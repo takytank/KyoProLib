@@ -337,6 +337,7 @@
 
 - [ABC130 D Enough Array](https://atcoder.jp/contests/abc130/tasks/abc130_d)
 - [競プロ典型 90 問 34 There are few types of elements](https://atcoder.jp/contests/typical90/tasks/typical90_ah)
+- [競プロ典型 90 問 89 Partitions and Inversions](https://atcoder.jp/contests/typical90/tasks/typical90_ck)
 
 ## TwoSat
 
