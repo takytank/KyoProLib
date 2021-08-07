@@ -66,6 +66,7 @@ namespace TakyTank.KyoProLib.CSharp
 	public struct Dpt
 	{
 		private const double EPS = 1e-10;
+		public static Dpt Origin => new Dpt(0, 0);
 
 		public double X { get; set; }
 		public double Y { get; set; }
@@ -152,16 +153,26 @@ namespace TakyTank.KyoProLib.CSharp
 			=> new Dpt(src.X * value, src.Y * value);
 		public static Dpt operator *(double value, Dpt src)
 			=> new Dpt(src.X * value, src.Y * value);
+		public static Dpt operator /(Dpt src, double value)
+			=> new Dpt(src.X / value, src.Y / value);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public double Dot(Dpt target) => Add(X * target.X, Y * target.Y);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public double Det(Dpt target) => Add(X * target.Y, -Y * target.X);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Dpt Rotate(double angle_rad)
+		{
+			double x = X * Math.Cos(angle_rad) - Y * Math.Sin(angle_rad);
+			double y = X * Math.Sin(angle_rad) + Y * Math.Cos(angle_rad);
+			return new Dpt(x, y);
+		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static double Add(double a, double b)
 			=> Math.Abs(a + b) < EPS * (Math.Abs(a) + Math.Abs(b)) ? 0 : a + b;
 
 		public override int GetHashCode() => HashCode.Combine(X, Y);
+		public override string ToString() => $"{X} {Y}";
 	}
 }
