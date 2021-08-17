@@ -149,8 +149,13 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Mex(int p = 0)
 		{
-			var (index, value) = set_.LowerBound(new LR(p, p));
-			if (index < 0 || value.L > p) {
+			var lower = set_.LowerBound(new LR(p, p));
+			if (lower.value.L != p) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
+			if (index < 0 || value.R <= p) {
 				return p;
 			} else {
 				return value.R;
@@ -341,8 +346,13 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long Mex(long p = 0)
 		{
-			var (index, value) = set_.LowerBound(new LR(p, p));
-			if (index < 0 || value.L > p) {
+			var lower = set_.LowerBound(new LR(p, p));
+			if (lower.value.L != p) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
+			if (index < 0 || value.R <= p) {
 				return p;
 			} else {
 				return value.R;
@@ -501,8 +511,13 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T Mex(T p)
 		{
-			var (index, value) = set_.LowerBound(new LR(p, p));
-			if (index < 0 || value.L.CompareTo(p) > 0) {
+			var lower = set_.LowerBound(new LR(p, p));
+			if (lower.value.L.CompareTo(p) != 0) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
+			if (index < 0 || value.R.CompareTo(p) <= 0) {
 				return p;
 			} else {
 				return value.R;
