@@ -315,6 +315,10 @@
 
 - [yukicoder No.1433 Two color sequence](https://yukicoder.me/problems/no/1433)
 
+## SuffixArray
+
+- [MojaCoder Shift Max](https://mojacoder.app/users/bayashiko/problems/shift_max)
+
 ## TernarySearch
 
 - [ARC054 B ムーアの法則](https://atcoder.jp/contests/arc054/tasks/arc054_b)
