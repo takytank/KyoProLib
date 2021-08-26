@@ -51,6 +51,15 @@
 
 - [deque](https://ufcpp.net/study/stl/deque.html)
 
+### DnaAlignment
+
+- [グローバルアライメント](https://bi.biopapyrus.jp/seq/alignment/needleman%E2%80%93wunsch.html)
+- [ローカルアライメント](https://bi.biopapyrus.jp/seq/alignment/smith-waterman.html)
+- [生命情報学 （２）配列解析基礎](https://www.bic.kyoto-u.ac.jp/takutsu/members/takutsu/sysbioinfo2019b.pdf)
+- [バイオインフォマティクスのすすめ（4）](https://note.com/tatanzaw/n/n93f5f132bb82)
+- [Smith-Watermanアルゴリズムを利用したギャップを含むコードクローン検出](https://sdl.ist.osaka-u.ac.jp/pman/pman3.cgi?DOWNLOAD=226)
+
+
 ### DynamicConnectivity
 
 - [ちょっと変わったセグメント木の使い方](https://ei1333.hateblo.jp/entry/2017/12/14/000000)

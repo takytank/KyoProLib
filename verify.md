@@ -60,6 +60,12 @@
 
 - [ABC176 D Wizard in Maze](https://atcoder.jp/contests/abc176/tasks/abc176_d)
 
+## DnaAlignment
+
+### NeedlemanWunsch
+
+- [ゲノコン2021 Practive 2](https://atcoder.jp/contests/genocon2021/tasks/genocon2021_b)
+
 ## Doubling
 
 - [ABC175 D Moving Piece](https://atcoder.jp/contests/abc175/tasks/abc175_d)
