@@ -139,6 +139,15 @@ namespace TakyTank.KyoProLib.CSharp
 
 			return Combination(n + k - 1, k);
 		}
+
+		public static ModInt HomogeneousProductK(long n, long k)
+		{
+			if (n < 0 || k < 0) {
+				return 0;
+			}
+
+			return CombinationK(n + k - 1, k);
+		}
 	}
 
 	public static class VModCounting
@@ -286,6 +295,15 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			return Combination(n + k - 1, k);
+		}
+
+		public static long HomogeneousProductK(long n, long k)
+		{
+			if (n < 0 || k < 0) {
+				return 0;
+			}
+
+			return CombinationK(n + k - 1, k);
 		}
 	}
 }
