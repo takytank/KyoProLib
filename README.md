@@ -218,6 +218,7 @@
 - [ミラーラビン素数判定法とロー法](https://joisino.hatenablog.com/entry/2017/08/03/210000)
 - [Deterministic variants of the Miller-Rabin primality test](http://miller-rabin.appspot.com)
 - [ポラード・ロー素因数分解法](https://qiita.com/gushwell/items/561afde2e00bf3380c98)
+- [眠れない夜は素数の個数でも数えましょう](https://rsk0315.hatenablog.com/entry/2021/05/18/015511)
 
 ### RadixHeap
 

@@ -241,6 +241,11 @@
 
 - [ACL Contest1 B Sum is Multiple](https://atcoder.jp/contests/acl1/tasks/acl1_b)
 
+### CountPrimeLucy
+
+- [yukicoder No.1661 Sum is Prime (Hard Version)](https://yukicoder.me/problems/no/1661)
+- [yosupo-judge Counting Primes](https://judge.yosupo.jp/problem/counting_primes)
+
 ## RadixHeap
 
 ### RadixHeap32

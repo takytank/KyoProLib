@@ -192,6 +192,87 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long CountPrimeLucy(long n)
+		{
+			if (n <= 1) {
+				return 0;
+			}
+
+			long nSqrt = FloorSqrt(n);
+
+			var larges = new long[nSqrt + 1];
+			for (int i = 1; i <= nSqrt; i++) {
+				larges[i] = n / i - 1;
+			}
+
+			var smalls = new long[n / nSqrt];
+			for (int i = 1; i < n / nSqrt; i++) {
+				smalls[i] = i - 1;
+			}
+
+			for (long p = 2; p <= nSqrt; p++) {
+				if (p < smalls.Length) {
+					if (smalls[p] <= smalls[p - 1]) {
+						continue;
+					}
+				} else {
+					if (larges[n / p] <= smalls[p - 1]) {
+						continue;
+					}
+				}
+
+				long pc = smalls[p - 1];
+				long q = p * p;
+				for (int i = 1; i <= nSqrt; i++) {
+					if (n / i < q) {
+						break;
+					}
+
+					long ip = i * p;
+					long cur = (larges.Length <= ip ? smalls[n / ip] : larges[ip]) - pc;
+					if (larges.Length <= i) {
+						smalls[n / i] -= cur;
+					} else {
+						larges[i] -= cur;
+					}
+				}
+
+				for (int i = smalls.Length - 1; i >= 0; i--) {
+					if (i < q) {
+						break;
+					}
+
+					long cur = smalls[i / p] - pc;
+					smalls[i] -= cur;
+
+				}
+			}
+
+			return larges[1];
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long FloorSqrt(long value)
+		{
+			if (value < 0) {
+				return -1;
+			}
+
+			long ok = 0;
+			long ng = 3000000000;
+			while (ng - ok > 1) {
+				long mid = (ng + ok) / 2;
+				if (mid * mid <= value) {
+					ok = mid;
+				} else {
+					ng = mid;
+				}
+			}
+
+			return ok;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static long Mod(long x, long p)
 		{
 			x %= p;
