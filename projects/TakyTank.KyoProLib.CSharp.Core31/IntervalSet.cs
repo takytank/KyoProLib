@@ -22,7 +22,12 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (int l, int r) GetInterval(int p)
 		{
-			var (index, value) = set_.LowerBound(new LR(p, p));
+			var lower = set_.LowerBound(new LR(p, p));
+			if (lower.value.L != p) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
 			if (index < 0 || value.R <= p) {
 				return set_[^1].ToTuple();
 			} else {
@@ -46,8 +51,11 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				return;
 			}
 
+			bool willMerge = mergesAdjacentInterval_
+				? right.value.L == p + 1
+				: right.value.L == p;
 			if (left.R == p) {
-				if (right.value.L != p + 1) {
+				if (willMerge == false) {
 					set_.Remove(left);
 					set_.Add(new LR(left.L, p + 1));
 				} else {
@@ -56,7 +64,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					set_.Add(new LR(left.L, right.value.R));
 				}
 			} else {
-				if (right.value.L != p + 1) {
+				if (willMerge == false) {
 					set_.Add(new LR(p, p + 1));
 				} else {
 					set_.Remove(right.value);
@@ -74,7 +82,10 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			var it = set_.LowerBound(new LR(l, r));
 			var t = set_[it.index - 1];
-			if (t.L <= l && l <= t.R) {
+			bool willMerge = mergesAdjacentInterval_
+				? t.L <= l && l <= t.R
+				: t.L < l && l < t.R;
+			if (willMerge) {
 				l = Math.Min(l, t.L);
 				r = Math.Max(r, t.R);
 				set_.RemoveAt(it.index - 1);
@@ -82,22 +93,15 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			it = set_.LowerBound(new LR(l, r));
 			while (true) {
-				if (mergesAdjacentInterval_) {
-					if (l <= it.value.L && it.value.L <= r) {
-						r = Math.Max(r, it.value.R);
-						set_.RemoveAt(it.index);
-						it = (it.index, set_[it.index]);
-					} else {
-						break;
-					}
+				willMerge = mergesAdjacentInterval_
+					 ? l <= it.value.L && it.value.L <= r
+					 : l < it.value.L && it.value.L < r;
+				if (willMerge) {
+					r = Math.Max(r, it.value.R);
+					set_.RemoveAt(it.index);
+					it = (it.index, set_[it.index]);
 				} else {
-					if (l < it.value.L && it.value.L < r) {
-						r = Math.Max(r, it.value.R);
-						set_.RemoveAt(it.index);
-						it = (it.index, set_[it.index]);
-					} else {
-						break;
-					}
+					break;
 				}
 			}
 
@@ -219,7 +223,12 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (long l, long r) GetInterval(long p)
 		{
-			var (index, value) = set_.LowerBound(new LR(p, p));
+			var lower = set_.LowerBound(new LR(p, p));
+			if (lower.value.L != p) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
 			if (index < 0 || value.R <= p) {
 				return set_[^1].ToTuple();
 			} else {
@@ -243,8 +252,11 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				return;
 			}
 
+			bool willMerge = mergesAdjacentInterval_
+				? right.value.L == p + 1
+				: right.value.L == p;
 			if (left.R == p) {
-				if (right.value.L != p + 1) {
+				if (willMerge == false) {
 					set_.Remove(left);
 					set_.Add(new LR(left.L, p + 1));
 				} else {
@@ -253,7 +265,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 					set_.Add(new LR(left.L, right.value.R));
 				}
 			} else {
-				if (right.value.L != p + 1) {
+				if (willMerge == false) {
 					set_.Add(new LR(p, p + 1));
 				} else {
 					set_.Remove(right.value);
@@ -271,7 +283,10 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			var it = set_.LowerBound(new LR(l, r));
 			var t = set_[it.index - 1];
-			if (t.L <= l && l <= t.R) {
+			bool willMerge = mergesAdjacentInterval_
+				? t.L <= l && l <= t.R
+				: t.L < l && l < t.R;
+			if (willMerge) {
 				l = Math.Min(l, t.L);
 				r = Math.Max(r, t.R);
 				set_.RemoveAt(it.index - 1);
@@ -279,22 +294,15 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			it = set_.LowerBound(new LR(l, r));
 			while (true) {
-				if (mergesAdjacentInterval_) {
-					if (l <= it.value.L && it.value.L <= r) {
-						r = Math.Max(r, it.value.R);
-						set_.RemoveAt(it.index);
-						it = (it.index, set_[it.index]);
-					} else {
-						break;
-					}
+				willMerge = mergesAdjacentInterval_
+					 ? l <= it.value.L && it.value.L <= r
+					 : l < it.value.L && it.value.L < r;
+				if (willMerge) {
+					r = Math.Max(r, it.value.R);
+					set_.RemoveAt(it.index);
+					it = (it.index, set_[it.index]);
 				} else {
-					if (l < it.value.L && it.value.L < r) {
-						r = Math.Max(r, it.value.R);
-						set_.RemoveAt(it.index);
-						it = (it.index, set_[it.index]);
-					} else {
-						break;
-					}
+					break;
 				}
 			}
 
@@ -416,7 +424,12 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (T l, T r) GetInterval(T p)
 		{
-			var (index, value) = set_.LowerBound(new LR(p, p));
+			var lower = set_.LowerBound(new LR(p, p));
+			if (lower.value.L.CompareTo(p) != 0) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
 			if (index < 0 || value.R.CompareTo(p) <= 0) {
 				return set_[^1].ToTuple();
 			} else {
@@ -440,7 +453,10 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			var it = set_.LowerBound(new LR(l, r));
 			var t = set_[it.index - 1];
-			if (t.L.CompareTo(l) <= 0 && l.CompareTo(t.R) <= 0) {
+			bool willMerge = mergesAdjacentInterval_
+				? t.L.CompareTo(l) <= 0 && l.CompareTo(t.R) <= 0
+				: t.L.CompareTo(l) < 0 && l.CompareTo(t.R) < 0;
+			if (willMerge) {
 				if (l.CompareTo(t.L) > 0) {
 					l = t.L;
 				}
@@ -454,28 +470,19 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			it = set_.LowerBound(new LR(l, r));
 			while (true) {
-				if (mergesAdjacentInterval_) {
-					if (l.CompareTo(it.value.L) <= 0 && it.value.L.CompareTo(r) <= 0) {
-						if (r.CompareTo(it.value.R) < 0) {
-							r = it.value.R;
-						}
+				willMerge = mergesAdjacentInterval_
+					 ? l.CompareTo(it.value.L) <= 0 && it.value.L.CompareTo(r) <= 0
+					 : l.CompareTo(it.value.L) < 0 && it.value.L.CompareTo(r) < 0;
 
-						set_.RemoveAt(it.index);
-						it = (it.index, set_[it.index]);
-					} else {
-						break;
+				if (willMerge) {
+					if (r.CompareTo(it.value.R) < 0) {
+						r = it.value.R;
 					}
+
+					set_.RemoveAt(it.index);
+					it = (it.index, set_[it.index]);
 				} else {
-					if (l.CompareTo(it.value.L) < 0 && it.value.L.CompareTo(r) < 0) {
-						if (r.CompareTo(it.value.R) < 0) {
-							r = it.value.R;
-						}
-
-						set_.RemoveAt(it.index);
-						it = (it.index, set_[it.index]);
-					} else {
-						break;
-					}
+					break;
 				}
 			}
 
