@@ -237,6 +237,12 @@
 - [エイシングプログラミングコンテスト2021 (ABC202) D aab aba baa](https://atcoder.jp/contests/abc202/tasks/abc202_d)
 - [ABC001 D 大ジャンプ](https://atcoder.jp/contests/abc011/tasks/abc011_4)
 
+## PivotTree
+
+- [CPSCO2019 Session1 E Exclusive OR Queries](https://atcoder.jp/contests/cpsco2019-s1/tasks/cpsco2019_s1_e)
+- [ABC170 E Smart Infants](https://atcoder.jp/contests/abc170/tasks/abc170_e)
+- [ABC217 D Cutting Woods](https://atcoder.jp/contests/abc217/tasks/abc217_d)
+
 ## Prime
 
 ### PrimeFactorsByPollardsRho
