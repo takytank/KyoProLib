@@ -16,6 +16,11 @@
 - 蟻本 95p
 - [ABC137 解説放送 (E問題)](https://www.youtube.com/watch?v=1Z6ofKN03_Y)
 
+### BinaryTrie
+
+- [非負整数値を扱う Trie について](https://kazuma8128.hatenablog.com/entry/2018/05/06/022654)
+- [Binary-Trie](https://ei1333.github.io/library/structure/trie/binary-trie.cpp.html)
+
 ### BitComputing
 
 - [ビットを数える・探すアルゴリズム](http://www.nminoru.jp/~nminoru/programming/bitcount.html)
