@@ -51,7 +51,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public (bool isSpanning, long length, (int u, int v, long cost)[]) Kruskal()
+		public (bool isSpanning, long length, (int u, int v, long cost)[] edges) Kruskal()
 		{
 			long length = 0;
 			var edges = new (int u, int v, long cost)[_n - 1];
@@ -74,7 +74,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public (bool isSpanning, long length, (int u, int v, long cost)[]) Prim()
+		public (bool isSpanning, long length, (int u, int v, long cost)[] edges) Prim()
 		{
 			long length = 0;
 			var edges = new (int u, int v, long cost)[_n - 1];
