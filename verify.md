@@ -14,6 +14,12 @@
 
 - [ABC137 E Coins Respawn](https://atcoder.jp/contests/m-solutions2020/tasks/m_solutions2020_e)
 - [ABC061 D Score Attack](https://atcoder.jp/contests/abc061/tasks/abc061_d)
+- [yosupo-judge Set Xor-Min](https://judge.yosupo.jp/problem/set_xor_min)
+
+## BinaryTrie
+
+- [ABC218 G Game on Tree 2](https://atcoder.jp/contests/abc218/tasks/abc218_g)
+- [ABC217 D Cutting Woods](https://atcoder.jp/contests/abc217/tasks/abc217_d)
 
 ## BitFlag
 
