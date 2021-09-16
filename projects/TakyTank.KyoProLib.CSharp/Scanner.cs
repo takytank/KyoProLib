@@ -87,6 +87,9 @@ namespace TakyTank.KyoProLib.CSharp
 		public (int, int, int, int) Int4(int offset = 0)
 			=> (Int(offset), Int(offset), Int(offset), Int(offset));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int, int, int, int, int) Int5(int offset = 0)
+			=> (Int(offset), Int(offset), Int(offset), Int(offset), Int(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int[] ArrayInt(int length, int offset = 0)
 		{
 			var array = new int[length];
@@ -133,6 +136,9 @@ namespace TakyTank.KyoProLib.CSharp
 		public (long, long, long, long) Long4(long offset = 0)
 			=> (Long(offset), Long(offset), Long(offset), Long(offset));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (long, long, long, long, long) Long5(long offset = 0)
+			=> (Long(offset), Long(offset), Long(offset), Long(offset), Long(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long[] ArrayLong(int length, long offset = 0)
 		{
 			var array = new long[length];
@@ -156,6 +162,9 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (BigInteger, BigInteger, BigInteger, BigInteger) Big4(long offset = 0)
 			=> (Big(offset), Big(offset), Big(offset), Big(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (BigInteger, BigInteger, BigInteger, BigInteger, BigInteger) Big5(long offset = 0)
+			=> (Big(offset), Big(offset), Big(offset), Big(offset), Big(offset));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public BigInteger[] ArrayBig(int length, long offset = 0)
 		{
@@ -181,6 +190,9 @@ namespace TakyTank.KyoProLib.CSharp
 		public (double, double, double, double) Double4(double offset = 0)
 			=> (Double(offset), Double(offset), Double(offset), Double(offset));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (double, double, double, double, double) Double5(double offset = 0)
+			=> (Double(offset), Double(offset), Double(offset), Double(offset), Double(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public double[] ArrayDouble(int length, double offset = 0)
 		{
 			var array = new double[length];
@@ -204,6 +216,9 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (decimal, decimal, decimal, decimal) Decimal4(decimal offset = 0)
 			=> (Decimal(offset), Decimal(offset), Decimal(offset), Decimal(offset));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (decimal, decimal, decimal, decimal, decimal) Decimal5(decimal offset = 0)
+			=> (Decimal(offset), Decimal(offset), Decimal(offset), Decimal(offset), Decimal(offset));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public decimal[] ArrayDecimal(int length, decimal offset = 0)
 		{
