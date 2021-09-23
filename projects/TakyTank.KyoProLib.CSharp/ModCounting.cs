@@ -6,51 +6,51 @@ namespace TakyTank.KyoProLib.CSharp
 {
 	public static class ModCounting
 	{
-		private const long p_ = ModInt.P;
+		private const long _p = ModInt.P;
 
-		private static ModInt[] factorial_;
-		private static ModInt[] inverseFactorial_;
-		private static ModInt[] inverse_;
-		private static ModInt[] montmort_;
+		private static ModInt[] _factorial;
+		private static ModInt[] _inverseFactorial;
+		private static ModInt[] _inverse;
+		private static ModInt[] _montmort;
 
 		public static void InitializeFactorial(long max, bool withInverse = false)
 		{
 			if (withInverse) {
-				factorial_ = new ModInt[max + 1];
-				inverseFactorial_ = new ModInt[max + 1];
-				inverse_ = new ModInt[max + 1];
+				_factorial = new ModInt[max + 1];
+				_inverseFactorial = new ModInt[max + 1];
+				_inverse = new ModInt[max + 1];
 
-				factorial_[0] = factorial_[1] = 1;
-				inverseFactorial_[0] = inverseFactorial_[1] = 1;
-				inverse_[1] = 1;
+				_factorial[0] = _factorial[1] = 1;
+				_inverseFactorial[0] = _inverseFactorial[1] = 1;
+				_inverse[1] = 1;
 				for (int i = 2; i <= max; i++) {
-					factorial_[i] = factorial_[i - 1] * i;
-					inverse_[i] = p_ - inverse_[p_ % i] * (p_ / i);
-					inverseFactorial_[i] = inverseFactorial_[i - 1] * inverse_[i];
+					_factorial[i] = _factorial[i - 1] * i;
+					_inverse[i] = _p - _inverse[_p % i] * (_p / i);
+					_inverseFactorial[i] = _inverseFactorial[i - 1] * _inverse[i];
 				}
 			} else {
-				factorial_ = new ModInt[max + 1];
-				inverseFactorial_ = new ModInt[max + 1];
+				_factorial = new ModInt[max + 1];
+				_inverseFactorial = new ModInt[max + 1];
 
-				factorial_[0] = factorial_[1] = 1;
+				_factorial[0] = _factorial[1] = 1;
 				for (int i = 2; i <= max; i++) {
-					factorial_[i] = factorial_[i - 1] * i;
+					_factorial[i] = _factorial[i - 1] * i;
 				}
 
-				inverseFactorial_[max] = new ModInt(1) / factorial_[max];
+				_inverseFactorial[max] = new ModInt(1) / _factorial[max];
 				for (long i = max - 1; i >= 0; i--) {
-					inverseFactorial_[i] = inverseFactorial_[i + 1] * (i + 1);
+					_inverseFactorial[i] = _inverseFactorial[i + 1] * (i + 1);
 				}
 			}
 		}
 
 		public static void InitializeMontmort(long max)
 		{
-			montmort_ = new ModInt[Math.Max(3, max + 1)];
-			montmort_[0] = 1;
-			montmort_[1] = 0;
+			_montmort = new ModInt[Math.Max(3, max + 1)];
+			_montmort[0] = 1;
+			_montmort[1] = 0;
 			for (int i = 2; i < max + 1; i++) {
-				montmort_[i] = (i - 1) * (montmort_[i - 1] + montmort_[i - 2]);
+				_montmort[i] = (i - 1) * (_montmort[i - 1] + _montmort[i - 2]);
 			}
 		}
 
@@ -60,7 +60,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return factorial_[n];
+			return _factorial[n];
 		}
 
 		public static ModInt InverseFactorial(long n)
@@ -69,7 +69,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return inverseFactorial_[n];
+			return _inverseFactorial[n];
 		}
 
 		public static ModInt Inverse(long n)
@@ -78,7 +78,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return inverse_[n];
+			return _inverse[n];
 		}
 
 		public static ModInt Montmort(long n)
@@ -87,7 +87,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return montmort_[n];
+			return _montmort[n];
 		}
 
 		public static ModInt Permutation(long n, long k)
@@ -96,15 +96,15 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return factorial_[n] * inverseFactorial_[n - k];
+			return _factorial[n] * _inverseFactorial[n - k];
 		}
 
 		public static ModInt RepeatedPermutation(long n, long k)
 		{
 			long ret = 1;
-			for (k %= p_ - 1; k > 0; k >>= 1, n = n * n % p_) {
+			for (k %= _p - 1; k > 0; k >>= 1, n = n * n % _p) {
 				if ((k & 1) == 1) {
-					ret = ret * n % p_;
+					ret = ret * n % _p;
 				}
 			}
 
@@ -117,15 +117,15 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return factorial_[n] * inverseFactorial_[k] * inverseFactorial_[n - k];
+			return _factorial[n] * _inverseFactorial[k] * _inverseFactorial[n - k];
 		}
 
 		public static ModInt CombinationK(long n, long k)
 		{
 			ModInt ret = 1;
 			for (int i = 0; i < k; i++) {
-				ret *= (n - i) % p_;
-				ret *= inverse_[i + 1];
+				ret *= (n - i) % _p;
+				ret *= _inverse[i + 1];
 			}
 
 			return ret;
@@ -161,62 +161,62 @@ namespace TakyTank.KyoProLib.CSharp
 
 	public static class VModCounting
 	{
-		private static long p_ = 1000000007;
+		private static long _p = 1000000007;
 
-		private static long[] factorial_;
-		private static long[] inverseFactorial_;
-		private static long[] inverse_;
-		private static long[] montmort_;
+		private static long[] _factorial;
+		private static long[] _inverseFactorial;
+		private static long[] _inverse;
+		private static long[] _montmort;
 
 		public static void InitializeFactorial(long max, long p, bool withInverse = false)
 		{
-			p_ = p;
+			_p = p;
 
 			if (withInverse) {
-				factorial_ = new long[max + 1];
-				inverseFactorial_ = new long[max + 1];
-				inverse_ = new long[max + 1];
+				_factorial = new long[max + 1];
+				_inverseFactorial = new long[max + 1];
+				_inverse = new long[max + 1];
 
-				factorial_[0] = factorial_[1] = 1;
-				inverseFactorial_[0] = inverseFactorial_[1] = 1;
-				inverse_[1] = 1;
+				_factorial[0] = _factorial[1] = 1;
+				_inverseFactorial[0] = _inverseFactorial[1] = 1;
+				_inverse[1] = 1;
 				for (int i = 2; i <= max; i++) {
-					factorial_[i] = factorial_[i - 1] * i % p_;
-					inverse_[i] = p_ - inverse_[p_ % i] * (p_ / i) % p_;
-					inverseFactorial_[i] = inverseFactorial_[i - 1] * inverse_[i] % p_;
+					_factorial[i] = _factorial[i - 1] * i % _p;
+					_inverse[i] = _p - _inverse[_p % i] * (_p / i) % _p;
+					_inverseFactorial[i] = _inverseFactorial[i - 1] * _inverse[i] % _p;
 				}
 			} else {
-				factorial_ = new long[max + 1];
-				inverseFactorial_ = new long[max + 1];
+				_factorial = new long[max + 1];
+				_inverseFactorial = new long[max + 1];
 
-				factorial_[0] = factorial_[1] = 1;
+				_factorial[0] = _factorial[1] = 1;
 				for (int i = 2; i <= max; i++) {
-					factorial_[i] = factorial_[i - 1] * i % p_;
+					_factorial[i] = _factorial[i - 1] * i % _p;
 				}
 
-				long value = factorial_[max];
-				long k = p_ - 2;
+				long value = _factorial[max];
+				long k = _p - 2;
 				long temp = 1;
-				for (k %= p_ - 1; k > 0; k >>= 1, value = value * value % p_) {
+				for (k %= _p - 1; k > 0; k >>= 1, value = value * value % _p) {
 					if ((k & 1) == 1) {
-						temp = temp * value % p_;
+						temp = temp * value % _p;
 					}
 				}
 
-				inverseFactorial_[max] = temp;
+				_inverseFactorial[max] = temp;
 				for (long i = max - 1; i >= 0; i--) {
-					inverseFactorial_[i] = inverseFactorial_[i + 1] * (i + 1) % p_;
+					_inverseFactorial[i] = _inverseFactorial[i + 1] * (i + 1) % _p;
 				}
 			}
 		}
 
 		public static void InitializeMontmort(long max)
 		{
-			montmort_ = new long[Math.Max(3, max + 1)];
-			montmort_[0] = 1;
-			montmort_[1] = 0;
+			_montmort = new long[Math.Max(3, max + 1)];
+			_montmort[0] = 1;
+			_montmort[1] = 0;
 			for (int i = 2; i < max + 1; i++) {
-				montmort_[i] = (i - 1) * (montmort_[i - 1] + montmort_[i - 2]);
+				_montmort[i] = (i - 1) * (_montmort[i - 1] + _montmort[i - 2]);
 			}
 		}
 
@@ -226,7 +226,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return factorial_[n];
+			return _factorial[n];
 		}
 
 		public static long InverseFactorial(long n)
@@ -235,7 +235,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return inverseFactorial_[n];
+			return _inverseFactorial[n];
 		}
 
 		public static long Inverse(long n)
@@ -244,7 +244,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return inverse_[n];
+			return _inverse[n];
 		}
 
 		public static long Montmort(long n)
@@ -253,7 +253,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return montmort_[n];
+			return _montmort[n];
 		}
 
 		public static long Permutation(long n, long k)
@@ -262,15 +262,15 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return factorial_[n] * inverseFactorial_[n - k] % p_;
+			return _factorial[n] * _inverseFactorial[n - k] % _p;
 		}
 
 		public static long RepeatedPermutation(long n, long k)
 		{
 			long ret = 1;
-			for (k %= p_ - 1; k > 0; k >>= 1, n = n * n % p_) {
+			for (k %= _p - 1; k > 0; k >>= 1, n = n * n % _p) {
 				if ((k & 1) == 1) {
-					ret = ret * n % p_;
+					ret = ret * n % _p;
 				}
 			}
 
@@ -283,15 +283,15 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return factorial_[n] * (inverseFactorial_[k] * inverseFactorial_[n - k] % p_) % p_;
+			return _factorial[n] * (_inverseFactorial[k] * _inverseFactorial[n - k] % _p) % _p;
 		}
 
 		public static long CombinationK(long n, long k)
 		{
 			long ret = 1;
 			for (int i = 0; i < k; i++) {
-				ret = (ret * ((n - i) % p_)) % p_;
-				ret = (ret * inverse_[i + 1]) % p_;
+				ret = (ret * ((n - i) % _p)) % _p;
+				ret = (ret * _inverse[i + 1]) % _p;
 			}
 
 			return ret;
@@ -321,7 +321,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			return Combination(2 * n, n) * Inverse(n + 1) % p_;
+			return Combination(2 * n, n) * Inverse(n + 1) % _p;
 		}
 	}
 }
