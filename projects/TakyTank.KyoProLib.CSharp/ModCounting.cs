@@ -148,6 +148,15 @@ namespace TakyTank.KyoProLib.CSharp
 
 			return CombinationK(n + k - 1, k);
 		}
+
+		public static ModInt Catalan(long n)
+		{
+			if (n < 0) {
+				return 0;
+			}
+
+			return Combination(2 * n, n) * Inverse(n + 1);
+		}
 	}
 
 	public static class VModCounting
@@ -304,6 +313,15 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			return CombinationK(n + k - 1, k);
+		}
+
+		public static long Catalan(long n)
+		{
+			if (n < 0) {
+				return 0;
+			}
+
+			return Combination(2 * n, n) * Inverse(n + 1) % p_;
 		}
 	}
 }
