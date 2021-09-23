@@ -135,6 +135,12 @@
 - [区間をsetで管理するやつ](https://satanic0258.github.io/snippets/data-structure/SegmentMap.html)
 - [要素の追加・削除と mex を対数時間で処理するよ](https://rsk0315.hatenablog.com/entry/2020/10/11/125049)
 
+### LaplacianMatrix
+
+- [ラプラシアン行列](https://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%97%E3%83%A9%E3%82%B7%E3%82%A2%E3%83%B3%E8%A1%8C%E5%88%97)
+- [グラフ理論 配布資料 #7](https://ocw.hokudai.ac.jp/wp-content/uploads/2016/01/GraphTheory-2005-Note-07.pdf)
+- [行列木定理の証明](https://mizuwater0.hatenablog.com/entry/2018/11/25/233547)
+
 ### LCS (Longest Common Subsequence)
 
 - 蟻本 56p

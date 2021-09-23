@@ -183,6 +183,11 @@
 - [ABC214 E Packing Under Range Regulations](https://atcoder.jp/contests/abc214/tasks/abc214_e)
 - [ABC217 D Cutting Woods](https://atcoder.jp/contests/abc217/tasks/abc217_d)
 
+## LaplacianMatrix
+
+- [第二回日本最強プログラマー学生選手権 G Spanning Tree](https://atcoder.jp/contests/jsc2021/tasks/jsc2021_g) 
+
+
 ## LevelAncestor
 
 - [ABC187 E Through Path](https://atcoder.jp/contests/abc187/tasks/abc187_e)
