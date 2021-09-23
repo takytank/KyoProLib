@@ -14,6 +14,13 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 		public static BitFlag FromBit(int bitNumber) => 1 << bitNumber;
 		public static BitFlag Fill(int count) => (1 << count) - 1;
 
+		public static IEnumerable<BitFlag> All(int n)
+		{
+			for (var f = Begin(); f < End(n); ++f) {
+				yield return f;
+			}
+		}
+
 		private readonly int flags_;
 		public int Flag => flags_;
 		public bool this[int bitNumber] => (flags_ & (1 << bitNumber)) != 0;
