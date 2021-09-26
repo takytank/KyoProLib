@@ -254,6 +254,10 @@
 - [ABC170 E Smart Infants](https://atcoder.jp/contests/abc170/tasks/abc170_e)
 - [ABC217 D Cutting Woods](https://atcoder.jp/contests/abc217/tasks/abc217_d)
 
+## Point
+
+- [Aizu Competitive Programming Camp 2021 Day 2 C Typhoon](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/C)
+
 ## Prime
 
 ### PrimeFactorsByPollardsRho

@@ -23,6 +23,22 @@ namespace TakyTank.KyoProLib.CSharp
 			return x * x + y * y;
 		}
 
+		public static (long numerator, long denominator, bool squared)
+			DistanceOfPointAndLine(Ipt p1, Ipt p2, Ipt q)
+		{
+			if ((p2 - p1).Dot(q - p1) < 0
+				|| (p1 - p2).Dot(q - p2) < 0) {
+				long distance2 = Math.Min(
+					Ipt.Length2(p1, q),
+					Ipt.Length2(p2, q));
+				return (distance2, 1, true);
+			} else {
+				long numerator = (q - p1).Det(p2 - p1);
+				long denominator2 = Ipt.Length2(p1, p2);
+				return (numerator, denominator2, false);
+			}
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsOnSegment(Ipt p1, Ipt p2, Ipt q)
 			=> (p1 - q).Det(p2 - q) == 0 && (p1 - q).Dot(p2 - q) <= 0;
@@ -83,6 +99,21 @@ namespace TakyTank.KyoProLib.CSharp
 			double x = p.X - q.X;
 			double y = p.Y - q.Y;
 			return Math.Sqrt(x * x + y * y);
+		}
+
+		public static double DistanceOfPointAndLine(Dpt p1, Dpt p2, Dpt q)
+		{
+			if ((p2 - p1).Dot(q - p1) < 0
+				|| (p1 - p2).Dot(q - p2) < 0) {
+				double distance = Math.Min(
+					Dpt.Length(p1, q),
+					Dpt.Length(p2, q));
+				return distance;
+			} else {
+				double numerator = (q - p1).Det(p2 - p1);
+				double denominator = Dpt.Length(p1, p2);
+				return numerator / denominator;
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
