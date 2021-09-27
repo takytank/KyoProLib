@@ -209,7 +209,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 			return x;
 
-			static long Gcd(long a, long b)
+			long Gcd(long a, long b)
 			{
 				if (b == 0) {
 					return a;
@@ -218,15 +218,15 @@ namespace TakyTank.KyoProLib.CSharp
 				return Gcd(b, a % b);
 			}
 
-			static (long gcd, long x, long y) ExtendedEuclidean(long a, long b)
+			(long gcd, long x, long y) ExtendedEuclidean(long a, long b)
 			{
 				if (b == 0) {
 					return (a, 1, 0);
 				}
 
-				var (gcd, y, x) = ExtendedEuclidean(b, a % b);
-				y -= a / b * x;
-				return (gcd, x, y);
+				var (gcd, yy, xx) = ExtendedEuclidean(b, a % b);
+				yy -= a / b * xx;
+				return (gcd, xx, yy);
 			}
 		}
 

@@ -9,7 +9,9 @@ namespace TakyTank.KyoProLib.CSharp.V7
 		public static (bool[] isPrime, List<int> primes) Sift(long n)
 		{
 			var isPrime = new bool[n + 1];
-			isPrime.AsSpan().Fill(true);
+			for (int i = 0; i <= n; i++) {
+				isPrime[i] = true;
+			}
 
 			var primes = new List<int>((int)Math.Sqrt(n));
 			for (long i = 2; i <= n; i++) {
@@ -27,7 +29,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 		private readonly long[] primes_;
 		private readonly long[] minPrimeFactors_;
 
-		public ReadOnlySpan<long> Primes => primes_;
+		public long[] Primes => primes_;
 
 		public Eratosthenes(long n)
 		{
@@ -82,7 +84,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 			return factors;
 		}
 
-		public Dictionary<long, int> PrimeFactorsOfLcm(ReadOnlySpan<long> values)
+		public Dictionary<long, int> PrimeFactorsOfLcm(long[] values)
 		{
 			var factors = new Dictionary<long, int>();
 			foreach (long value in values) {
@@ -105,7 +107,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 		private readonly long[] primes_;
 		private readonly long[] minPrimeFactors_;
 
-		public ReadOnlySpan<long> Primes => primes_;
+		public long[] Primes => primes_;
 
 		public LinearSeive(long n)
 		{

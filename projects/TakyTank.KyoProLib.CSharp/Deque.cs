@@ -80,7 +80,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public T PopFront()
 		{
 			if (Count == 0) {
-				return default;
+				return default(T);
 			}
 
 			T ret = ringBuffer_[front_];
@@ -97,7 +97,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public T PopBack()
 		{
 			if (Count == 0) {
-				return default;
+				return default(T);
 			}
 
 			if (back_ < 0) {

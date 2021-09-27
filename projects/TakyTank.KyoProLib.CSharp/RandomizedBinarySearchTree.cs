@@ -13,11 +13,11 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly bool isMulti_;
 		private Node root_;
 
-		public RandomizedBinarySearchTree(bool isMulti = false, T inf = default)
+		public RandomizedBinarySearchTree(bool isMulti = false, T inf = default(T))
 			: this(Comparer<T>.Default, isMulti, inf) { }
-		public RandomizedBinarySearchTree(Comparison<T> comaprison, bool isMulti = false, T inf = default)
+		public RandomizedBinarySearchTree(Comparison<T> comaprison, bool isMulti = false, T inf = default(T))
 			: this(Comparer<T>.Create(comaprison), isMulti, inf) { }
-		public RandomizedBinarySearchTree(IComparer<T> comparer, bool isMulti = false, T inf = default)
+		public RandomizedBinarySearchTree(IComparer<T> comparer, bool isMulti = false, T inf = default(T))
 		{
 			comparer_ = comparer;
 			isMulti_ = isMulti;

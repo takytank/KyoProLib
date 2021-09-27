@@ -74,8 +74,8 @@ namespace TakyTank.KyoProLib.CSharp
 				finish_[v] = index;
 			}
 
-			int index = 0;
-			Dfs(root, -1, 0, ref index);
+			int index2 = 0;
+			Dfs(root, -1, 0, ref index2);
 
 			for (int i = depthCount_ - 1; i > 0; i--) {
 				var l = depthTree_[i << 1];

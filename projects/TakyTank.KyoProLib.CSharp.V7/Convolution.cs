@@ -7,7 +7,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 {
 	public static class Convolution
 	{
-		public static long[] Convolve(ReadOnlySpan<long> a, ReadOnlySpan<long> b)
+		public static long[] Convolve(long[] a, long[] b)
 		{
 			unchecked {
 				var n = a.Length;
@@ -35,7 +35,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 
 				var c = new long[n + m - 1];
 
-				Span<ulong> offset = stackalloc ulong[] { 0, 0, M1M2M3, 2 * M1M2M3, 3 * M1M2M3 };
+				var offset = new ulong[] { 0, 0, M1M2M3, 2 * M1M2M3, 3 * M1M2M3 };
 
 				for (int i = 0; i < c.Length; i++) {
 					ulong x = 0;
@@ -57,7 +57,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static ulong[] Convolve<TMod>(ReadOnlySpan<long> a, ReadOnlySpan<long> b)
+		private static ulong[] Convolve<TMod>(long[] a, long[] b)
 				where TMod : struct, IFftMod
 		{
 			int z = 1 << CeilPow2(a.Length + b.Length - 1);
@@ -82,7 +82,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Span<FftModInt<TMod>> Convolve<TMod>(Span<FftModInt<TMod>> a, Span<FftModInt<TMod>> b, int n, int m, int z)
+		private static FftModInt<TMod>[] Convolve<TMod>(FftModInt<TMod>[] a, FftModInt<TMod>[] b, int n, int m, int z)
 			where TMod : struct, IFftMod
 		{
 			FftModInt<TMod>.Butterfly(a);
@@ -93,10 +93,15 @@ namespace TakyTank.KyoProLib.CSharp.V7
 			}
 
 			FftModInt<TMod>.ButterflyInv(a);
-			var result = a[0..(n + m - 1)];
+			int count = (n + m - 1);
+			var result = new FftModInt<TMod>[count];
+			for (int i = 0; i < count; i++) {
+				result[i] = a[i];
+			}
+
 			var iz = new FftModInt<TMod>(z).Inv();
-			foreach (ref var r in result) {
-				r *= iz;
+			for (int i = 0; i < count; i++) {
+				result[i] *= iz;
 			}
 
 			return result;
@@ -191,7 +196,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 			bool IsPrime { get; }
 		}
 
-		private readonly struct FftMod1 : IFftMod
+		private struct FftMod1 : IFftMod
 		{
 			public const uint MOD = 754974721;
 			public uint Mod => MOD;
@@ -199,7 +204,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 			public bool IsPrime => true;
 		}
 
-		private readonly struct FftMod2 : IFftMod
+		private struct FftMod2 : IFftMod
 		{
 			public const uint MOD = 167772161;
 			public uint Mod => MOD;
@@ -207,7 +212,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 			public bool IsPrime => true;
 		}
 
-		private readonly struct FftMod3 : IFftMod
+		private struct FftMod3 : IFftMod
 		{
 			public const uint MOD = 469762049;
 			public uint Mod => MOD;
@@ -215,7 +220,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 			public bool IsPrime => true;
 		}
 
-		private readonly struct FftModInt<T> where T : struct, IFftMod
+		private struct FftModInt<T> where T : struct, IFftMod
 		{
 			private readonly uint v_;
 			public int Value => (int)v_;
@@ -230,7 +235,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 				return new FftModInt<T>(u);
 			}
 
-			public static void Butterfly(Span<FftModInt<T>> a)
+			public static void Butterfly(FftModInt<T>[] a)
 			{
 				var n = a.Length;
 				var h = CeilPow2(n);
@@ -253,7 +258,7 @@ namespace TakyTank.KyoProLib.CSharp.V7
 				}
 			}
 
-			public static void ButterflyInv(Span<FftModInt<T>> a)
+			public static void ButterflyInv(FftModInt<T>[] a)
 			{
 				var n = a.Length;
 				var h = CeilPow2(n);
@@ -379,8 +384,8 @@ namespace TakyTank.KyoProLib.CSharp.V7
 
 				var sumE = new FftModInt<T>[cnt2 - 2];
 
-				Span<FftModInt<T>> es = stackalloc FftModInt<T>[cnt2 - 1];
-				Span<FftModInt<T>> ies = stackalloc FftModInt<T>[cnt2 - 1];
+				var es = new FftModInt<T>[cnt2 - 1];
+				var ies = new FftModInt<T>[cnt2 - 1];
 
 				for (int i = es.Length - 1; i >= 0; i--) {
 					es[i] = e;
@@ -407,8 +412,8 @@ namespace TakyTank.KyoProLib.CSharp.V7
 
 				var sumIE = new FftModInt<T>[cnt2 - 2];
 
-				Span<FftModInt<T>> es = stackalloc FftModInt<T>[cnt2 - 1];
-				Span<FftModInt<T>> ies = stackalloc FftModInt<T>[cnt2 - 1];
+				var es = new FftModInt<T>[cnt2 - 1];
+				var ies = new FftModInt<T>[cnt2 - 1];
 
 				for (int i = es.Length - 1; i >= 0; i--) {
 					es[i] = e;
