@@ -26,6 +26,13 @@
 - [ビットを数える・探すアルゴリズム](http://www.nminoru.jp/~nminoru/programming/bitcount.html)
 - [一番右端の立っているビット位置を求める「ものすごい」コード](https://siokoshou.hatenadiary.org/entry/20090704/p1)
 
+### BitOperations
+
+- [ビットを数える・探すアルゴリズム](http://www.nminoru.jp/~nminoru/programming/bitcount.html)
+- [ビットを数える x86/x64最適化勉強会1](https://www.slideshare.net/takesako/x86x64-sse42-popcnt)
+- [x86_64でpopcnt / tzcnt / lzcntする【ビット演算テクニック](https://qiita.com/ocxtal/items/01c46b15cb1f2e656887)
+- [How to take log2() very fast](https://hackmd.io/@y56/Hk9sTzYWS)
+
 ### BitFlag
 
 - [M-SOLUTIONS プロコンオープン 2020 解説放送 (E問題)](https://www.youtube.com/watch?v=z6SeLXdwVhA&feature=youtu.be)
@@ -221,12 +228,7 @@
 - 蟻本 226p
 - [2線分の交差判定手法](https://qiita.com/zu_rin/items/e04fdec4e3dec6072104)
 - [三角形の外接円の半径と中心座標(外心)を求める](https://qiita.com/tatesuke/items/59133758ec25146766c3)
-
-### PopCount
-
-- [ビットを数える・探すアルゴリズム](http://www.nminoru.jp/~nminoru/programming/bitcount.html)
-- [ビットを数える x86/x64最適化勉強会1](https://www.slideshare.net/takesako/x86x64-sse42-popcnt)
-- [x86_64でpopcnt / tzcnt / lzcntする【ビット演算テクニック](https://qiita.com/ocxtal/items/01c46b15cb1f2e656887)
+- [プログラミングコンテストにおける計算幾何入門](https://www.ioi-jp.org/camp/2017/2017-sp_camp-hide.pdf)
 
 ### Prime
 
@@ -348,3 +350,4 @@
 - [約数集合でのゼータ変換・メビウス変換的なやつと畳み込み](https://kazuma8128.hatenablog.com/entry/2018/07/29/231819)
 - [高速ゼータ変換 高速メビウス変換](https://ikatakos.com/pot/programming_algorithm/dynamic_programming/subset_convolution)
 - [高速ゼータ変換について](https://qiita.com/Euglenese/items/260f9ddf513f772d7e42)
+- [倍数変換・約数変換](https://nyaannyaan.github.io/library/multiplicative-function/divisor-multiple-transform.hpp.html)
