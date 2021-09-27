@@ -69,8 +69,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T Query(Range range) => Query(range.Start.Value, range.End.Value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public T Query(Range range) => Query(range.Start.Value, range.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T Query(int left, int right)
 		{
@@ -99,9 +99,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return operate_(valL, valR);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int FindLeftest(Range range, Func<T, bool> check)
-			=> FindLeftest(range.Start.Value, range.End.Value, check);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public int FindLeftest(Range range, Func<T, bool> check)
+		//	=> FindLeftest(range.Start.Value, range.End.Value, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int FindLeftest(int left, int right, Func<T, bool> check)
 			=> FindLeftestCore(left, right, 1, 0, n_, check);
@@ -125,9 +125,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int FindRightest(Range range, Func<T, bool> check)
-			=> FindRightest(range.Start.Value, range.End.Value, check);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public int FindRightest(Range range, Func<T, bool> check)
+		//	=> FindRightest(range.Start.Value, range.End.Value, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int FindRightest(int left, int right, Func<T, bool> check)
 			=> FindRightestCore(left, right, 1, 0, n_, check);
@@ -280,9 +280,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return tree_[k];
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Update(Range range, T value)
-			=> Update(range.Start.Value, range.End.Value, value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public void Update(Range range, T value)
+		//	=> Update(range.Start.Value, range.End.Value, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Update(int left, int right, T value)
 		{
@@ -312,9 +312,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int FindLeftest(Range range, Func<T, bool> check)
-			=> FindLeftest(range.Start.Value, range.End.Value, check);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public int FindLeftest(Range range, Func<T, bool> check)
+		//	=> FindLeftest(range.Start.Value, range.End.Value, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int FindLeftest(int left, int right, Func<T, bool> check)
 			=> FindLeftestCore(left, right, 1, 0, n_, check);
@@ -339,9 +339,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int FindRightest(Range range, Func<T, bool> check)
-			=> FindRightest(range.Start.Value, range.End.Value, check);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public int FindRightest(Range range, Func<T, bool> check)
+		//	=> FindRightest(range.Start.Value, range.End.Value, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int FindRightest(int left, int right, Func<T, bool> check)
 			=> FindRightestCore(left, right, 1, 0, n_, check);
@@ -526,9 +526,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Update(int v, TUpdate value)
 			=> Update(v, v + 1, value);
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Update(Range range, TUpdate value)
-			=> Update(range.Start.Value, range.End.Value, value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public void Update(Range range, TUpdate value)
+		//	=> Update(range.Start.Value, range.End.Value, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Update(int left, int right, TUpdate value)
 			=> UpdateCore(left, right, 1, 0, n_, value);
@@ -552,8 +552,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TData Query(int v) => Query(v, v + 1);
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public TData Query(Range range) => Query(range.Start.Value, range.End.Value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public TData Query(Range range) => Query(range.Start.Value, range.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TData Query(int left, int right)
 			=> QueryCore(left, right, 1, 0, n_);
@@ -578,9 +578,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int FindLeftest(Range range, Func<TData, bool> check)
-			=> FindLeftest(range.Start.Value, range.End.Value, check);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public int FindLeftest(Range range, Func<TData, bool> check)
+		//	=> FindLeftest(range.Start.Value, range.End.Value, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int FindLeftest(int left, int right, Func<TData, bool> check)
 			=> FindLeftestCore(left, right, 1, 0, n_, check);
@@ -608,9 +608,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int FindRightest(Range range, Func<TData, bool> check)
-			=> FindRightest(range.Start.Value, range.End.Value, check);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public int FindRightest(Range range, Func<TData, bool> check)
+		//	=> FindRightest(range.Start.Value, range.End.Value, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int FindRightest(int left, int right, Func<TData, bool> check)
 			=> FindRightestCore(left, right, 1, 0, n_, check);
