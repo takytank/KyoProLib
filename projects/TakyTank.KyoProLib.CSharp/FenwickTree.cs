@@ -61,8 +61,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return sum;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long Sum(Range range) => Sum(range.Start.Value, range.End.Value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public long Sum(Range range) => Sum(range.Start.Value, range.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long Sum(int l, int r) => Sum(r - 1) - Sum(l - 1);
 
@@ -138,8 +138,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return sum;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ModInt Sum(Range range) => Sum(range.Start.Value, range.End.Value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public ModInt Sum(Range range) => Sum(range.Start.Value, range.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ModInt Sum(int l, int r) => Sum(r - 1) - Sum(l - 1);
 
@@ -168,9 +168,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			bit_ = new long[2, n_ + 1];
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Add(Range range, long value)
-			=> Add(range.Start.Value, range.End.Value, value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public void Add(Range range, long value) => Add(range.Start.Value, range.End.Value, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(int l_0, int r_0, long value)
 		{
@@ -197,8 +196,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return SumCore(0, index_0) + SumCore(1, index_0) * index_0;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long Sum(Range range) => Sum(range.Start.Value, range.End.Value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public long Sum(Range range) => Sum(range.Start.Value, range.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long Sum(int l_0, int r_0) => Sum(r_0 - 1) - Sum(l_0 - 1);
 
@@ -238,9 +237,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			bit_ = new ModInt[2, n_ + 1];
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Add(Range range, ModInt value)
-			=> Add(range.Start.Value, range.End.Value, value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public void Add(Range range, ModInt value) => Add(range.Start.Value, range.End.Value, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(int l_0, int r_0, ModInt value)
 		{
@@ -267,8 +265,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return SumCore(0, index_0) + SumCore(1, index_0) * index_0;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ModInt Sum(Range range) => Sum(range.Start.Value, range.End.Value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public ModInt Sum(Range range) => Sum(range.Start.Value, range.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ModInt Sum(int l_0, int r_0) => Sum(r_0 - 1) - Sum(l_0 - 1);
 
@@ -330,9 +328,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return sum;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long Query(Range row, Range column)
-			=> Query(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public long Query(Range row, Range column)
+		//	=> Query(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long Query(int h1, int w1, int h2, int w2)
 			=> Sum(h2 - 1, w2 - 1)
@@ -380,9 +378,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return sum;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ModInt Query(Range row, Range column)
-			=> Query(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value);
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//public ModInt Query(Range row, Range column)
+		//	=> Query(row.Start.Value, column.Start.Value, row.End.Value, column.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ModInt Query(int h1, int w1, int h2, int w2)
 			=> Sum(h2 - 1, w2 - 1)
