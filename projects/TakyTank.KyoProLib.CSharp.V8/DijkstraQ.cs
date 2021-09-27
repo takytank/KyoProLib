@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Core31
+namespace TakyTank.KyoProLib.CSharp.V8
 {
 	public class DijkstraQ
 	{
@@ -44,7 +44,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 			int c = count_ - 1;
 			while (c > 0) {
-				int p = (c - 1) >> 1;
+				int p = c - 1 >> 1;
 				var tempD = Unsafe.Add(ref dRef, p);
 				if (tempD <= distance) {
 					break;

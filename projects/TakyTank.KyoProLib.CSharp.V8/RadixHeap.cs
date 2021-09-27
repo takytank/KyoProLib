@@ -4,8 +4,9 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using TakyTank.KyoProLib.CSharp.V8;
 
-namespace TakyTank.KyoProLib.CSharp.Core31
+namespace TakyTank.KyoProLib.CSharp.V8
 {
 	public class RadixHeap32<T>
 	{

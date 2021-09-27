@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Core31
+namespace TakyTank.KyoProLib.CSharp.V8
 {
 	public static class Convolution
 	{
@@ -41,9 +41,9 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 
 				for (int i = 0; i < c.Length; i++) {
 					ulong x = 0;
-					x += (c1[i] * i1) % Mod1 * M2M3;
-					x += (c2[i] * i2) % Mod2 * M1M3;
-					x += (c3[i] * i3) % Mod3 * M1M2;
+					x += c1[i] * i1 % Mod1 * M2M3;
+					x += c2[i] * i2 % Mod2 * M1M3;
+					x += c3[i] * i3 % Mod3 * M1M2;
 
 					long diff = (long)c1[i] - SafeMod((long)x, (long)Mod1);
 					if (diff < 0) {
@@ -229,8 +229,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				var registerLength = Vector<uint>.Count;
 				var modVector = new Vector<uint>(mod_);
 				for (int ph = 1; ph <= h; ph++) {
-					int w = 1 << (ph - 1);
-					int p = 1 << (h - ph);
+					int w = 1 << ph - 1;
+					int p = 1 << h - ph;
 					var now = Raw(1);
 					int shift = h - ph + 1;
 					for (int s = 0; s < w; s++) {
@@ -280,8 +280,8 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 				var registerLength = Vector<uint>.Count;
 				var modVector = new Vector<uint>(mod_);
 				for (int ph = h; ph >= 1; ph--) {
-					int w = 1 << (ph - 1);
-					int p = 1 << (h - ph);
+					int w = 1 << ph - 1;
+					int p = 1 << h - ph;
 					var inverseNow = Raw(1);
 					int shift = h - ph + 1;
 					for (int s = 0; s < w; s++) {
@@ -426,7 +426,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			{
 				int g = default(T).PrimitiveRoot;
 				int cnt2 = BitScanForward(default(T).Mod - 1);
-				var e = new FftModInt<T>(g).Pow((default(T).Mod - 1) >> cnt2);
+				var e = new FftModInt<T>(g).Pow(default(T).Mod - 1 >> cnt2);
 				var ie = e.Inv();
 
 				var sumE = new FftModInt<T>[cnt2 - 2];
@@ -455,7 +455,7 @@ namespace TakyTank.KyoProLib.CSharp.Core31
 			{
 				int g = default(T).PrimitiveRoot;
 				int cnt2 = BitScanForward(default(T).Mod - 1);
-				var e = new FftModInt<T>(g).Pow((default(T).Mod - 1) >> cnt2);
+				var e = new FftModInt<T>(g).Pow(default(T).Mod - 1 >> cnt2);
 				var ie = e.Inv();
 
 				var sumIE = new FftModInt<T>[cnt2 - 2];
