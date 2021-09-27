@@ -8,26 +8,10 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
-	public static class Prime
+	public static class PrimeEx
 	{
 		static readonly HashSet<long> smallPrimes_
 			= new HashSet<long> { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37 };
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool IsPrime(long value)
-		{
-			if (value < 2) {
-				return false;
-			}
-
-			for (long i = 2; i * i <= value; i++) {
-				if (value % i == 0) {
-					return false;
-				}
-			}
-
-			return true;
-		}
 
 		static readonly long[] sprpBase1 = { 126401071349994536 };
 		static readonly long[] sprpBase2 = { 336781006125, 9639812373923155 };
@@ -81,49 +65,6 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			return true;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static HashSet<long> PrimeFactor(long value)
-		{
-			var factors = new HashSet<long>();
-			for (long i = 2; i * i <= value; ++i) {
-				if (value % i == 0) {
-					factors.Add(i);
-					while (value % i == 0) {
-						value /= i;
-					}
-				}
-			}
-
-			if (value != 1) {
-				factors.Add(value);
-			}
-
-			return factors;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Dictionary<long, int> PrimeFactors(long value)
-		{
-			var factors = new Dictionary<long, int>();
-			for (long i = 2; i * i <= value; ++i) {
-				while (value % i == 0) {
-					if (factors.ContainsKey(i) == false) {
-						factors[i] = 1;
-					} else {
-						factors[i] += 1;
-					}
-
-					value /= i;
-				}
-			}
-
-			if (value != 1) {
-				factors[value] = 1;
-			}
-
-			return factors;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

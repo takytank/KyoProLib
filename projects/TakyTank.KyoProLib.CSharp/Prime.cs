@@ -5,13 +5,10 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.V7
+namespace TakyTank.KyoProLib.CSharp
 {
 	public static class Prime
 	{
-		static readonly HashSet<long> smallPrimes_
-			= new HashSet<long> { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37 };
-
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsPrime(long value)
 		{
@@ -69,27 +66,6 @@ namespace TakyTank.KyoProLib.CSharp.V7
 			}
 
 			return factors;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static long Mod(long x, long p)
-		{
-			x %= p;
-			if (x < 0) {
-				x += p;
-			}
-
-			return x;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static long Gcd(long a, long b)
-		{
-			if (b == 0) {
-				return a;
-			}
-
-			return Gcd(b, a % b);
 		}
 	}
 }

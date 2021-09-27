@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.V8
+namespace TakyTank.KyoProLib.CSharp
 {
 	public struct BitFlag
 	{
