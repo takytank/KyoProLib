@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Csc360
+namespace TakyTank.KyoProLib.CSharp.V7
 {
 	public static class Prime
 	{

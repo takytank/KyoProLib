@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Csc360
+namespace TakyTank.KyoProLib.CSharp.V7
 {
 	public static class Convolution
 	{
@@ -39,9 +39,9 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 
 				for (int i = 0; i < c.Length; i++) {
 					ulong x = 0;
-					x += (c1[i] * i1) % Mod1 * M2M3;
-					x += (c2[i] * i2) % Mod2 * M1M3;
-					x += (c3[i] * i3) % Mod3 * M1M2;
+					x += c1[i] * i1 % Mod1 * M2M3;
+					x += c2[i] * i2 % Mod2 * M1M3;
+					x += c3[i] * i3 % Mod3 * M1M2;
 
 					long diff = (long)c1[i] - SafeMod((long)x, (long)Mod1);
 					if (diff < 0) {
@@ -176,7 +176,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 		private static int BitScanForward(uint n)
 		{
 			for (int i = 0; i < 32; i++) {
-				if (((1 << i) & n) != 0) {
+				if ((1 << i & n) != 0) {
 					return i;
 				}
 			}
@@ -236,11 +236,11 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 				var h = CeilPow2(n);
 
 				for (int ph = 1; ph <= h; ph++) {
-					int w = 1 << (ph - 1);
-					int p = 1 << (h - ph);
+					int w = 1 << ph - 1;
+					int p = 1 << h - ph;
 					var now = Raw(1);
 					for (int s = 0; s < w; s++) {
-						int offset = s << (h - ph + 1);
+						int offset = s << h - ph + 1;
 						for (int i = 0; i < p; i++) {
 							var l = a[i + offset];
 							var r = a[i + offset + p] * now;
@@ -259,11 +259,11 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 				var h = CeilPow2(n);
 
 				for (int ph = h; ph >= 1; ph--) {
-					int w = 1 << (ph - 1);
-					int p = 1 << (h - ph);
+					int w = 1 << ph - 1;
+					int p = 1 << h - ph;
 					var iNow = Raw(1);
 					for (int s = 0; s < w; s++) {
-						int offset = s << (h - ph + 1);
+						int offset = s << h - ph + 1;
 						for (int i = 0; i < p; i++) {
 							var l = a[i + offset];
 							var r = a[i + offset + p];
@@ -374,7 +374,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 			{
 				int g = default(T).PrimitiveRoot;
 				int cnt2 = BitScanForward(default(T).Mod - 1);
-				var e = new FftModInt<T>(g).Pow((default(T).Mod - 1) >> cnt2);
+				var e = new FftModInt<T>(g).Pow(default(T).Mod - 1 >> cnt2);
 				var ie = e.Inv();
 
 				var sumE = new FftModInt<T>[cnt2 - 2];
@@ -402,7 +402,7 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 			{
 				int g = default(T).PrimitiveRoot;
 				int cnt2 = BitScanForward(default(T).Mod - 1);
-				var e = new FftModInt<T>(g).Pow((default(T).Mod - 1) >> cnt2);
+				var e = new FftModInt<T>(g).Pow(default(T).Mod - 1 >> cnt2);
 				var ie = e.Inv();
 
 				var sumIE = new FftModInt<T>[cnt2 - 2];

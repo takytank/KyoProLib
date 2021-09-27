@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Core31
+namespace TakyTank.KyoProLib.CSharp.V7
 {
 	public class Eratosthenes
 	{

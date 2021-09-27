@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.Csc360
+namespace TakyTank.KyoProLib.CSharp.V7
 {
 	public struct BitFlag
 	{
@@ -14,15 +14,15 @@ namespace TakyTank.KyoProLib.CSharp.Csc360
 
 		private readonly int flags_;
 		public int Flag => flags_;
-		public bool this[int bitNumber] => (flags_ & (1 << bitNumber)) != 0;
+		public bool this[int bitNumber] => (flags_ & 1 << bitNumber) != 0;
 		public BitFlag(int flags) { flags_ = flags; }
 
 		public bool Has(BitFlag target) => (flags_ & target.flags_) == target.flags_;
 		public bool Has(int target) => (flags_ & target) == target;
-		public bool HasBit(int bitNumber) => (flags_ & (1 << bitNumber)) != 0;
-		public BitFlag OrBit(int bitNumber) => (flags_ | (1 << bitNumber));
-		public BitFlag AndBit(int bitNumber) => (flags_ & (1 << bitNumber));
-		public BitFlag XorBit(int bitNumber) => (flags_ ^ (1 << bitNumber));
+		public bool HasBit(int bitNumber) => (flags_ & 1 << bitNumber) != 0;
+		public BitFlag OrBit(int bitNumber) => flags_ | 1 << bitNumber;
+		public BitFlag AndBit(int bitNumber) => flags_ & 1 << bitNumber;
+		public BitFlag XorBit(int bitNumber) => flags_ ^ 1 << bitNumber;
 		public BitFlag ComplementOf(BitFlag sub) => flags_ ^ sub.flags_;
 
 		public static BitFlag operator ++(BitFlag src) => new BitFlag(src.flags_ + 1);
