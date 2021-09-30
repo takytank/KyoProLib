@@ -205,4 +205,148 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			Multiple,
 		}
 	}
+
+	public class ZetaTransform<T>
+	{
+		private readonly Func<T, T, T> _add;
+		private readonly Func<T, T, T> _sub;
+
+		public ZetaTransform(
+			Func<T, T, T> add,
+			Func<T, T, T> sub)
+		{
+			_add = add;
+			_sub = sub;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Span<T> ZetaSuperSet(Span<T> values)
+		{
+			int n = values.Length;
+			for (int i = 1; i < n; i <<= 1) {
+				for (int j = 0; j < n; ++j) {
+					if ((j & i) == 0) {
+						values[j] = _add(values[j], values[j | i]);
+					}
+				}
+			}
+
+			return values;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Span<T> MoebiusSuperSet(Span<T> values)
+		{
+			int n = values.Length;
+			for (int i = 1; i < n; i <<= 1) {
+				for (int j = 0; j < n; ++j) {
+					if ((j & i) == 0) {
+						values[j] = _sub(values[j], values[j | i]);
+					}
+				}
+			}
+
+			return values;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Span<T> ZetaSubSet(Span<T> values)
+		{
+			int n = values.Length;
+			for (int i = 1; i < n; i <<= 1) {
+				for (int j = 0; j < n; ++j) {
+					if ((j & i) == 0) {
+						values[j | i] = _add(values[j | i], values[j]);
+					}
+				}
+			}
+
+			return values;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Span<T> MoebiusSubSet(Span<T> values)
+		{
+			int n = values.Length;
+			for (int i = 1; i < n; i <<= 1) {
+				for (int j = 0; j < n; ++j) {
+					if ((j & i) == 0) {
+						values[j | i] = _sub(values[j | i], values[j]);
+					}
+				}
+			}
+
+			return values;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Span<T> ZetaDivisor(Span<T> values)
+		{
+			int n = values.Length;
+			var sieve = new bool[n];
+			for (int p = 2; p < n; ++p) {
+				if (sieve[p] == false) {
+					for (int i = 1; i * p < n; ++i) {
+						sieve[i * p] = true;
+						values[i * p] = _add(values[i * p], values[i]);
+					}
+				}
+			}
+
+			return values;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Span<T> MoebiusDivisor(Span<T> values)
+		{
+			int n = values.Length;
+			var sieve = new bool[n];
+			int m = n - 1;
+			for (int p = 2; p < n; ++p) {
+				if (sieve[p] == false) {
+					for (int i = m / p; i > 0; --i) {
+						sieve[i * p] = true;
+						values[i * p] = _sub(values[i * p], values[i]);
+					}
+				}
+			}
+
+			return values;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Span<T> ZetaMultiple(Span<T> values)
+		{
+			int n = values.Length;
+			var sieve = new bool[n];
+			int m = n - 1;
+			for (int p = 2; p < n; ++p) {
+				if (sieve[p] == false) {
+					for (int i = m / p; i > 0; --i) {
+						sieve[i * p] = true;
+						values[i] = _add(values[i], values[i * p]);
+					}
+				}
+			}
+
+			return values;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Span<T> MoebiusMultiple(Span<T> values)
+		{
+			int n = values.Length;
+			var sieve = new bool[n];
+			for (int p = 2; p < n; ++p) {
+				if (sieve[p] == false) {
+					for (int i = 1; i * p < n; ++i) {
+						sieve[i * p] = true;
+						values[i] = _sub(values[i], values[i * p]);
+					}
+				}
+			}
+
+			return values;
+		}
+	}
 }
