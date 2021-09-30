@@ -351,3 +351,4 @@
 - [高速ゼータ変換 高速メビウス変換](https://ikatakos.com/pot/programming_algorithm/dynamic_programming/subset_convolution)
 - [高速ゼータ変換について](https://qiita.com/Euglenese/items/260f9ddf513f772d7e42)
 - [倍数変換・約数変換](https://nyaannyaan.github.io/library/multiplicative-function/divisor-multiple-transform.hpp.html)
+- [添え字 gcd での畳み込みで AGC038-C を解く](https://noshi91.hatenablog.com/entry/2019/09/23/002445?_ga=2.226724693.934348036.1570274035-8397580.1533805090)
