@@ -173,13 +173,17 @@
 - [Gauss-Jordan の掃き出し法と、連立一次方程式の解き方](https://drken1215.hatenablog.com/entry/2019/03/20/202800)
 - [行列分解](https://docs.microsoft.com/ja-jp/archive/msdn-magazine/2012/december/csharp-matrix-decomposition)
 
-### MinimumWeightCycle
+### MaximumIndependentSet
 
-- [重みが最小となる閉路を求めるアルゴリズム](https://algo-logic.info/minimum-weight-cycle/)
+- [CODE THANKS FESTIVAL 2017で解けなかった問題群](https://hyoga.hatenablog.com/entry/2017/12/15/144647)
 
 ### MinimumSpanningTree
 
 - 蟻本 100P, 101P
+
+### MinimumWeightCycle
+
+- [重みが最小となる閉路を求めるアルゴリズム](https://algo-logic.info/minimum-weight-cycle/)
 
 ### ModCounting
 
