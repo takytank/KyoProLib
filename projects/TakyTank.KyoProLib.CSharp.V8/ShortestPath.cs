@@ -39,6 +39,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public ReadOnlySpan<(int to, long d)> GetEdge(int i) => edges_[i].AsSpan();
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ReadOnlySpan<int> GetPath(int s, int t, int[] prevs)
 		{
 			var path = new List<int> { t };
