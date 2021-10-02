@@ -229,7 +229,15 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public int Count { get; }
 
-		public T this[int i] => Query(i);
+		public T this[int i]
+		{
+			get => Query(i);
+			set
+			{
+				PropagateTopDown(i);
+				tree_[i + n_] = value;
+			}
+		}
 
 		public DualSegmentTree(int count, T unit, Func<T, T, T> operate)
 		{
@@ -472,7 +480,16 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public int Count { get; }
 
-		public TData this[int index] => Query(index);
+		public TData this[int index]
+		{
+			get => Query(index);
+			set
+			{
+				Down(index);
+				data_[index + n_] = value;
+				Up(index);
+			}
+		}
 
 		public LazySegmentTree(
 			int count,
@@ -646,6 +663,36 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			data_[v] = update_(data_[v], value, r - l);
 			lazy_[v] = compose_(value, lazy_[v]);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Up(int v)
+		{
+			v += n_;
+			v >>= 1;
+			while (v > 0) {
+				data_[v] = operate_(data_[v << 1], data_[(v << 1) + 1]);
+				v >>= 1;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Down(int v) => DownCore(v, v + 1, 1, 0, n_);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void DownCore(int left, int right, int v, int l, int r)
+		{
+			if ((left <= l && r <= right) || (r <= left || right <= l)) {
+				return;
+			} else {
+				int lc = v << 1;
+				int rc = (v << 1) + 1;
+				int mid = (l + r) >> 1;
+				Propagate(lc, l, mid, v);
+				Propagate(rc, mid, r, v);
+				lazy_[v] = unitUpdate_;
+				DownCore(left, right, lc, l, mid);
+				DownCore(left, right, rc, mid, r);
+			}
 		}
 
 		public IEnumerator<TData> GetEnumerator()
