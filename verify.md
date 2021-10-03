@@ -321,6 +321,10 @@
 - [ABC177 F I hate Shortest Path Problem](https://atcoder.jp/contests/abc177/tasks/abc177_f)
 - [ABC221 E LEQ](https://atcoder.jp/contests/abc221/tasks/abc221_e)
 
+### SegmentTree2D
+
+- [ACPC2021 Day2 H RangeMinimumQuery](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/H)
+
 ## ShortestPath
 
 ### Bfs

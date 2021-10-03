@@ -295,6 +295,8 @@
 - [非再帰版の遅延評価セグメント木の実装メモ](https://smijake3.hatenablog.com/entry/2018/11/03/100133)
 - [非再帰セグ木サイコー！ 一番すきなセグ木です](https://hcpc-hokudai.github.io/archive/structure_segtree_001.pdf)
 - [ac-library-cs](https://github.com/key-moon/ac-library-cs)
+- [セグメント木(Segment-Tree)](https://ei1333.github.io/algorithm/segment-tree.html)
+- [セグメント木(Segment-Tree)](https://ei1333.github.io/luzhiled/snippets/structure/segment-tree.html)
 
 ### ShortestPath
 
