@@ -11,16 +11,18 @@ namespace TakyTank.KyoProLib.CSharp
 		private const int ROOT = 1;
 
 		private readonly int _n;
-		private readonly List<TStructure> _seg;
 		private readonly Func<int, TStructure> _newStructure;
 		private readonly Func<TData, TData, TData> _operate;
 		private readonly Func<TStructure, int, int, TData> _query;
 		private readonly Action<TStructure, int, TUpdate> _update;
 		private readonly Action<TStructure, int, TData> _propagate;
 		private readonly TData _unity;
+		private readonly Dictionary<int, HashSet<int>> _tempPoints;
+
 		private readonly int[][] _fcL; //FractionalCascading
 		private readonly int[][] _fcR;
-		private readonly List<int>[] _points;
+		private int[] _pointsY;
+		private TStructure[] _seg;
 
 		public SegmentTree2D(
 			int n,
@@ -31,7 +33,6 @@ namespace TakyTank.KyoProLib.CSharp
 			Action<TStructure, int, TData> propagate,
 			TData unity)
 		{
-			_seg = new List<TStructure>();
 			_newStructure = newStructure;
 			_operate = operate;
 			_query = query;
@@ -43,46 +44,57 @@ namespace TakyTank.KyoProLib.CSharp
 				_n <<= 1;
 			}
 
+			_tempPoints = new Dictionary<int, HashSet<int>>();
+
 			int size = _n << 1;
-			_points = new List<int>[size];
 			_fcL = new int[size][];
 			_fcR = new int[size][];
-			for (int i = 0; i < size; i++) {
-				_points[i] = new List<int>();
-			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void AddPoint(int x, int y)
 		{
-			_points[x + _n].Add(y);
+			if (_tempPoints.ContainsKey(x) == false) {
+				_tempPoints[x] = new HashSet<int>();
+			}
+
+			_tempPoints[x].Add(y);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Build()
 		{
-			for (int k = _points.Length - 1; k >= _n; k--) {
-				_points[k].Sort();
-				_points[k] = _points[k].Distinct().ToList();
+			int size = _n << 1;
+			var pointTree = new int[size][];
+			for (int k = size - 1; k >= _n; k--) {
+				int x = k - _n;
+				if (_tempPoints.ContainsKey(x)) {
+					var arr = _tempPoints[x].ToArray();
+					Array.Sort(arr);
+					pointTree[k] = arr;
+				} else {
+					pointTree[k] = new int[0];
+				}
 			}
+
+			_tempPoints.Clear();
 
 			for (int k = _n - 1; k > 0; k--) {
 				int lc = k << 1;
 				int rc = (k << 1) + 1;
 
-				Merge(_points[lc], _points[rc], _points[k]);
-				_points[k] = _points[k].Distinct().ToList();
+				Merge(pointTree[lc], pointTree[rc], ref pointTree[k]);
 
-				_fcL[k] = new int[_points[k].Count + 1];
-				_fcR[k] = new int[_points[k].Count + 1];
+				_fcL[k] = new int[pointTree[k].Length + 1];
+				_fcR[k] = new int[pointTree[k].Length + 1];
 				int tail1 = 0;
 				int tail2 = 0;
-				for (int i = 0; i < _points[k].Count; i++) {
-					while (tail1 < _points[lc].Count && _points[lc][tail1] < _points[k][i]) {
+				for (int i = 0; i < pointTree[k].Length; i++) {
+					while (tail1 < pointTree[lc].Length && pointTree[lc][tail1] < pointTree[k][i]) {
 						++tail1;
 					}
 
-					while (tail2 < _points[rc].Count && _points[rc][tail2] < _points[k][i]) {
+					while (tail2 < pointTree[rc].Length && pointTree[rc][tail2] < pointTree[k][i]) {
 						++tail2;
 					}
 
@@ -90,20 +102,23 @@ namespace TakyTank.KyoProLib.CSharp
 					_fcR[k][i] = tail2;
 				}
 
-				_fcL[k][_points[k].Count] = _points[lc].Count;
-				_fcR[k][_points[k].Count] = _points[rc].Count;
+				_fcL[k][pointTree[k].Length] = pointTree[lc].Length;
+				_fcR[k][pointTree[k].Length] = pointTree[rc].Length;
 			}
 
-			for (int k = 0; k < _points.Length; k++) {
-				_seg.Add(_newStructure(_points[k].Count));
+			_pointsY = pointTree[ROOT];
+
+			_seg = new TStructure[size];
+			for (int k = 1; k < pointTree.Length; k++) {
+				_seg[k] = _newStructure(pointTree[k].Length);
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Update(int x, int y, TUpdate value)
 		{
-			int y1 = LowerBound(_points[ROOT], y);
-			int y2 = LowerBound(_points[ROOT], y + 1);
+			int y1 = LowerBound(_pointsY, y);
+			int y2 = LowerBound(_pointsY, y + 1);
 			Update(x, y1, y2, value, ROOT, 0, _n);
 		}
 
@@ -130,8 +145,8 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TData Query(int x1, int x2, int y1, int y2)
 		{
-			y1 = LowerBound(_points[ROOT], y1);
-			y2 = LowerBound(_points[ROOT], y2);
+			y1 = LowerBound(_pointsY, y1);
+			y2 = LowerBound(_pointsY, y2);
 			return Query(x1, x2, y1, y2, ROOT, 0, _n);
 		}
 
@@ -150,10 +165,10 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int LowerBound(List<int> array, int value)
+		private int LowerBound(int[] array, int value)
 		{
 			int ng = -1;
-			int ok = array.Count;
+			int ok = array.Length;
 			while (ok - ng > 1) {
 				int mid = (ok + ng) / 2;
 				if (array[mid] >= value) {
@@ -167,31 +182,47 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Merge(List<int> first, List<int> second, List<int> target)
+		private void Merge(int[] first, int[] second, ref int[] target)
 		{
 			int p = 0;
 			int q = 0;
-			while (p < first.Count || q < second.Count) {
-				if (p == first.Count) {
-					target.Add(second[q]);
+			var temp = new List<int>();
+			int last = int.MinValue;
+			while (p < first.Length || q < second.Length) {
+				if (p == first.Length) {
+					if (last != second[q]) {
+						temp.Add(second[q]);
+						last = second[q];
+					}
 					q++;
 					continue;
 				}
 
-				if (q == second.Count) {
-					target.Add(first[p]);
+				if (q == second.Length) {
+					if (last != first[p]) {
+						temp.Add(first[p]);
+						last = first[p];
+					}
 					p++;
 					continue;
 				}
 
 				if (first[p].CompareTo(second[q]) < 0) {
-					target.Add(first[p]);
+					if (last != first[p]) {
+						temp.Add(first[p]);
+						last = first[p];
+					}
 					p++;
 				} else {
-					target.Add(second[q]);
+					if (last != second[q]) {
+						temp.Add(second[q]);
+						last = second[q];
+					}
 					q++;
 				}
 			}
+
+			target = temp.ToArray();
 		}
 	}
 }
