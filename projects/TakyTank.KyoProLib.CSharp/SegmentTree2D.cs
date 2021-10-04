@@ -10,7 +10,6 @@ namespace TakyTank.KyoProLib.CSharp
 	{
 		private const int ROOT = 1;
 
-		private readonly int _n;
 		private readonly Func<int, TStructure> _newStructure;
 		private readonly Func<TData, TData, TData> _operate;
 		private readonly Func<TStructure, int, int, TData> _query;
@@ -19,13 +18,14 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly TData _unity;
 		private readonly Dictionary<int, HashSet<int>> _tempPoints;
 
-		private readonly int[][] _fcL; //FractionalCascading
-		private readonly int[][] _fcR;
+		private int _n;
+		private int[] _pointsX;
 		private int[] _pointsY;
+		private int[][] _fcL; //FractionalCascading
+		private int[][] _fcR;
 		private TStructure[] _seg;
 
 		public SegmentTree2D(
-			int n,
 			Func<int, TStructure> newStructure,
 			Func<TData, TData, TData> operate,
 			Func<TStructure, int, int, TData> query,
@@ -39,16 +39,7 @@ namespace TakyTank.KyoProLib.CSharp
 			_update = update;
 			_propagate = propagate;
 			_unity = unity;
-			_n = 1;
-			while (_n < n) {
-				_n <<= 1;
-			}
-
 			_tempPoints = new Dictionary<int, HashSet<int>>();
-
-			int size = _n << 1;
-			_fcL = new int[size][];
-			_fcR = new int[size][];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -64,16 +55,26 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Build()
 		{
+			_pointsX = _tempPoints.Keys.ToArray();
+			Array.Sort(_pointsX);
+
+			_n = 1;
+			while (_n < _pointsX.Length) {
+				_n <<= 1;
+			}
+
 			int size = _n << 1;
+			_fcL = new int[size][];
+			_fcR = new int[size][];
 			var pointTree = new int[size][];
-			for (int k = size - 1; k >= _n; k--) {
-				int x = k - _n;
-				if (_tempPoints.ContainsKey(x)) {
+			for (int k = 0; k < _n; k++) {
+				if (k < _pointsX.Length) {
+					int x = _pointsX[k];
 					var arr = _tempPoints[x].ToArray();
 					Array.Sort(arr);
-					pointTree[k] = arr;
+					pointTree[_n + k] = arr;
 				} else {
-					pointTree[k] = new int[0];
+					pointTree[_n + k] = new int[0];
 				}
 			}
 
@@ -117,9 +118,10 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Update(int x, int y, TUpdate value)
 		{
+			int x1 = LowerBound(_pointsX, x);
 			int y1 = LowerBound(_pointsY, y);
 			int y2 = LowerBound(_pointsY, y + 1);
-			Update(x, y1, y2, value, ROOT, 0, _n);
+			Update(x1, y1, y2, value, ROOT, 0, _n);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -145,9 +147,11 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TData Query(int x1, int x2, int y1, int y2)
 		{
-			y1 = LowerBound(_pointsY, y1);
-			y2 = LowerBound(_pointsY, y2);
-			return Query(x1, x2, y1, y2, ROOT, 0, _n);
+			int xx1 = LowerBound(_pointsX, x1);
+			int xx2 = LowerBound(_pointsX, x2);
+			int yy1 = LowerBound(_pointsY, y1);
+			int yy2 = LowerBound(_pointsY, y2);
+			return Query(xx1, xx2, yy1, yy2, ROOT, 0, _n);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
