@@ -324,6 +324,7 @@
 ### SegmentTree2D
 
 - [ACPC2021 Day2 H RangeMinimumQuery](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/H)
+- [ABC106 D AtCoder Express 2](https://atcoder.jp/contests/abc106/tasks/abc106_d)
 
 ## ShortestPath
 

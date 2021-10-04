@@ -6,7 +6,143 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
-	public class SegmentTree2D<TStructure, TData, TUpdate>
+	public class SegmentTree2D<T>
+	{
+		private const int ROOT = 1;
+
+		private readonly int _h;
+		private readonly int _w;
+		private readonly T _unity;
+		private readonly T[,] _tree;
+		private readonly Func<T, T, T> _operate;
+
+		public int Height { get; }
+		public int Width { get; }
+
+		public T this[int y, int x]
+		{
+			get => _tree[y + _h, x + _w];
+			set => Update(y, x, value);
+		}
+
+		public SegmentTree2D(int h, int w, T unity, Func<T, T, T> operate)
+		{
+			_unity = unity;
+			_operate = operate;
+
+			Height = h;
+			Width = w;
+			_h = 1;
+			_w = 1;
+			while (_h < Height) {
+				_h <<= 1;
+			}
+			while (_w < Width) {
+				_w <<= 1;
+			}
+
+			_tree = new T[2 * _h, 2 * _w];
+			for (int i = 0; i < 2 * _h; ++i) {
+				for (int j = 0; j < 2 * _w; ++j) {
+					_tree[i, j] = unity;
+				}
+			}
+		}
+
+		public SegmentTree2D(T[,] data, T unity, Func<T, T, T> operate)
+			: this(data.GetLength(0), data.GetLength(1), unity, operate)
+		{
+			for (int i = 0; i < Height; ++i) {
+				for (int j = 0; j < Width; ++j) {
+					_tree[i + _h, j + _w] = data[i, j];
+				}
+			}
+
+			for (int i = 2 * _h - 1; i > _h - 1; --i) {
+				for (int j = _w - 1; j > 0; --j) {
+					_tree[i, j] = operate(_tree[i, j << 1], _tree[i, (j << 1) | 1]);
+				}
+			}
+
+			for (int i = _h - 1; i > 0; --i) {
+				for (int j = 1; j < 2 * _w; ++j) {
+					_tree[i, j] = operate(_tree[i << 1, j], _tree[(i << 1) | 1, j]);
+				}
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Update(int y, int x, T value)
+		{
+			if (y < 0 || y >= Height || x < 0 || x >= Width) {
+				return;
+			}
+
+			int tempX = x + _w;
+			int tempY = y + _h;
+			x = tempX;
+			y = tempY;
+			_tree[y, x] = value;
+
+			x = tempX >> 1;
+			while (x != 0) {
+				_tree[y, x] = _operate(_tree[y, x << 1], _tree[y, (x << 1) | 1]);
+				x >>= 1;
+			}
+
+			y >>= 1;
+			while (y != 0) {
+				x = tempX;
+				_tree[y, x] = _operate(_tree[y << 1, x], _tree[(y << 1) | 1, x]);
+
+				x >>= 1;
+				while (x != 0) {
+					_tree[y, x] = _operate(
+						_operate(_tree[y << 1, x << 1], _tree[y << 1, (x << 1) | 1]),
+						_operate(_tree[(y << 1) | 1, x << 1], _tree[(y << 1) | 1, (x << 1) | 1]));
+					x >>= 1;
+				}
+
+				y >>= 1;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T Query(int y1, int x1, int y2, int x2)
+			=> QueryCoreH(y1, x1, y2, x2, ROOT, 0, _h);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private T QueryCoreH(int y1, int x1, int y2, int x2, int yv, int l, int r)
+		{
+			if (y2 <= l || r <= y1) {
+				return _unity;
+			} else if (y1 <= l && r <= y2) {
+				return QueryCoreW(x1, x2, yv, ROOT, 0, _w);
+			}
+
+			int my = (l + r) >> 1;
+			return _operate(
+				QueryCoreH(y1, x1, y2, x2, yv << 1, l, my),
+				QueryCoreH(y1, x1, y2, x2, (yv << 1) | 1, my, r));
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private T QueryCoreW(int x1, int x2, int yv, int xv, int l, int r)
+		{
+			if (x2 <= l || r <= x1) {
+				return _unity;
+			} else if (x1 <= l && r <= x2) {
+				return _tree[yv, xv];
+			}
+
+			int mx = (l + r) >> 1;
+			return _operate(
+				QueryCoreW(x1, x2, yv, xv << 1, l, mx),
+				QueryCoreW(x1, x2, yv, (xv << 1) | 1, mx, r));
+		}
+	}
+
+	public class DynamicSegmentTree2D<TStructure, TData, TUpdate>
 	{
 		private const int ROOT = 1;
 
@@ -25,7 +161,10 @@ namespace TakyTank.KyoProLib.CSharp
 		private int[][] _fcR;
 		private TStructure[] _seg;
 
-		public SegmentTree2D(
+		public int Height => _pointsY.Length;
+		public int Width => _pointsX.Length;
+
+		public DynamicSegmentTree2D(
 			Func<int, TStructure> newStructure,
 			Func<TData, TData, TData> operate,
 			Func<TStructure, int, int, TData> query,
