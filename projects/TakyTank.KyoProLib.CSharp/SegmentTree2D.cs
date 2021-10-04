@@ -16,7 +16,8 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly Func<TData, TData, TData> _operate;
 		private readonly Func<TStructure, int, int, TData> _query;
 		private readonly Action<TStructure, int, TUpdate> _update;
-		private readonly TData _identity;
+		private readonly Action<TStructure, int, TData> _propagate;
+		private readonly TData _unity;
 		private readonly int[][] _fcL; //FractionalCascading
 		private readonly int[][] _fcR;
 		private readonly List<int>[] _points;
@@ -27,14 +28,16 @@ namespace TakyTank.KyoProLib.CSharp
 			Func<TData, TData, TData> operate,
 			Func<TStructure, int, int, TData> query,
 			Action<TStructure, int, TUpdate> update,
-			TData identity)
+			Action<TStructure, int, TData> propagate,
+			TData unity)
 		{
 			_seg = new List<TStructure>();
 			_newStructure = newStructure;
 			_operate = operate;
 			_query = query;
 			_update = update;
-			_identity = identity;
+			_propagate = propagate;
+			_unity = unity;
 			_n = 1;
 			while (_n < n) {
 				_n <<= 1;
@@ -99,23 +102,29 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Update(int x, int y, TUpdate value)
 		{
-			y = LowerBound(_points[ROOT], y);
-			Update(x, y, value, ROOT, 0, _n);
+			int y1 = LowerBound(_points[ROOT], y);
+			int y2 = LowerBound(_points[ROOT], y + 1);
+			Update(x, y1, y2, value, ROOT, 0, _n);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Update(int x, int y, TUpdate value, int v, int l, int r)
+		private void Update(int x, int y1, int y2, TUpdate value, int v, int l, int r)
 		{
 			if (r <= x || x + 1 <= l) {
 				return;
 			} else if (x <= l && r <= x + 1) {
-				_update(_seg[v], y, value);
+				_update(_seg[v], y1, value);
 				return;
 			}
 
-			Update(x, _fcL[v][y], value, v << 1, l, (l + r) >> 1);
-			Update(x, _fcR[v][y], value, (v << 1) + 1, (l + r) >> 1, r);
-			_update(_seg[v], y, value);
+			int lc = v << 1;
+			int rc = (v << 1) + 1;
+			Update(x, _fcL[v][y1], _fcL[v][y2], value, lc, l, (l + r) >> 1);
+			Update(x, _fcR[v][y1], _fcR[v][y2], value, rc, (l + r) >> 1, r);
+
+			var left = _query(_seg[lc], _fcL[v][y1], _fcL[v][y2]);
+			var right = _query(_seg[rc], _fcR[v][y1], _fcR[v][y2]);
+			_propagate(_seg[v], y1, _operate(left, right));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -130,7 +139,7 @@ namespace TakyTank.KyoProLib.CSharp
 		private TData Query(int x1, int x2, int y1, int y2, int v, int l, int r)
 		{
 			if (x1 >= r || x2 <= l) {
-				return _identity;
+				return _unity;
 			} else if (x1 <= l && r <= x2) {
 				return _query(_seg[v], y1, y2);
 			}
