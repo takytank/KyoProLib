@@ -78,32 +78,30 @@ namespace TakyTank.KyoProLib.CSharp
 				return;
 			}
 
-			int tempX = x + _w;
-			int tempY = y + _h;
-			x = tempX;
-			y = tempY;
-			_tree[y, x] = value;
+			int j = x + _w;
+			int i = y + _h;
+			_tree[i, j] = value;
 
-			x = tempX >> 1;
-			while (x != 0) {
-				_tree[y, x] = _operate(_tree[y, x << 1], _tree[y, (x << 1) | 1]);
-				x >>= 1;
+			j >>= 1;
+			while (j != 0) {
+				_tree[i, j] = _operate(_tree[i, j << 1], _tree[i, (j << 1) | 1]);
+				j >>= 1;
 			}
 
-			y >>= 1;
-			while (y != 0) {
-				x = tempX;
-				_tree[y, x] = _operate(_tree[y << 1, x], _tree[(y << 1) | 1, x]);
+			i >>= 1;
+			while (i != 0) {
+				j = x + _w;
+				_tree[i, j] = _operate(_tree[i << 1, j], _tree[(i << 1) | 1, j]);
 
-				x >>= 1;
-				while (x != 0) {
-					_tree[y, x] = _operate(
-						_operate(_tree[y << 1, x << 1], _tree[y << 1, (x << 1) | 1]),
-						_operate(_tree[(y << 1) | 1, x << 1], _tree[(y << 1) | 1, (x << 1) | 1]));
-					x >>= 1;
+				j >>= 1;
+				while (j != 0) {
+					_tree[i, j] = _operate(
+						_operate(_tree[i << 1, j << 1], _tree[i << 1, (j << 1) | 1]),
+						_operate(_tree[(i << 1) | 1, j << 1], _tree[(i << 1) | 1, (j << 1) | 1]));
+					j >>= 1;
 				}
 
-				y >>= 1;
+				i >>= 1;
 			}
 		}
 
