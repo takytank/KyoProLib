@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
@@ -10,6 +11,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		private readonly int[] size_;
 		private readonly int[] in_;
 		private readonly int[] out_;
+		private readonly int[] depth_;
 		private readonly int[] head_;
 		private readonly int[] reverseindex_;
 		private readonly int[] parent_;
@@ -24,24 +26,28 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			size_ = new int[n];
 			in_ = new int[n];
 			out_ = new int[n];
+			depth_ = new int[n];
 			head_ = new int[n];
 			reverseindex_ = new int[n];
 			parent_ = new int[n];
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void AddEdge(int p, int q)
 		{
 			g_[p].Add(q);
 			g_[q].Add(p);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Build(int root = 0)
 		{
 			DfsSize(root, -1);
 			int t = 0;
-			DfsHld(root, -1, ref t);
+			DfsHld(0, root, -1, ref t);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void DfsSize(int index, int p)
 		{
 			parent_[index] = p;
@@ -64,9 +70,11 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
-		private void DfsHld(int index, int p, ref int count)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void DfsHld(int depth, int index, int p, ref int count)
 		{
 			in_[index] = count;
+			depth_[index] = depth;
 			count++;
 			reverseindex_[in_[index]] = index;
 			foreach (var to in g_[index]) {
@@ -75,12 +83,18 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 
 				head_[to] = g_[index][0] == to ? head_[index] : to;
-				DfsHld(to, index, ref count);
+				DfsHld(depth + 1, to, index, ref count);
 			}
 
 			out_[index] = count;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Depth(int v) => depth_[v];
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Distance(int u, int v) => depth_[u] + depth_[v] - depth_[Lca(u, v)] * 2;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int LevelAncestor(int v, int k)
 		{
 			while (true) {
@@ -94,7 +108,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
-		public int LCA(int u, int v)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Lca(int u, int v)
 		{
 			while (true) {
 				if (in_[u] > in_[v]) {
@@ -109,7 +124,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Vertex(int v) => in_[v];
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Edge(int u, int v)
 		{
 			if (in_[u] > in_[v]) {
@@ -123,6 +140,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void ForEachVertex(int u, int v, Action<int, int> action)
 		{
 			while (true) {
@@ -139,6 +157,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void ForEachEdge(int u, int v, Action<int, int> action)
 		{
 			while (true) {
@@ -159,8 +178,14 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T Query<T>(
-			int u, int v, T unit, Func<int, int, T> query, Func<T, T, T> merge, bool edge = false)
+			int u,
+			int v,
+			T unit,
+			Func<int, int, T> query,
+			Func<T, T, T> merge,
+			bool edge = false)
 		{
 			T l = unit;
 			T r = unit;
