@@ -320,6 +320,11 @@
 - [Sliding Window Aggregation](https://scrapbox.io/data-structures/Sliding_Window_Aggregation)
 - [SWAG(Sliding Window Aggregation)の実装についての提案](https://motsu-xe.hatenablog.com/entry/2019/12/06/192424)
 
+### SparseTable
+
+- [SparseTable の実装と解説 C#](https://webbibouroku.com/Blog/Article/sparse-table)
+- [スパーステーブル(Sparse-Table)](https://ei1333.github.io/luzhiled/snippets/structure/sparse-table.html)
+
 ### StronglyConnectedComponent
 
 - [ac-library-cs](https://github.com/key-moon/ac-library-cs)
