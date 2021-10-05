@@ -7,36 +7,36 @@ namespace TakyTank.KyoProLib.CSharp.V8
 {
 	public class HeavyLightDecomposition
 	{
-		private readonly List<int>[] g_;
-		private readonly int[] size_;
-		private readonly int[] in_;
-		private readonly int[] out_;
-		private readonly int[] depth_;
-		private readonly int[] head_;
-		private readonly int[] reverseindex_;
-		private readonly int[] parent_;
+		private readonly List<int>[] _graph;
+		private readonly int[] _size;
+		private readonly int[] _in;
+		private readonly int[] _out;
+		private readonly int[] _depth;
+		private readonly int[] _head;
+		private readonly int[] _reverseindex;
+		private readonly int[] _parent;
 
 		public HeavyLightDecomposition(int n)
 		{
-			g_ = new List<int>[n];
+			_graph = new List<int>[n];
 			for (int i = 0; i < n; i++) {
-				g_[i] = new List<int>();
+				_graph[i] = new List<int>();
 			}
 
-			size_ = new int[n];
-			in_ = new int[n];
-			out_ = new int[n];
-			depth_ = new int[n];
-			head_ = new int[n];
-			reverseindex_ = new int[n];
-			parent_ = new int[n];
+			_size = new int[n];
+			_in = new int[n];
+			_out = new int[n];
+			_depth = new int[n];
+			_head = new int[n];
+			_reverseindex = new int[n];
+			_parent = new int[n];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void AddEdge(int p, int q)
 		{
-			g_[p].Add(q);
-			g_[q].Add(p);
+			_graph[p].Add(q);
+			_graph[q].Add(p);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -50,22 +50,22 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void DfsSize(int index, int p)
 		{
-			parent_[index] = p;
-			size_[index] = 1;
-			if (g_[index].Count > 0 && g_[index][0] == p) {
-				(g_[index][0], g_[index][^1]) = (g_[index][^1], g_[index][0]);
+			_parent[index] = p;
+			_size[index] = 1;
+			if (_graph[index].Count > 0 && _graph[index][0] == p) {
+				(_graph[index][0], _graph[index][^1]) = (_graph[index][^1], _graph[index][0]);
 			}
 
-			for (int i = 0; i < g_[index].Count; i++) {
-				int to = g_[index][i];
+			for (int i = 0; i < _graph[index].Count; i++) {
+				int to = _graph[index][i];
 				if (to == p) {
 					continue;
 				}
 
 				DfsSize(to, index);
-				size_[index] += size_[to];
-				if (size_[g_[index][0]] < size_[to]) {
-					(g_[index][0], g_[index][i]) = (to, g_[index][0]);
+				_size[index] += _size[to];
+				if (_size[_graph[index][0]] < _size[to]) {
+					(_graph[index][0], _graph[index][i]) = (to, _graph[index][0]);
 				}
 			}
 		}
@@ -73,38 +73,38 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void DfsHld(int depth, int index, int p, ref int count)
 		{
-			in_[index] = count;
-			depth_[index] = depth;
+			_in[index] = count;
+			_depth[index] = depth;
 			count++;
-			reverseindex_[in_[index]] = index;
-			foreach (var to in g_[index]) {
+			_reverseindex[_in[index]] = index;
+			foreach (var to in _graph[index]) {
 				if (to == p) {
 					continue;
 				}
 
-				head_[to] = g_[index][0] == to ? head_[index] : to;
+				_head[to] = _graph[index][0] == to ? _head[index] : to;
 				DfsHld(depth + 1, to, index, ref count);
 			}
 
-			out_[index] = count;
+			_out[index] = count;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Depth(int v) => depth_[v];
+		public int Depth(int v) => _depth[v];
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Distance(int u, int v) => depth_[u] + depth_[v] - depth_[Lca(u, v)] * 2;
+		public int Distance(int u, int v) => _depth[u] + _depth[v] - _depth[Lca(u, v)] * 2;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int LevelAncestor(int v, int k)
 		{
 			while (true) {
-				int u = head_[v];
-				if (in_[v] - k >= in_[u]) {
-					return reverseindex_[in_[v] - k];
+				int u = _head[v];
+				if (_in[v] - k >= _in[u]) {
+					return _reverseindex[_in[v] - k];
 				}
 
-				k -= in_[v] - in_[u] + 1;
-				v = parent_[u];
+				k -= _in[v] - _in[u] + 1;
+				v = _parent[u];
 			}
 		}
 
@@ -112,31 +112,31 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public int Lca(int u, int v)
 		{
 			while (true) {
-				if (in_[u] > in_[v]) {
+				if (_in[u] > _in[v]) {
 					(u, v) = (v, u);
 				}
 
-				if (head_[u] == head_[v]) {
+				if (_head[u] == _head[v]) {
 					return u;
 				}
 
-				v = parent_[head_[v]];
+				v = _parent[_head[v]];
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Vertex(int v) => in_[v];
+		public int Vertex(int v) => _in[v];
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Edge(int u, int v)
 		{
-			if (in_[u] > in_[v]) {
+			if (_in[u] > _in[v]) {
 				(u, v) = (v, u);
 			}
 
-			if (head_[u] == head_[v]) {
-				return in_[u] + 1;
+			if (_head[u] == _head[v]) {
+				return _in[u] + 1;
 			} else {
-				return in_[v];
+				return _in[v];
 			}
 		}
 
@@ -144,13 +144,13 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public void ForEachVertex(int u, int v, Action<int, int> action)
 		{
 			while (true) {
-				if (in_[u] > in_[v]) {
+				if (_in[u] > _in[v]) {
 					(u, v) = (v, u);
 				}
 
-				action(Math.Max(in_[head_[v]], in_[u]), in_[v] + 1);
-				if (head_[u] != head_[v]) {
-					v = parent_[head_[v]];
+				action(Math.Max(_in[_head[v]], _in[u]), _in[v] + 1);
+				if (_head[u] != _head[v]) {
+					v = _parent[_head[v]];
 				} else {
 					break;
 				}
@@ -161,16 +161,16 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public void ForEachEdge(int u, int v, Action<int, int> action)
 		{
 			while (true) {
-				if (in_[u] > in_[v]) {
+				if (_in[u] > _in[v]) {
 					(u, v) = (v, u);
 				}
 
-				if (head_[u] != head_[v]) {
-					action(in_[head_[v]], in_[v] + 1);
-					v = parent_[head_[v]];
+				if (_head[u] != _head[v]) {
+					action(_in[_head[v]], _in[v] + 1);
+					v = _parent[_head[v]];
 				} else {
 					if (u != v) {
-						action(in_[u] + 1, in_[v] + 1);
+						action(_in[u] + 1, _in[v] + 1);
 					}
 
 					break;
@@ -189,21 +189,21 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		{
 			T l = unit;
 			T r = unit;
-			for (; ; v = parent_[head_[v]]) {
-				if (in_[u] > in_[v]) {
+			for (; ; v = _parent[_head[v]]) {
+				if (_in[u] > _in[v]) {
 					(u, v) = (v, u);
 					(l, r) = (r, l);
 				}
 
-				if (head_[u] == head_[v]) {
+				if (_head[u] == _head[v]) {
 					break;
 				}
 
-				l = merge(query(in_[head_[v]], in_[v] + 1), l);
+				l = merge(query(_in[_head[v]], _in[v] + 1), l);
 			}
 
 			return merge(
-				merge(query(in_[u] + (edge ? 1 : 0), in_[v] + 1), l),
+				merge(query(_in[u] + (edge ? 1 : 0), _in[v] + 1), l),
 				r);
 		}
 	}
