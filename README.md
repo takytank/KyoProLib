@@ -324,6 +324,7 @@
 
 - [SparseTable の実装と解説 C#](https://webbibouroku.com/Blog/Article/sparse-table)
 - [スパーステーブル(Sparse-Table)](https://ei1333.github.io/luzhiled/snippets/structure/sparse-table.html)
+- [Sparse Table 2D](https://kopricky.github.io/code/DataStructure_Advanced/sparse_table_2D.html)
 
 ### StronglyConnectedComponent
 

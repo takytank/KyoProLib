@@ -13,11 +13,17 @@ namespace TakyTank.KyoProLib.CSharp
 		private T[,] _table;
 		private int[] _lookup;
 
-		public SparseTable(int n, T unity, Func<T, T, T> operate)
+		public SparseTable(int n, T unity, Func<T, T, T> operate, bool fills = true)
 		{
 			_baseArray = new T[n];
 			_unity = unity;
 			_operate = operate;
+
+			if (fills) {
+				for (int i = 0; i < n; i++) {
+					_baseArray[i] = unity;
+				}
+			}
 		}
 
 		public SparseTable(T[] baseArray, T unity, Func<T, T, T> operate)
@@ -33,36 +39,29 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Build()
 		{
-			int height = 0;
-			while ((1 << height) <= _baseArray.Length) {
-				++height;
+			int n = _baseArray.Length;
+			_lookup = new int[n + 1];
+			for (int i = 2; i <= n; ++i) {
+				_lookup[i] = _lookup[i >> 1] + 1;
 			}
 
-			int size = 1 << height;
-			_table = new T[height, size];
-			for (int i = 0; i < height; i++) {
-				for (int j = 0; j < size; j++) {
-					_table[i, j] = _unity;
-				}
-			}
-
+			int logN = _lookup[n] + 1;
+			_table = new T[logN, n];
 			for (int i = 0; i < _baseArray.Length; ++i) {
 				_table[0, i] = _baseArray[i];
 			}
 
-			for (int i = 1; i < height; ++i) {
+			for (int i = 1; i < logN; ++i) {
 				int length = 1 << i;
-				for (int j = 0; j + length <= size; ++j) {
+				int offset = 1 << (i - 1);
+				for (int j = 0; j + length <= n; ++j) {
 					_table[i, j] = _operate(
 						_table[i - 1, j],
-						_table[i - 1, j + (1 << (i - 1))]);
+						_table[i - 1, j + offset]);
 				}
 			}
 
-			_lookup = new int[_baseArray.Length + 1];
-			for (int i = 2; i < _lookup.Length; ++i) {
-				_lookup[i] = _lookup[i >> 1] + 1;
-			}
+			
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -113,7 +112,6 @@ namespace TakyTank.KyoProLib.CSharp
 			int w = _baseArray.GetLength(1);
 			int n = Math.Max(h, w);
 			_lookup = new int[n + 1];
-
 			for (int i = 2; i <= n; ++i) {
 				_lookup[i] = _lookup[i >> 1] + 1;
 			}

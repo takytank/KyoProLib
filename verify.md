@@ -352,6 +352,7 @@
 ## SparseTable
 
 - [KUPC2015 J MODクエリ](https://atcoder.jp/contests/kupc2015/tasks/kupc2015_j)
+- [AOJ 1068 School of Killifish](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1068)
 
 ## StronglyConnectedComponent
 
