@@ -8,7 +8,6 @@ namespace TakyTank.KyoProLib.CSharp
 	public class SparseTable<T>
 	{
 		private readonly T[] _baseArray;
-		private readonly T _unity;
 		private readonly Func<T, T, T> _operate;
 		private T[,] _table;
 		private int[] _lookup;
@@ -16,7 +15,6 @@ namespace TakyTank.KyoProLib.CSharp
 		public SparseTable(int n, T unity, Func<T, T, T> operate, bool fills = true)
 		{
 			_baseArray = new T[n];
-			_unity = unity;
 			_operate = operate;
 
 			if (fills) {
@@ -26,10 +24,9 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
-		public SparseTable(T[] baseArray, T unity, Func<T, T, T> operate)
+		public SparseTable(T[] baseArray, Func<T, T, T> operate)
 		{
 			_baseArray = baseArray;
-			_unity = unity;
 			_operate = operate;
 		}
 
@@ -75,7 +72,6 @@ namespace TakyTank.KyoProLib.CSharp
 	public class SparseTable2D<T>
 	{
 		private readonly T[,] _baseArray;
-		private readonly T _unity;
 		private readonly Func<T, T, T> _operate;
 		private T[,,,] _table;
 		private int[] _lookup;
@@ -83,22 +79,20 @@ namespace TakyTank.KyoProLib.CSharp
 		public SparseTable2D(int h, int w, T unity, Func<T, T, T> operate, bool fills = true)
 		{
 			_baseArray = new T[h, w];
-			_unity = unity;
 			_operate = operate;
 
 			if (fills) {
 				for (int i = 0; i < h; i++) {
 					for (int j = 0; j < w; j++) {
-						_baseArray[i, j] = _unity;
+						_baseArray[i, j] = unity;
 					}
 				}
 			}
 		}
 
-		public SparseTable2D(T[,] baseArray, T unity, Func<T, T, T> operate)
+		public SparseTable2D(T[,] baseArray, Func<T, T, T> operate)
 		{
 			_baseArray = baseArray;
-			_unity = unity;
 			_operate = operate;
 		}
 
