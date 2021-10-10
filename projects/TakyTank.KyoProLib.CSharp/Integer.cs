@@ -77,6 +77,26 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long Pow(long n, long k, long p)
+		{
+			if (p == 1) {
+				return 0;
+			}
+
+			long ret = 1;
+			long mul = n % p;
+			while (k != 0) {
+				if ((k & 1) == 1) {
+					ret = ret * mul % p;
+				}
+				mul = mul * mul % p;
+				k >>= 1;
+			}
+
+			return ret;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Dictionary<long, (long first, long length)> FloorNK(long n)
 		{
 			var nk = new Dictionary<long, (long first, long length)>();
