@@ -241,6 +241,11 @@
 
 - [ACL Contest1 B Sum is Multiple](https://atcoder.jp/contests/acl1/tasks/acl1_b)
 
+### Discrete Logarithm Problem (ModLog)
+
+- [エクサウィザーズプログラミングコンテスト2021 G 222](https://atcoder.jp/contests/abc222/tasks/abc222_g)
+- [ARC042 D あまり](https://atcoder.jp/contests/arc042/tasks/arc042_d)
+
 ## NoshiBasis
 
 - [ZONeエナジー プログラミングコンテスト “HELLO SPACE” F 出会いと別れ](https://atcoder.jp/contests/zone2021/tasks/zone2021_f)

@@ -200,6 +200,9 @@
 - [ac-library-cs](https://github.com/key-moon/ac-library-cs)
 - [中国剰余定理 (CRT) の解説と、それを用いる問題のまとめ](https://qiita.com/drken/items/ae02240cd1f8edfc86fd)
 - [拡張互除法と中国剰余定理（Garnerのアルゴリズム）](https://www.creativ.xyz/ect-gcd-crt-garner-927/)
+- [離散対数問題 (Baby-step giant-step)](https://tjkendev.github.io/procon-library/python/math/baby-step-giant-step.html)
+- [離散対数問題(Mod-Log)](https://ei1333.github.io/luzhiled/snippets/math/mod-log.html)
+- [離散対数問題 (Discrete Logarithm Problem) を任意 mod で解く](https://qiita.com/suisen_cp/items/d597c8ec576ae32ee2d7)
 
 ### NoshiBasis
 

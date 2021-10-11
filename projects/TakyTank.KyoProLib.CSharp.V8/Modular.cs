@@ -6,8 +6,8 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
-    public static class Modular
-    {
+	public static class Modular
+	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static long Mod(long x, long p)
 		{
@@ -24,6 +24,26 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		{
 			var (_, x, _) = ExtendedEuclidean(a, p);
 			return Mod(x, p);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long Pow(long n, long k, long p)
+		{
+			if (p == 1) {
+				return 0;
+			}
+
+			long ret = 1;
+			long mul = n % p;
+			while (k != 0) {
+				if ((k & 1) == 1) {
+					ret = ret * mul % p;
+				}
+				mul = mul * mul % p;
+				k >>= 1;
+			}
+
+			return ret;
 		}
 
 		// ax + by = gcd(a, b)
@@ -78,6 +98,61 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				t -= s * u;
 				m1 -= m0 * u;
 			}
+		}
+
+		// a^x = b (mod p)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long ModLog(long a, long b, long p, bool includesZero = true)
+		{
+			long gcd = 1;
+			for (long i = p; i > 0; i >>= 1) {
+				gcd = gcd * a % p;
+			}
+
+			gcd = Gcd(gcd, p);
+
+			long t = includesZero ? 1 : a % p;
+			long c = includesZero ? 0 : 1;
+			for (; t % gcd > 0; c++) {
+				if (t == b) {
+					return c;
+				}
+
+				t = t * a % p;
+			}
+
+			if (b % gcd > 0) {
+				return -1;
+			}
+
+			var dic = new Dictionary<long, long>();
+			if (includesZero) {
+				dic[1] = 0;
+			}
+
+			long sqrtP = (long)Math.Sqrt(p) + 1;
+
+			long baby = 1;
+			for (int i = 0; i < sqrtP; i++) {
+				baby = baby * a % p;
+				if (dic.ContainsKey(baby) == false) {
+					dic[baby] = i + 1;
+				}
+			}
+
+			if (dic.ContainsKey(b)) {
+				return dic[b];
+			}
+
+			long giant = InverseMod(Pow(a, sqrtP, p), p);
+			for (int i = 1; i <= sqrtP; i++) {
+				b = b * giant % p;
+				if (dic.ContainsKey(b)) {
+					return dic[b] + i * sqrtP;
+				}
+			}
+
+			return -1;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -136,5 +211,71 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 			return (r0, m0);
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static long Gcd(long a, long b)
+		{
+			if (b == 0) {
+				return a;
+			}
+
+			return Gcd(b, a % b);
+		}
+
+		/*
+		// a^x = b (mod p)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long ModLog(long a, long b, long p)
+		{
+			long gcd = 1;
+			for (long i = p; i > 0; i >>= 1) {
+				gcd = gcd * a % p;
+			}
+
+			gcd = Gcd(gcd, p);
+
+			long t = 1;
+			long c = 0;
+			for (; t % gcd > 0; c++) {
+				if (t == b) {
+					return c;
+				}
+
+				t = t * a % p;
+			}
+
+			if (b % gcd > 0) {
+				return -1;
+			}
+
+			t /= gcd;
+			b /= gcd;
+
+			long n = p / gcd;
+			long h = 0;
+			long giant = 1;
+			for (; h * h < n; h++) {
+				giant = giant * a % n;
+			}
+
+			var dic = new Dictionary<long, long>();
+			dic[1] = 0;
+			for (long s = 0; s < h; ++s) {
+				b = b * a % n;
+				if (dic.ContainsKey(b) == false) {
+					dic[b] = s + 1;
+				}
+			}
+
+			b = t;
+			for (long s = 0; s < n;) {
+				b = b * giant % n;
+				s += h;
+				if (dic.ContainsKey(b)) {
+					return c + s - dic[b];
+				}
+			}
+
+			return -1;
+		}*/
 	}
-}
