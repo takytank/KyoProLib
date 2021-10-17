@@ -107,7 +107,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 
 				if (distances[t] == INF) {
-					return (-1, 0);
+					return (flowLimit - f, minCost);
 				}
 
 				long d = f;
@@ -182,7 +182,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 
 				if (distances[t] == INF) {
-					return (-1, 0);
+					return (flowLimit - f, minCost);
 				}
 
 				long d = f;
@@ -278,7 +278,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 
 				if (distances[t] == INF) {
-					return (-1, 0);
+					return (flowLimit - f, minCost);
 				}
 
 				for (int v = 0; v < n_; ++v) {

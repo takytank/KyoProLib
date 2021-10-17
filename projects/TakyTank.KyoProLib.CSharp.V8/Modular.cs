@@ -279,3 +279,4 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return -1;
 		}*/
 	}
+}
