@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -61,6 +62,11 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (long flow, long cost) BellmanFord(
 			int s, int t, long flowLimit, bool keepsEdges = false)
+			=> BellmanFordSlopes(s, t, flowLimit, keepsEdges).Last();
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public List<(long flow, long cost)> BellmanFordSlopes(
+			int s, int t, long flowLimit, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
 				CopyEdges();
@@ -72,6 +78,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			var prevEdgeIndexes = new int[n_];
 			var distances = new long[n_];
 
+			var result = new List<(long flow, long cost)>();
+			result.Add((0, 0));
+			long prevCostPerFlow = -1;
 			long minCost = 0;
 			long f = flowLimit;
 			while (f > 0) {
@@ -98,7 +107,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 					}
 
 					if (i == n_ - 1 && changes) {
-						return (-1, 0);
+						return result;
 					}
 
 					if (changes == false) {
@@ -107,7 +116,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 
 				if (distances[t] == INF) {
-					return (flowLimit - f, minCost);
+					return result;
 				}
 
 				long d = f;
@@ -122,13 +131,25 @@ namespace TakyTank.KyoProLib.CSharp.V8
 					e.Capacity -= d;
 					flowedEdges_[v][e.ReverseEdgeIndex].Capacity += d;
 				}
+
+				if (prevCostPerFlow == distances[t]) {
+					result.RemoveAt(result.Count - 1);
+				}
+
+				result.Add((flowLimit - f, minCost));
+				prevCostPerFlow = distances[t];
 			}
 
-			return (flowLimit - f, minCost);
+			return result;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (long flow, long cost) Fpsa(
+			int s, int t, long flowLimit, bool keepsEdges = false)
+			=> FpsaSlopes(s, t, flowLimit, keepsEdges).Last();
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public List<(long flow, long cost)> FpsaSlopes(
 			int s, int t, long flowLimit, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -143,6 +164,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			var pending = new bool[n_];
 			var times = new int[n_];
 
+			var result = new List<(long flow, long cost)>();
+			result.Add((0, 0));
+			long prevCostPerFlow = -1;
 			long minCost = 0;
 			long f = flowLimit;
 			while (f > 0) {
@@ -172,7 +196,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 						if (pending[edge.To] == false) {
 							++times[edge.To];
 							if (times[edge.To] >= n_) {
-								return (-1, 0);
+								return result;
 							}
 
 							pending[edge.To] = true;
@@ -182,7 +206,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 
 				if (distances[t] == INF) {
-					return (flowLimit - f, minCost);
+					return result;
 				}
 
 				long d = f;
@@ -197,13 +221,25 @@ namespace TakyTank.KyoProLib.CSharp.V8
 					e.Capacity -= d;
 					flowedEdges_[v][e.ReverseEdgeIndex].Capacity += d;
 				}
+
+				if (prevCostPerFlow == distances[t]) {
+					result.RemoveAt(result.Count - 1);
+				}
+
+				result.Add((flowLimit - f, minCost));
+				prevCostPerFlow = distances[t];
 			}
 
-			return (flowLimit - f, minCost);
+			return result;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (long flow, long cost) Dijkstra(
+			int s, int t, long flowLimit, bool hasMinusCost = false, bool keepsEdges = false)
+			=> DijkstraSlopes(s, t, flowLimit, hasMinusCost, keepsEdges).Last();
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public List<(long flow, long cost)> DijkstraSlopes(
 			int s, int t, long flowLimit, bool hasMinusCost = false, bool keepsEdges = false)
 		{
 			if (keepsEdges) {
@@ -217,6 +253,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			var prevEdgeIndexes = new int[n_];
 			var distances = new long[n_];
 
+			var result = new List<(long flow, long cost)>();
+			result.Add((0, 0));
+			long prevCostPerFlow = -1;
 			bool first = true;
 			long minCost = 0;
 			long f = flowLimit;
@@ -247,7 +286,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 						}
 
 						if (i == n_ - 1 && changes) {
-							return (-1, 0);
+							return result;
 						}
 
 						if (changes == false) {
@@ -278,7 +317,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 
 				if (distances[t] == INF) {
-					return (flowLimit - f, minCost);
+					return result;
 				}
 
 				for (int v = 0; v < n_; ++v) {
@@ -298,10 +337,17 @@ namespace TakyTank.KyoProLib.CSharp.V8
 					flowedEdges_[v][e.ReverseEdgeIndex].Capacity += d;
 				}
 
+				if (prevCostPerFlow == distances[t]) {
+					result.RemoveAt(result.Count - 1);
+				}
+
+				result.Add((flowLimit - f, minCost));
+				prevCostPerFlow = distances[t];
+
 				first = false;
 			}
 
-			return (flowLimit - f, minCost);
+			return result;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
