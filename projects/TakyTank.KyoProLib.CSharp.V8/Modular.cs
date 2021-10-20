@@ -102,27 +102,19 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		// a^x = b (mod p)
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static long ModLog(long a, long b, long p, bool includesZero = true)
+		public static long ModLogCoprime(long a, long b, long p, bool includesZero = true)
 		{
-			long gcd = 1;
-			for (long i = p; i > 0; i >>= 1) {
-				gcd = gcd * a % p;
+			if (p == 1) {
+				return includesZero ? 0 : 1;
+			}
+			a %= p;
+			b %= p;
+			if (b == 1 && includesZero) {
+				return 0;
 			}
 
-			gcd = Gcd(gcd, p);
-
-			long t = includesZero ? 1 : a % p;
-			long c = includesZero ? 0 : 1;
-			for (; t % gcd > 0; c++) {
-				if (t == b) {
-					return c;
-				}
-
-				t = t * a % p;
-			}
-
-			if (b % gcd > 0) {
-				return -1;
+			if (a == 0) {
+				return b == 0 ? 1 : -1;
 			}
 
 			var dic = new Dictionary<long, long>();
@@ -140,19 +132,49 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 			}
 
-			if (dic.ContainsKey(b)) {
-				return dic[b];
-			}
-
 			long giant = InverseMod(Pow(a, sqrtP, p), p);
-			for (int i = 1; i <= sqrtP; i++) {
-				b = b * giant % p;
+			for (int i = 0; i <= sqrtP; i++) {
 				if (dic.ContainsKey(b)) {
 					return dic[b] + i * sqrtP;
 				}
+
+				b = b * giant % p;
 			}
 
 			return -1;
+		}
+
+		// a^x = b (mod p)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long ModLogArbitary(long a, long b, long p, bool includesZero = true)
+		{
+			if (p == 1) {
+				return includesZero ? 0 : 1;
+			}
+
+			a %= p;
+			b %= p;
+			long powA = includesZero ? 1 : a % p;
+			int d = includesZero ? 0 : 1;
+			for (long i = p; i > 0; i >>= 1) {
+				if (powA == b) {
+					return d;
+				}
+
+				powA = powA * a % p;
+				++d;
+			}
+
+			long gcd = Gcd(powA, p);
+			if (b % gcd > 0) {
+				return -1;
+			}
+
+			p /= gcd;
+			b *= InverseMod(powA, p);
+			var ret = ModLogCoprime(a, b, p, includesZero);
+
+			return ret == -1 ? -1 : ret + d;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -221,62 +243,5 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 			return Gcd(b, a % b);
 		}
-
-		/*
-		// a^x = b (mod p)
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static long ModLog(long a, long b, long p)
-		{
-			long gcd = 1;
-			for (long i = p; i > 0; i >>= 1) {
-				gcd = gcd * a % p;
-			}
-
-			gcd = Gcd(gcd, p);
-
-			long t = 1;
-			long c = 0;
-			for (; t % gcd > 0; c++) {
-				if (t == b) {
-					return c;
-				}
-
-				t = t * a % p;
-			}
-
-			if (b % gcd > 0) {
-				return -1;
-			}
-
-			t /= gcd;
-			b /= gcd;
-
-			long n = p / gcd;
-			long h = 0;
-			long giant = 1;
-			for (; h * h < n; h++) {
-				giant = giant * a % n;
-			}
-
-			var dic = new Dictionary<long, long>();
-			dic[1] = 0;
-			for (long s = 0; s < h; ++s) {
-				b = b * a % n;
-				if (dic.ContainsKey(b) == false) {
-					dic[b] = s + 1;
-				}
-			}
-
-			b = t;
-			for (long s = 0; s < n;) {
-				b = b * giant % n;
-				s += h;
-				if (dic.ContainsKey(b)) {
-					return c + s - dic[b];
-				}
-			}
-
-			return -1;
-		}*/
 	}
 }

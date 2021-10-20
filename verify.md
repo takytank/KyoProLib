@@ -245,6 +245,7 @@
 
 - [エクサウィザーズプログラミングコンテスト2021 G 222](https://atcoder.jp/contests/abc222/tasks/abc222_g)
 - [ARC042 D あまり](https://atcoder.jp/contests/arc042/tasks/arc042_d)
+- [yosupo-judge Discrete Logarithm](https://judge.yosupo.jp/problem/discrete_logarithm_mod)
 
 ## NoshiBasis
 
