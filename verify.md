@@ -168,6 +168,7 @@
 
 ### Imos2D
 
+- [ABC086 D Checker](https://atcoder.jp/contests/abc086/tasks/arc089_b)
 - [ARC067 F Yakiniku Restaurants](https://atcoder.jp/contests/arc067/tasks/arc067_d)
 - [yukicoder 1490 スライムと爆弾](https://yukicoder.me/problems/no/1490)
 
