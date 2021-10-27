@@ -183,11 +183,10 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void ForEachSubBits(int bit, Action<int> action)
+		public static IEnumerable<int> SubBitsOf(int bit)
 		{
-			for (int sub = bit; sub >= 0; --sub) {
-				sub &= bit;
-				action(sub);
+			for (int sub = bit; sub > 0; sub = --sub & bit) {
+				yield return sub;
 			}
 		}
 

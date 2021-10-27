@@ -23,15 +23,15 @@ namespace TakyTank.KyoProLib.CSharp
 
 		private readonly int flags_;
 		public int Flag => flags_;
-		public bool this[int bitNumber] => (flags_ & 1 << bitNumber) != 0;
+		public bool this[int bitNumber] => (flags_ & (1 << bitNumber)) != 0;
 		public BitFlag(int flags) { flags_ = flags; }
 
 		public bool Has(BitFlag target) => (flags_ & target.flags_) == target.flags_;
 		public bool Has(int target) => (flags_ & target) == target;
-		public bool HasBit(int bitNumber) => (flags_ & 1 << bitNumber) != 0;
-		public BitFlag OrBit(int bitNumber) => flags_ | 1 << bitNumber;
-		public BitFlag AndBit(int bitNumber) => flags_ & 1 << bitNumber;
-		public BitFlag XorBit(int bitNumber) => flags_ ^ 1 << bitNumber;
+		public bool HasBit(int bitNumber) => (flags_ & (1 << bitNumber)) != 0;
+		public BitFlag OrBit(int bitNumber) => flags_ | (1 << bitNumber);
+		public BitFlag AndBit(int bitNumber) => flags_ & (1 << bitNumber);
+		public BitFlag XorBit(int bitNumber) => flags_ ^ (1 << bitNumber);
 		public BitFlag ComplementOf(BitFlag sub) => flags_ ^ sub.flags_;
 		public int PopCount() => BitOperations.PopCount((uint)flags_);
 
@@ -73,14 +73,6 @@ namespace TakyTank.KyoProLib.CSharp
 		public static implicit operator int(BitFlag t) => t.flags_;
 
 		public override string ToString() => $"{Convert.ToString(flags_, 2).PadLeft(32, '0')} ({flags_})";
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void ForEachSubBits(Action<BitFlag> action)
-		{
-			for (BitFlag sub = flags_; sub > 0; sub = --sub & flags_) {
-				action(sub);
-			}
-		}
 
 		public SubBitsEnumerator SubBits => new SubBitsEnumerator(flags_);
 		public struct SubBitsEnumerator : IEnumerable<BitFlag>
