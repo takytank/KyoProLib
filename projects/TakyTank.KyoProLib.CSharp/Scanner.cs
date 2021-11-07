@@ -11,6 +11,7 @@ namespace TakyTank.KyoProLib.CSharp
 	public class Scanner : IDisposable
 	{
 		private const int BUFFER_SIZE = 1024;
+		private const int ASCII_SPACE = 32;
 		private const int ASCII_CHAR_BEGIN = 33;
 		private const int ASCII_CHAR_END = 126;
 		private readonly string filePath_;
@@ -41,6 +42,18 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public string NextLine()
+		{
+			var sb = new StringBuilder();
+			for (var b = Char(); b >= ASCII_SPACE && b <= ASCII_CHAR_END; b = (char)Read()) {
+				sb.Append(b);
+			}
+
+			return sb.ToString();
+		}
+
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public char Char()
 		{
 			byte b;
@@ -52,7 +65,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public string Next()
+		public string String()
 		{
 			var sb = new StringBuilder();
 			for (var b = Char(); b >= ASCII_CHAR_BEGIN && b <= ASCII_CHAR_END; b = (char)Read()) {
@@ -67,7 +80,7 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			var array = new string[length];
 			for (int i = 0; i < length; ++i) {
-				array[i] = Next();
+				array[i] = String();
 			}
 
 			return array;
@@ -177,7 +190,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public double Double() => double.Parse(Next(), CultureInfo.InvariantCulture);
+		public double Double() => double.Parse(String(), CultureInfo.InvariantCulture);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public double Double(double offset) => Double() + offset;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -204,7 +217,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public decimal Decimal() => decimal.Parse(Next(), CultureInfo.InvariantCulture);
+		public decimal Decimal() => decimal.Parse(String(), CultureInfo.InvariantCulture);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public decimal Decimal(decimal offset) => Decimal() + offset;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
