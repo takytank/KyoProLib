@@ -36,12 +36,14 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void InitializeByNearestNeighbour()
+		public void InitializeByNearestNeighbour() => InitializeByNearestNeighbour(0, _n);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void InitializeByNearestNeighbour(int left, int right)
 		{
-			for (int i = 1; i < _n; i++) {
+			for (int i = left + 1; i < right; i++) {
 				long min = long.MaxValue;
 				int minIndex = 0;
-				for (int j = i; j < _n; j++) {
+				for (int j = i; j < right; j++) {
 					long cost = _getCost(_array[i - 1], _array[j]);
 					if (cost < min) {
 						min = cost;
@@ -58,13 +60,13 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Optimize(int count) => Optimize(count, 0, _m);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Optimize(int count, int min, int max)
+		public void Optimize(int count, int left, int right)
 		{
 			for (int k = 0; k < count; k++) {
-				int i = _rnd.Next(min, max - 1);
-				int j = _rnd.Next(min + 1, max);
+				int i = _rnd.Next(left, right - 1);
+				int j = _rnd.Next(left + 1, right);
 				while (i + 1 == j) {
-					j = _rnd.Next(min + 1, max);
+					j = _rnd.Next(left + 1, right);
 				}
 
 				if (j < i) {
@@ -84,6 +86,78 @@ namespace TakyTank.KyoProLib.CSharp.V8
 						--j;
 					}
 				}
+			}
+		}
+
+		public (long delta, int targetIndex) EstimateExchange(int removeIndex, T newValue)
+			=> EstimateExchange(removeIndex, newValue, 1, _m - 1);
+		public (long delta, int targetIndex) EstimateExchange(
+			int removeIndex, T newValue, int left, int right)
+		{
+			long after = long.MaxValue;
+			int target = 1;
+			for (int i = left; i <= right; i++) {
+				int l = i - 1;
+				if (l == removeIndex) {
+					l--;
+				}
+
+				int r = i;
+				if (r == removeIndex) {
+					r++;
+				}
+
+				long tempAfter = _getCost(_array[l], newValue) + _getCost(newValue, _array[r]);
+				if (tempAfter < after) {
+					after = tempAfter;
+					target = i;
+				}
+			}
+
+			if (removeIndex == target || removeIndex == target - 1) {
+				long before = _getCost(_array[removeIndex - 1], _array[removeIndex])
+					+ _getCost(_array[removeIndex], _array[removeIndex + 1]);
+				return (after - before, target);
+			} else {
+				long delta = 0;
+				delta -= _getCost(_array[removeIndex - 1], _array[removeIndex]);
+				delta -= _getCost(_array[removeIndex], _array[removeIndex + 1]);
+				delta += _getCost(_array[removeIndex - 1], _array[removeIndex + 1]);
+				delta -= _getCost(_array[target - 1], _array[target]);
+				delta += after;
+				return (delta, target);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Exchange(int removeIndex, T newValue, bool forced)
+			=> Exchange(removeIndex, newValue, 1, _m - 1, forced);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Exchange(int removeIndex, T newValue, int left, int right, bool forced)
+		{
+			var (delta, target) = EstimateExchange(removeIndex, newValue, left, right);
+			if (forced || delta < 0) {
+				Exchange(removeIndex, target, newValue);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Exchange(int removeIndex, int insertIndex, T newValue)
+		{
+			if (removeIndex < insertIndex) {
+				for (int i = removeIndex; i < insertIndex - 1; i++) {
+					_array[i] = _array[i + 1];
+				}
+
+				_array[insertIndex - 1] = newValue;
+			} else if (removeIndex > insertIndex) {
+				for (int i = removeIndex - 1; i >= insertIndex; i--) {
+					_array[i + 1] = _array[i];
+				}
+
+				_array[insertIndex] = newValue;
+			} else {
+				_array[removeIndex] = newValue;
 			}
 		}
 	}
