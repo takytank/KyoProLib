@@ -219,7 +219,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 			for (int k = _n - 1; k > 0; k--) {
 				int lc = k << 1;
-				int rc = (k << 1) + 1;
+				int rc = (k << 1) | 1;
 
 				Merge(pointTree[lc], pointTree[rc], ref pointTree[k]);
 
@@ -272,7 +272,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			int lc = v << 1;
-			int rc = (v << 1) + 1;
+			int rc = (v << 1) | 1;
 			Update(x, _fcL[v][y1], _fcL[v][y2], value, lc, l, (l + r) >> 1);
 			Update(x, _fcR[v][y1], _fcR[v][y2], value, rc, (l + r) >> 1, r);
 
@@ -302,7 +302,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 			return _operate(
 				Query(x1, x2, _fcL[v][y1], _fcL[v][y2], v << 1, l, (l + r) >> 1),
-				Query(x1, x2, _fcR[v][y1], _fcR[v][y2], (v << 1) + 1, (l + r) >> 1, r));
+				Query(x1, x2, _fcR[v][y1], _fcR[v][y2], (v << 1) | 1, (l + r) >> 1, r));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -311,7 +311,7 @@ namespace TakyTank.KyoProLib.CSharp
 			int ng = -1;
 			int ok = array.Length;
 			while (ok - ng > 1) {
-				int mid = (ok + ng) / 2;
+				int mid = (ok + ng) >> 1;
 				if (array[mid] >= value) {
 					ok = mid;
 				} else {

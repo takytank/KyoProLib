@@ -94,6 +94,11 @@
 - [ARC115 E LEQ and NEQ](https://atcoder.jp/contests/arc115/tasks/arc115_e)
 - [第二回日本最強プログラマー学生選手権 F Max Matrix](https://atcoder.jp/contests/jsc2021/tasks/jsc2021_f)
 
+### DynamicSegmentTree2D
+
+- [ACPC2021 Day2 H RangeMinimumQuery](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/H)
+- [yosupo-judge Rectangle Sum](https://judge.yosupo.jp/problem/rectangle_sum)
+
 ## EulerTotient
 
 - [yukicoder 1339 循環小数](https://yukicoder.me/problems/no/1339)
@@ -331,8 +336,8 @@
 
 ### SegmentTree2D
 
-- [ACPC2021 Day2 H RangeMinimumQuery](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/H)
 - [ABC106 D AtCoder Express 2](https://atcoder.jp/contests/abc106/tasks/abc106_d)
+- [トヨタシステムズプログラミングコンテスト2021 F Stamp Game](https://atcoder.jp/contests/abc228/tasks/abc228_f)
 
 ## ShortestPath
 

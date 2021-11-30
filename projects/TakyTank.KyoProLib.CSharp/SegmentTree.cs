@@ -49,7 +49,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			for (int i = n_ - 1; i > 0; --i) {
-				tree_[i] = operate_(tree_[i << 1], tree_[(i << 1) + 1]);
+				tree_[i] = operate_(tree_[i << 1], tree_[(i << 1) | 1]);
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace TakyTank.KyoProLib.CSharp
 			tree_[index] = value;
 			index >>= 1;
 			while (index != 0) {
-				tree_[index] = operate_(tree_[index << 1], tree_[(index << 1) + 1]);
+				tree_[index] = operate_(tree_[index << 1], tree_[(index << 1) | 1]);
 				index >>= 1;
 			}
 		}
@@ -114,7 +114,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return v - n_;
 			} else {
 				int lc = v << 1;
-				int rc = (v << 1) + 1;
+				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				int vl = FindLeftestCore(left, right, lc, l, mid, check);
 				if (vl != right) {
@@ -140,7 +140,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return v - n_;
 			} else {
 				int lc = v << 1;
-				int rc = (v << 1) + 1;
+				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				int vr = FindRightestCore(left, right, rc, mid, r, check);
 				if (vr != left - 1) {
@@ -275,7 +275,7 @@ namespace TakyTank.KyoProLib.CSharp
 			int k = 1;
 			while (r - l > 1) {
 				Propagate(k);
-				int m = (l + r) / 2;
+				int m = (l + r) >> 1;
 				if (i < m) {
 					r = m;
 					k <<= 1;
@@ -336,7 +336,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return v - n_;
 			} else {
 				int lc = v << 1;
-				int rc = (v << 1) + 1;
+				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				int vl = FindLeftestCore(left, right, lc, l, mid, check);
 				if (vl != right) {
@@ -363,7 +363,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return v - n_;
 			} else {
 				int lc = v << 1;
-				int rc = (v << 1) + 1;
+				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				int vr = FindRightestCore(left, right, rc, mid, r, check);
 				if (vr != left - 1) {
@@ -388,7 +388,7 @@ namespace TakyTank.KyoProLib.CSharp
 			if (should_[v]) {
 				if (v < n_) {
 					int lc = v << 1;
-					int rc = (v << 1) + 1;
+					int rc = (v << 1) | 1;
 					tree_[lc] = operate_(tree_[v], tree_[lc]);
 					should_[lc] = true;
 					tree_[rc] = operate_(tree_[v], tree_[rc]);
@@ -536,7 +536,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			for (int i = n_ - 1; i > 0; --i) {
-				data_[i] = operate_(data_[i << 1], data_[(i << 1) + 1]);
+				data_[i] = operate_(data_[i << 1], data_[(i << 1) | 1]);
 			}
 		}
 
@@ -556,7 +556,7 @@ namespace TakyTank.KyoProLib.CSharp
 				Propagate(v, l, r, ref value);
 			} else if (left < r && l < right) {
 				int lc = v << 1;
-				int rc = (v << 1) + 1;
+				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				Propagate(lc, l, mid, v);
 				UpdateCore(left, right, lc, l, mid, value);
@@ -583,7 +583,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return unitData_;
 			} else {
 				int lc = v << 1;
-				int rc = (v << 1) + 1;
+				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				Propagate(lc, l, mid, v);
 				Propagate(rc, mid, r, v);
@@ -610,7 +610,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return v - n_;
 			} else {
 				int lc = v << 1;
-				int rc = (v << 1) + 1;
+				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				Propagate(lc, l, mid, v);
 				Propagate(rc, mid, r, v);
@@ -640,7 +640,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return v - n_;
 			} else {
 				int lc = v << 1;
-				int rc = (v << 1) + 1;
+				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				Propagate(lc, l, mid, v);
 				Propagate(rc, mid, r, v);
@@ -671,7 +671,7 @@ namespace TakyTank.KyoProLib.CSharp
 			v += n_;
 			v >>= 1;
 			while (v > 0) {
-				data_[v] = operate_(data_[v << 1], data_[(v << 1) + 1]);
+				data_[v] = operate_(data_[v << 1], data_[(v << 1) | 1]);
 				v >>= 1;
 			}
 		}
@@ -685,7 +685,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return;
 			} else {
 				int lc = v << 1;
-				int rc = (v << 1) + 1;
+				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				Propagate(lc, l, mid, v);
 				Propagate(rc, mid, r, v);
