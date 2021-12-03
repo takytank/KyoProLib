@@ -134,7 +134,14 @@
 
 ### Integer
 
+#### FloorSum
+
 - [ac-library-cs](https://github.com/key-moon/ac-library-cs)
+
+#### QuotientRange
+
+- [商列挙](https://ei1333.github.io/luzhiled/snippets/math/quotient-range.html)
+- [Divide Both](https://maspypy.com/divide-both（abc206-e）)
 
 ### IntervalSet
 

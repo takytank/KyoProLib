@@ -97,7 +97,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Dictionary<long, (long first, long length)> FloorNK(long n)
+		public static Dictionary<long, (long first, long length)> QuotientRange(long n)
 		{
 			var nk = new Dictionary<long, (long first, long length)>();
 			long l = 1;

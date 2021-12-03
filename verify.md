@@ -183,6 +183,11 @@
 
 - [AtCoder Library Practice Contest C Floor Sum](https://atcoder.jp/contests/practice2/tasks/practice2_c)
 
+### QuotientRange
+
+- [ABC230 E Fraction Floor Sum](https://atcoder.jp/contests/abc230/tasks/abc230_e)
+
+
 ## IntervalSet
 
 - [CODE FESTIVAL 2015 予選B マスと駒と色塗り](https://atcoder.jp/contests/code-festival-2015-qualb/tasks/codefestival_2015_qualB_d)
