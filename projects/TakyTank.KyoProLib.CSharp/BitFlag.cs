@@ -55,6 +55,8 @@ namespace TakyTank.KyoProLib.CSharp
 			=> new BitFlag(lhs.flags_ ^ rhs);
 		public static BitFlag operator ^(int lhs, BitFlag rhs)
 			=> new BitFlag(lhs ^ rhs.flags_);
+		public static BitFlag operator <<(BitFlag bit, int shift) => bit.flags_ << shift;
+		public static BitFlag operator >>(BitFlag bit, int shift) => bit.flags_ >> shift;
 
 		public static bool operator <(BitFlag lhs, BitFlag rhs) => lhs.flags_ < rhs.flags_;
 		public static bool operator <(BitFlag lhs, int rhs) => lhs.flags_ < rhs;
