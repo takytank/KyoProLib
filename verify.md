@@ -160,6 +160,10 @@
 
 ## Helper
 
+### BinarySearch
+
+- [2010年 日本情報オリンピック春合宿OJ 戦国時代](https://atcoder.jp/contests/joisc2010/tasks/joisc2010_sengoku)
+
 ### Merge
 
 - [第14回日本情報オリンピック 予選 F 財宝](https://atcoder.jp/contests/joi2015yo/tasks/joi2015yo_f)

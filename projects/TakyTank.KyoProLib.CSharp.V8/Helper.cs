@@ -52,6 +52,36 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long BinarySearchOKNG(long ok, long ng, Func<long, bool> satisfies)
+		{
+			while (ng - ok > 1) {
+				long mid = (ok + ng) / 2;
+				if (satisfies(mid)) {
+					ok = mid;
+				} else {
+					ng = mid;
+				}
+			}
+
+			return ok;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long BinarySearchNGOK(long ng, long ok, Func<long, bool> satisfies)
+		{
+			while (ok - ng > 1) {
+				long mid = (ok + ng) / 2;
+				if (satisfies(mid)) {
+					ok = mid;
+				} else {
+					ng = mid;
+				}
+			}
+
+			return ok;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Array1<T>(int n, T initialValue) where T : struct
 			=> new T[n].Fill(initialValue);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
