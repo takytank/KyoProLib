@@ -25,6 +25,7 @@
 
 - [ARC105 C Camels and Bridge](https://atcoder.jp/contests/arc105/tasks/arc105_c)
 - [ABC187 F Close Group](https://atcoder.jp/contests/abc187/tasks/abc187_f)
+- [ARC132 C Almost Sorted](https://atcoder.jp/contests/arc132/tasks/arc132_c)
 
 ## BitSet
 
@@ -335,6 +336,7 @@
 
 - [AtCoder Library Practice Contest J Segment Tree](https://atcoder.jp/contests/practice2/tasks/practice2_j)
 - [PAST05 N 旅行会社](https://atcoder.jp/contests/past202012-open/tasks/past202012_n)
+- [PAST09 M 名前の変更](https://atcoder.jp/contests/past202112-open/tasks/past202112_m)
 
 ### LazySegmentTree
 

@@ -151,6 +151,74 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int MaxRight(int l, Predicate<T> satisfies)
+		{
+			if (l == Count) {
+				return Count;
+			}
+
+			l += n_;
+			var sum = unit_;
+			do {
+				while (l % 2 == 0) {
+					l >>= 1;
+				}
+
+				if (satisfies(operate_(sum, tree_[l])) == false) {
+					while (l < n_) {
+						l <<= 1;
+						var temp = operate_(sum, tree_[l]);
+						if (satisfies(temp)) {
+							sum = temp;
+							++l;
+						}
+					}
+
+					return l - n_;
+				}
+
+				sum = operate_(sum, tree_[l]);
+				++l;
+			} while ((l & -l) != l);
+
+			return Count;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int MinLeft(int r, Predicate<T> satisfies)
+		{
+			if (r == 0) {
+				return 0;
+			}
+
+			r += n_;
+			var sum = unit_;
+			do {
+				--r;
+				while (r > 1 && (r % 2) != 0) {
+					r >>= 1;
+				}
+
+				if (satisfies(operate_(tree_[r], sum)) == false) {
+					while (r < n_) {
+						r = (r << 1) | 1;
+						var temp = operate_(tree_[r], sum);
+						if (satisfies(temp)) {
+							sum = temp;
+							--r;
+						}
+					}
+
+					return r + 1 - n_;
+				}
+
+				sum = operate_(tree_[r], sum);
+			} while ((r & -r) != r);
+
+			return 0;
+		}
+
 		public IEnumerator<T> GetEnumerator()
 		{
 			for (int i = 0; i < Count; i++) {
