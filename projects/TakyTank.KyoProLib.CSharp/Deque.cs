@@ -15,7 +15,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public int Count { get; private set; } = 0;
 		public T Front => ringBuffer_[front_];
-		public T Back => ringBuffer_[back_];
+		public T Back => ringBuffer_[back_ != -1 ? back_ : back_ + capacity_];
 
 		public T this[int index]
 		{
