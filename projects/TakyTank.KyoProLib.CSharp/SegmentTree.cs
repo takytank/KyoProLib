@@ -536,6 +536,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 	[DebuggerTypeProxy(typeof(LazySegmentTree<,>.DebugView))]
 	public class LazySegmentTree<TData, TUpdate> : IEnumerable<TData>
+		where TUpdate : IEquatable<TUpdate>
 	{
 		private readonly int n_;
 		private readonly TData[] data_;
@@ -729,6 +730,10 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Propagate(int v, int l, int r, ref TUpdate value)
 		{
+			if (value.Equals(unitUpdate_)) {
+				return;
+			}
+
 			data_[v] = update_(data_[v], value, r - l);
 			lazy_[v] = compose_(value, lazy_[v]);
 		}
