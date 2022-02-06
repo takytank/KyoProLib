@@ -218,6 +218,7 @@
 - [Mo's algorithm (kopricky アルゴリズムライブラリ)](https://kopricky.github.io/code/DataStructure_Advanced/mo_algorithm.html)
 - [Mo's algorithm(クエリ平方分割)の話](https://qiita.com/ageprocpp/items/34121c58e571ea8c4023)
 - [ABC238 G - Cubic?](https://kanpurin.hatenablog.com/entry/2022/02/05/224105)
+- [SPOJ DQUERY - D-query](https://drken1215.hatenablog.com/entry/2019/01/01/234400)
 
 ### NoshiBasis
 

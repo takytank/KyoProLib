@@ -266,6 +266,7 @@
 ## Mo's Algorithm
 
 - [ABC238 G Cubic?](https://atcoder.jp/contests/abc238/tasks/abc238_g)
+- [ABC174 F Range Set Query](https://atcoder.jp/contests/abc174/tasks/abc174_f)
 
 ## NoshiBasis
 

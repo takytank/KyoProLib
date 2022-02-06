@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 
@@ -8,16 +9,16 @@ namespace TakyTank.KyoProLib.CSharp.V8
 {
 	public class Eratosthenes
 	{
-		public static (bool[] isPrime, List<int> primes) Sift(long n)
+		public static (bool[] isPrime, List<int> primes) Sift(int n)
 		{
 			var isPrime = new bool[n + 1];
 			isPrime.AsSpan().Fill(true);
 
 			var primes = new List<int>((int)Math.Sqrt(n));
-			for (long i = 2; i <= n; i++) {
+			for (int i = 2; i <= n; i++) {
 				if (isPrime[i]) {
-					primes.Add((int)i);
-					for (long j = i * i; j <= n; j += i) {
+					primes.Add(i);
+					for (long j = (long)i * i; j <= n; j += i) {
 						isPrime[j] = false;
 					}
 				}
@@ -26,23 +27,23 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return (isPrime, primes);
 		}
 
-		private readonly long[] primes_;
-		private readonly long[] minPrimeFactors_;
+		private readonly int[] primes_;
+		private readonly int[] minPrimeFactors_;
 
-		public ReadOnlySpan<long> Primes => primes_;
+		public ReadOnlySpan<int> Primes => primes_;
 
-		public Eratosthenes(long n)
+		public Eratosthenes(int n)
 		{
-			minPrimeFactors_ = new long[n + 1];
+			minPrimeFactors_ = new int[n + 1];
 			minPrimeFactors_[0] = -1;
 			minPrimeFactors_[1] = -1;
 
-			var tempPrimes = new List<long>();
-			for (long d = 2; d <= n; d++) {
+			var tempPrimes = new List<int>();
+			for (int d = 2; d <= n; d++) {
 				if (minPrimeFactors_[d] == 0) {
 					tempPrimes.Add(d);
 					minPrimeFactors_[d] = d;
-					for (long j = d * d; j <= n; j += d) {
+					for (long j = (long)d * d; j <= n; j += d) {
 						if (minPrimeFactors_[j] == 0) {
 							minPrimeFactors_[j] = d;
 						}
@@ -53,14 +54,16 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			primes_ = tempPrimes.ToArray();
 		}
 
-		public bool IsPrime(long n)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool IsPrime(int n)
 		{
 			return minPrimeFactors_[n] == n;
 		}
 
-		public IReadOnlyList<long> PrimeFactorsOf(long n)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public IReadOnlyList<int> PrimeFactorsOf(int n)
 		{
-			var factors = new List<long>();
+			var factors = new List<int>();
 			while (n > 1) {
 				factors.Add(minPrimeFactors_[n]);
 				n /= minPrimeFactors_[n];
@@ -69,11 +72,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return factors;
 		}
 
-		public Dictionary<long, int> PrimeFactors(long n)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Dictionary<int, int> PrimeFactors(int n)
 		{
-			var factors = new Dictionary<long, int>();
+			var factors = new Dictionary<int, int>();
 			var list = PrimeFactorsOf(n);
-			foreach (long value in list) {
+			foreach (int value in list) {
 				if (factors.ContainsKey(value)) {
 					factors[value]++;
 				} else {
@@ -84,12 +88,13 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return factors;
 		}
 
-		public Dictionary<long, int> PrimeFactorsOfLcm(ReadOnlySpan<long> values)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Dictionary<int, int> PrimeFactorsOfLcm(ReadOnlySpan<int> values)
 		{
-			var factors = new Dictionary<long, int>();
-			foreach (long value in values) {
+			var factors = new Dictionary<int, int>();
+			foreach (int value in values) {
 				var temp = PrimeFactors(value);
-				foreach (long key in temp.Keys) {
+				foreach (int key in temp.Keys) {
 					if (factors.ContainsKey(key)) {
 						factors[key] = Math.Max(factors[key], temp[key]);
 					} else {
