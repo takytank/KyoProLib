@@ -211,6 +211,14 @@
 - [離散対数問題(Mod-Log)](https://ei1333.github.io/luzhiled/snippets/math/mod-log.html)
 - [離散対数問題 (Discrete Logarithm Problem) を任意 mod で解く](https://qiita.com/suisen_cp/items/d597c8ec576ae32ee2d7)
 
+### Mo's Algorithm
+
+- [Mo's algorithm (ei1333の日記)](https://ei1333.hateblo.jp/entry/2017/09/11/211011)
+- [Mo's Algorithm (Luzhiled's memo)](https://ei1333.github.io/luzhiled/snippets/other/mo.html)
+- [Mo's algorithm (kopricky アルゴリズムライブラリ)](https://kopricky.github.io/code/DataStructure_Advanced/mo_algorithm.html)
+- [Mo's algorithm(クエリ平方分割)の話](https://qiita.com/ageprocpp/items/34121c58e571ea8c4023)
+- [ABC238 G - Cubic?](https://kanpurin.hatenablog.com/entry/2022/02/05/224105)
+
 ### NoshiBasis
 
 - [xor の掃き出しすごい簡単に出来るんですね](https://twitter.com/noshi91/status/1200702280128856064?s=20)

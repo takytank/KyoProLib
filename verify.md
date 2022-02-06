@@ -263,6 +263,10 @@
 - [ARC042 D あまり](https://atcoder.jp/contests/arc042/tasks/arc042_d)
 - [yosupo-judge Discrete Logarithm](https://judge.yosupo.jp/problem/discrete_logarithm_mod)
 
+## Mo's Algorithm
+
+- [ABC238 G Cubic?](https://atcoder.jp/contests/abc238/tasks/abc238_g)
+
 ## NoshiBasis
 
 - [ZONeエナジー プログラミングコンテスト “HELLO SPACE” F 出会いと別れ](https://atcoder.jp/contests/zone2021/tasks/zone2021_f)
