@@ -43,6 +43,13 @@ namespace TakyTank.KyoProLib.CSharp
 			back_ = -1;
 		}
 
+		public void Clear()
+		{
+			front_ = 0;
+			back_ = -1;
+			Count = 0;
+		}
+
 		public void PushFront(T item)
 		{
 			if (Count == capacity_) {
