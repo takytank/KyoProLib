@@ -125,6 +125,7 @@
 ### MaxFlow
 
 - [AtCoder Library Practice Contest D MaxFlow](https://atcoder.jp/contests/practice2/tasks/practice2_d)
+- [ABC239 G Builder Takahashi](https://atcoder.jp/contests/abc239/tasks/abc239_g)
 
 ### MinCostFlow
 

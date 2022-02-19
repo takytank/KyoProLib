@@ -178,6 +178,39 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (bool[] canReach, (int u, int v)[] minCutEdges) MinCut(int s)
+		{
+			var visited = new bool[n_];
+			var que = new Queue<int>();
+			que.Enqueue(s);
+			while (que.Count > 0) {
+				int p = que.Dequeue();
+				visited[p] = true;
+				foreach (var e in edges_[p]) {
+					if (e.Capacity != 0 && visited[e.To] == false) {
+						visited[e.To] = true;
+						que.Enqueue(e.To);
+					}
+				}
+			}
+
+			if (flowedEdges_ is null) {
+				flowedEdges_ = edges_;
+			}
+
+			var minCutEdges = new List<(int u, int v)>();
+			for (int i = 0; i < edgeInfos_.Count; ++i) {
+				int from = edgeInfos_[i].v;
+				int to = flowedEdges_[edgeInfos_[i].v][edgeInfos_[i].index].To;
+				if (visited[from] != visited[to]) {
+					minCutEdges.Add((from, to));
+				}
+			}
+
+			return (visited, minCutEdges.ToArray());
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void CopyEdges()
 		{
 			flowedEdges_ = new JagList2<EdgeInternal>(n_);
