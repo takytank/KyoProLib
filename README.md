@@ -284,6 +284,13 @@
 - [平衡二分探索木(Red-Black-Tree)](https://ei1333.github.io/luzhiled/snippets/structure/red-black-tree.html)
 - [赤黒木を実装してみた](http://shifth.hatenablog.com/entry/2015/05/10/103528)
 
+### ReorderArray
+
+- [A powerful representation of integer sets](https://codeforces.com/blog/entry/83969)
+- [keijakさんの発言](https://twitter.com/keijak/status/1488232021394702336)
+- [keijakさんの提出](https://atcoder.jp/contests/abc237/submissions/28981971)
+
+
 ### Rerooting
 
 - [明日使える便利な木構造のアルゴリズム](https://qiita.com/keymoon/items/2a52f1b0fb7ef67fb89e)
