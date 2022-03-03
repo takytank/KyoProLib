@@ -64,7 +64,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		{
 			int t = s;
 			for (int i = k_ - 1; i >= 0; i--) {
-				if (((1 << i) & length) != 0) {
+				if (((1L << i) & length) != 0) {
 					t = indexes_[i, t];
 				}
 			}
@@ -154,7 +154,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			int t = s;
 			var ret = unit_;
 			for (int i = k_ - 1; i >= 0; i--) {
-				if (((1 << i) & length) != 0) {
+				if (((1L << i) & length) != 0) {
 					ret = merge_(ret, values_[i, t]);
 					t = indexes_[i, t];
 				}
