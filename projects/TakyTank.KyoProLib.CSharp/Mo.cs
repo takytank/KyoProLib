@@ -6,29 +6,19 @@ namespace TakyTank.KyoProLib.CSharp
 {
 	public class Mo
 	{
-		private readonly int _sqrtN;
-		private readonly int _logN;
-		private readonly int _maxN;
-
 		private readonly List<int> _tempL;
 		private readonly List<int> _tempR;
+
+		private int _sqrtQ;
+		private int _logQ;
+		private int _maxQ;
 
 		private int[] _left;
 		private int[] _right;
 		private int[] _order;
 
-		public Mo(int n)
+		public Mo()
 		{
-			_sqrtN = (int)Math.Sqrt(n);
-			//var rnd = new Random();
-			//_sqrtN *= rnd.Next(3) + 1;
-			_logN = 0;
-			while (n > 0) {
-				++_logN;
-				n >>= 1;
-			}
-			++_logN;
-			_maxN = 1 << _logN;
 			_tempL = new List<int>();
 			_tempR = new List<int>();
 		}
@@ -49,11 +39,21 @@ namespace TakyTank.KyoProLib.CSharp
 				_order[i] = i;
 			}
 
+			int q = size;
+			_sqrtQ = (int)Math.Sqrt(q);
+			_logQ = 0;
+			while (q > 0) {
+				++_logQ;
+				q >>= 1;
+			}
+			++_logQ;
+			_maxQ = 1 << _logQ;
+
 			switch (order) {
 				case QuerySortOrder.Normal:
 					Array.Sort(_order, (a, b) => {
-						int ac = _left[a] / _sqrtN;
-						int bc = _left[b] / _sqrtN;
+						int ac = _left[a] / _sqrtQ;
+						int bc = _left[b] / _sqrtQ;
 						if (ac != bc) {
 							return _left[a].CompareTo(_left[b]);
 						} else if ((ac & 1) != 0) {
@@ -93,7 +93,7 @@ namespace TakyTank.KyoProLib.CSharp
 		ulong HilbertDistance(int x, int y)
 		{
 			ulong d = 0;
-			for (int s = 1 << (_logN - 1); s > 0; s >>= 1) {
+			for (int s = 1 << (_logQ - 1); s > 0; s >>= 1) {
 				bool rx = (x & s) > 0;
 				bool ry = (y & s) > 0;
 				d = (d << 2) | ((rx ? 1u : 0u) * 3) ^ (ry ? 1u : 0u);
@@ -102,8 +102,8 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 
 				if (rx) {
-					x = _maxN - x;
-					y = _maxN - y;
+					x = _maxQ - x;
+					y = _maxQ - y;
 				}
 
 				(x, y) = (y, x);
@@ -115,7 +115,7 @@ namespace TakyTank.KyoProLib.CSharp
 		long TriangleDistance(long l, long r)
 		{
 			long d = 0;
-			for (long s = 1L << (_logN - 1); s > 1; s >>= 1) {
+			for (long s = 1L << (_logQ - 1); s > 1; s >>= 1) {
 				if (l >= s) {
 					d += (36 * s * s) >> 4;
 					l -= s;
