@@ -6,6 +6,7 @@ namespace TakyTank.KyoProLib.CSharp
 {
 	public class Mo
 	{
+		private readonly int _n;
 		private readonly List<int> _tempL;
 		private readonly List<int> _tempR;
 
@@ -17,8 +18,9 @@ namespace TakyTank.KyoProLib.CSharp
 		private int[] _right;
 		private int[] _order;
 
-		public Mo()
+		public Mo(int n)
 		{
+			_n = n;
 			_tempL = new List<int>();
 			_tempR = new List<int>();
 		}
@@ -40,7 +42,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			int q = size;
-			_sqrtQ = (int)Math.Sqrt(q);
+			_sqrtQ = Math.Max((int)(Math.Sqrt(3) * _n / Math.Sqrt(2 * q)), 1);
 			_logQ = 0;
 			while (q > 0) {
 				++_logQ;
