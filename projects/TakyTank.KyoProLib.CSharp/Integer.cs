@@ -27,6 +27,24 @@ namespace TakyTank.KyoProLib.CSharp
 
 			return ok;
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static long Sqrt2(long value)
+		{
+			long v0 = value / 2;
+			if (v0 == 0) {
+				return value;
+			}
+
+			long v1 = (v0 + value / v0) >> 1;
+			while (v1 < v0) {
+				v0 = v1;
+				v1 = (v0 + value / v0) >> 1;
+			}
+
+			return v0;
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static long Floor(long numerator, long denominator)
 			=> numerator >= 0 ? numerator / denominator : (numerator - denominator + 1) / denominator;
