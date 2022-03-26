@@ -14,12 +14,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		private readonly Stack<Node> pool_ = new Stack<Node>();
 		private Node root_;
 
-		public RedBlackTree(bool isMulti = false)
+		public RedBlackTree(bool isMulti)
 		{
 			isMulti_ = isMulti;
 		}
 
-		public RedBlackTree(IEnumerable<T> collection, bool isMulti = false)
+		public RedBlackTree(IEnumerable<T> collection, bool isMulti)
 		{
 			isMulti_ = isMulti;
 			var arr = InitializeArray(collection);
@@ -749,23 +749,23 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		private readonly Stack<Node> pool_ = new Stack<Node>();
 		private Node root_;
 
-		public RedBlackTreeG(bool isMulti = false)
+		public RedBlackTreeG(bool isMulti)
 			: this(Comparer<T>.Default, isMulti) { }
 
-		public RedBlackTreeG(IEnumerable<T> collection, bool isMulti = false)
+		public RedBlackTreeG(IEnumerable<T> collection, bool isMulti)
 			: this(collection, Comparer<T>.Default, isMulti) { }
 
-		public RedBlackTreeG(IComparer<T> comparer, bool isMulti = false)
+		public RedBlackTreeG(IComparer<T> comparer, bool isMulti)
 			: this(comparer.Compare, isMulti) { }
-		public RedBlackTreeG(Comparison<T> comparer, bool isMulti = false)
+		public RedBlackTreeG(Comparison<T> comparer, bool isMulti)
 		{
 			comparer_ = comparer;
 			isMulti_ = isMulti;
 		}
 
-		public RedBlackTreeG(IEnumerable<T> collection, IComparer<T> comparer, bool isMulti = false)
+		public RedBlackTreeG(IEnumerable<T> collection, IComparer<T> comparer, bool isMulti)
 			: this(collection, comparer.Compare, isMulti) { }
-		public RedBlackTreeG(IEnumerable<T> collection, Comparison<T> comparer, bool isMulti = false)
+		public RedBlackTreeG(IEnumerable<T> collection, Comparison<T> comparer, bool isMulti)
 		{
 			comparer_ = comparer;
 			isMulti_ = isMulti;

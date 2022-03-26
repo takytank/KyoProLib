@@ -13,7 +13,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public IntervalSet32(int inf = int.MaxValue, bool mergesAdjacentInterval = true)
 		{
 			mergesAdjacentInterval_ = mergesAdjacentInterval;
-			set_ = new RedBlackTree<LR>() {
+			set_ = new RedBlackTree<LR>(false) {
 				new LR(-inf, -inf),
 				new LR(inf, inf),
 			};
@@ -214,7 +214,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public IntervalSet64(long inf = long.MaxValue, bool mergesAdjacentInterval = true)
 		{
 			mergesAdjacentInterval_ = mergesAdjacentInterval;
-			set_ = new RedBlackTree<LR>() {
+			set_ = new RedBlackTree<LR>(false) {
 				new LR(-inf, -inf),
 				new LR(inf, inf),
 			};
@@ -415,7 +415,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public IntervalSet(T inf, T minf, bool mergesAdjacentInterval)
 		{
 			mergesAdjacentInterval_ = mergesAdjacentInterval;
-			set_ = new RedBlackTree<LR>() {
+			set_ = new RedBlackTree<LR>(false) {
 				new LR(minf, minf),
 				new LR(inf, inf),
 			};
