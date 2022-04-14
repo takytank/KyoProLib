@@ -309,7 +309,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 								var sub = l - r;
 								var condition = Vector.GreaterThanOrEqual(add, modVector);
 								add = Vector.ConditionalSelect(condition, add - modVector, add);
-								sub += modVector;
+								condition = Vector.GreaterThanOrEqual(sub, modVector);
+								sub = Vector.ConditionalSelect(condition, sub + modVector, sub);
 								add.CopyTo(targetL);
 								sub.CopyTo(targetR);
 							}

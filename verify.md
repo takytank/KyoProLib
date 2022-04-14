@@ -61,7 +61,7 @@
 
 ## Convolution
 
-- [ABC196 F Substring 2](https://atcoder.jp/contests/abc196/submissions/21127433)
+- [ABC196 F Substring 2](https://atcoder.jp/contests/abc196/tasks/abc196_f)
 
 ## Deque
 
