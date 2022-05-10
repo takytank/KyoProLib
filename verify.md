@@ -233,6 +233,10 @@
 - [CODE THANKS FESTIVAL 2017 G Mixture Drug](https://atcoder.jp/contests/code-thanks-festival-2017/tasks/code_thanks_festival_2017_g)
 - [ACPC2021 Day2 I BreakUp](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/I)
 
+## MexArray
+
+- [ARC038 C 茶碗と豆](https://atcoder.jp/contests/arc038/tasks/arc038_c)
+
 ## MinimumSpanningTree
 
 - [競プロ典型 90 問 49 Flip Digits 2](https://atcoder.jp/contests/typical90/tasks/typical90_aw)
