@@ -7,41 +7,43 @@ namespace TakyTank.KyoProLib.CSharp
 {
 	public class Grid<T>
 	{
-		private static readonly int[] delta2_ = { 1, 0, 1 };
-		private static readonly int[] delta4_ = { 1, 0, -1, 0, 1 };
-		private static readonly int[] delta5_ = { 1, 0, 0, -1, 0, 1 };
-		private static readonly int[] delta8_ = { 1, 0, -1, 0, 1, 1, -1, -1, 1 };
+		private static readonly int[] _delta2 = { 1, 0, 1 };
+		private static readonly int[] _delta4 = { 1, 0, -1, 0, 1 };
+		private static readonly int[] _delta5 = { 1, 0, 0, -1, 0, 1 };
+		private static readonly int[] _delta8 = { 1, 0, -1, 0, 1, 1, -1, -1, 1 };
 
-		private readonly int height_;
-		private readonly int width_;
-		private readonly T[,] grid_;
+		private readonly int _height;
+		private readonly int _width;
+		private readonly T[,] _grid;
 
+		public int Height => _height;
+		public int Width => _width;
 		public T this[int i, int j]
 		{
-			get => grid_[i, j];
-			set => grid_[i, j] = value;
+			get => _grid[i, j];
+			set => _grid[i, j] = value;
 		}
 
 		public Grid(int height, int width)
 		{
-			height_ = height;
-			width_ = width;
-			grid_ = new T[height, width];
+			_height = height;
+			_width = width;
+			_grid = new T[height, width];
 		}
 
 		public Grid(T[,] data)
 		{
-			height_ = data.GetLength(0);
-			width_ = data.GetLength(1);
-			grid_ = data;
+			_height = data.GetLength(0);
+			_width = data.GetLength(1);
+			_grid = data;
 		}
 
 		public Grid(int height, int width, Func<int, int, T> initialize)
 			: this(height, width)
 		{
-			for (int i = 0; i < height_; i++) {
-				for (int j = 0; j < width_; j++) {
-					grid_[i, j] = initialize(i, j);
+			for (int i = 0; i < _height; i++) {
+				for (int j = 0; j < _width; j++) {
+					_grid[i, j] = initialize(i, j);
 				}
 			}
 		}
@@ -54,9 +56,9 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void ForEach(Func<T, bool> should, Action<int, int> action)
 		{
-			for (int i = 0; i < height_; i++) {
-				for (int j = 0; j < width_; j++) {
-					if (should(grid_[i, j]) == false) {
+			for (int i = 0; i < _height; i++) {
+				for (int j = 0; j < _width; j++) {
+					if (should(_grid[i, j]) == false) {
 						continue;
 					}
 
@@ -66,54 +68,93 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void DoIn2(int i, int j, Action<int, int> action)
+		public Grid<T> Copy()
+		{
+			var copied = new Grid<T>(_height, _width);
+			for (int i = 0; i < _height; i++) {
+				for (int j = 0; j < _width; j++) {
+					copied[i, j] = this[i, j];
+				}
+			}
+
+			return copied;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Grid<T> Rotate90R()
+		{
+			var newGrid = new Grid<T>(_width, _height);
+			for (int i = 0; i < _height; i++) {
+				for (int j = 0; j < _width; j++) {
+					newGrid[j, _height - 1 - i] = _grid[i, j];
+				}
+			}
+
+			return newGrid;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Grid<T> Rotate90L()
+		{
+			var newGrid = new Grid<T>(_width, _height);
+			for (int i = 0; i < _height; i++) {
+				for (int j = 0; j < _width; j++) {
+					newGrid[_width - 1 - j, i] = _grid[i, j];
+				}
+			}
+
+			return newGrid;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public IEnumerable<(int i, int j)> Adjacence2(int i, int j)
 		{
 			for (int dn = 0; dn < 2; ++dn) {
-				int d2i = i + delta2_[dn];
-				int d2j = j + delta2_[dn + 1];
-				if ((uint)d2i < (uint)height_ && (uint)d2j < (uint)width_) {
-					action(d2i, d2j);
+				int d2i = i + _delta2[dn];
+				int d2j = j + _delta2[dn + 1];
+				if ((uint)d2i < (uint)_height && (uint)d2j < (uint)_width) {
+					yield return (d2i, d2j);
 				}
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void DoIn4(int i, int j, Action<int, int> action)
+		public IEnumerable<(int i, int j)> Adjacence4(int i, int j)
 		{
 			for (int dn = 0; dn < 4; ++dn) {
-				int d4i = i + delta4_[dn];
-				int d4j = j + delta4_[dn + 1];
-				if ((uint)d4i < (uint)height_ && (uint)d4j < (uint)width_) {
-					action(d4i, d4j);
+				int d4i = i + _delta4[dn];
+				int d4j = j + _delta4[dn + 1];
+				if ((uint)d4i < (uint)_height && (uint)d4j < (uint)_width) {
+					yield return (d4i, d4j);
 				}
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void DoIn5(int i, int j, Action<int, int> action)
+		public IEnumerable<(int i, int j)> Adjacence5(int i, int j)
 		{
 			for (int dn = 0; dn < 5; ++dn) {
-				int d5i = i + delta5_[dn];
-				int d5j = j + delta5_[dn + 1];
-				if ((uint)d5i < (uint)height_ && (uint)d5j < (uint)width_) {
-					action(d5i, d5j);
+				int d5i = i + _delta5[dn];
+				int d5j = j + _delta5[dn + 1];
+				if ((uint)d5i < (uint)_height && (uint)d5j < (uint)_width) {
+					yield return (d5i, d5j);
 				}
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void DoIn8(int i, int j, Action<int, int> action)
+		public IEnumerable<(int i, int j)> Adjacence8(int i, int j)
 		{
 			for (int dn = 0; dn < 8; ++dn) {
-				int d8i = i + delta8_[dn];
-				int d8j = j + delta8_[dn + 1];
-				if ((uint)d8i < (uint)height_ && (uint)d8j < (uint)width_) {
-					action(d8i, d8j);
+				int d8i = i + _delta8[dn];
+				int d8j = j + _delta8[dn + 1];
+				if ((uint)d8i < (uint)_height && (uint)d8j < (uint)_width) {
+					yield return (d8i, d8j);
 				}
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int ToIndex(int i, int j) => i * width_ + j;
+		public int ToIndex(int i, int j) => i * _width + j;
 	}
 }

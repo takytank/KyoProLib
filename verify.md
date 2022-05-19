@@ -152,6 +152,7 @@
 ## Grid
 
 - [PAST05 K 的あて](https://atcoder.jp/contests/past202012-open/tasks/past202012_k)
+- [第１６回日本情報オリンピック 本選 C JOIOI 王国](https://atcoder.jp/contests/joi2017ho/tasks/joi2017ho_c)
 
 ## HeavyLightDecomposition
 
