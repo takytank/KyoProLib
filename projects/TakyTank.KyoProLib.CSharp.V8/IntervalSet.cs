@@ -215,6 +215,143 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 	}
 
+	public class IntervalSet32<T>
+	{
+		private readonly RedBlackTree<LR> set_;
+		private readonly bool mergesAdjacentInterval_;
+
+		public IntervalSet32(int inf = int.MaxValue, bool mergesAdjacentInterval = true)
+		{
+			mergesAdjacentInterval_ = mergesAdjacentInterval;
+			set_ = new RedBlackTree<LR>(false) {
+				new LR(-inf, -inf, default),
+				new LR(inf, inf, default),
+			};
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int l, int r) GetInterval(int p)
+		{
+			var lower = set_.LowerBound(new LR(p, p, default));
+			if (lower.value.L != p) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
+			if (index < 0 || value.R <= p) {
+				return set_[^1].ToTuple();
+			} else {
+				return value.ToTuple();
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool IncludesSameInterval(int p, int q)
+		{
+			var (l, r) = GetInterval(p);
+			return l <= q && q < r;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(int l, int r, T value)
+		{
+			if (l > r) {
+				(l, r) = (r, l);
+			}
+
+			Remove(l, r);
+			set_.Add(new LR(l, r, value));
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public IReadOnlyList<(int l, int r, T value)> Remove(int l, int r)
+		{
+			if (l > r) {
+				(l, r) = (r, l);
+			}
+
+			var itL = set_.LowerBound(new LR(l, l, default));
+			var itR = set_.UpperBound(new LR(r, r, default));
+			itL = set_.Prev(itL);
+			itR = set_.Prev(itR);
+			var removes = new List<(int l, int r, T value)>();
+			for (int i = itR.index; i >= itL.index; i--) {
+				bool isEdge = i == 0 || i == set_.Count - 1;
+				var (found, removed) = set_.RemoveAt(i);
+				if (isEdge == false && found) {
+					removes.Add((Math.Max(l, removed.L), Math.Min(r, removed.R), removed.Value));
+				}
+			}
+
+			if (itL.value.L < l) {
+				set_.Add(new LR(itL.value.L, Math.Min(itL.value.R, l), itL.value.Value));
+			}
+
+			if (r < itR.value.R) {
+				set_.Add(new LR(Math.Max(itR.value.L, r), itR.value.R, itR.value.Value));
+			}
+
+			return removes;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Mex(int p = 0)
+		{
+			var lower = set_.LowerBound(new LR(p, p, default));
+			if (lower.value.L != p) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
+			if (index < 0 || value.R <= p) {
+				return p;
+			} else {
+				return value.R;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, int l, int r) LowerBound(int p)
+		{
+			var lower = set_.LowerBound(new LR(p, p, default));
+			if (lower.value.L == p) {
+				return (lower.index, lower.value.L, lower.value.R);
+			}
+
+			var (index, value) = set_.Prev(lower);
+			if (value.R > p) {
+				return (index, value.L, value.R);
+			} else {
+				return (lower.index, lower.value.L, lower.value.R);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, int l, int r) UpperBound(int p)
+		{
+			var (index, value) = set_.UpperBound(new LR(p, p, default));
+			return (index, value.L, value.R);
+		}
+
+		private struct LR : IComparable<LR>
+		{
+			public int L { get; set; }
+			public int R { get; set; }
+			public T Value { get; set; }
+			public LR(int l, int r, T value)
+			{
+				L = l;
+				R = r;
+				Value = value;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public (int l, int r) ToTuple() => (L, R);
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public int CompareTo(LR other) => L.CompareTo(other.L);
+		}
+	}
+
 	public class IntervalSet64
 	{
 		private readonly RedBlackTree<LR> set_;
@@ -425,12 +562,149 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 	}
 
-	public class IntervalSetAny<T> where T : struct, IComparable<T>
+	public class IntervalSet64<T>
 	{
 		private readonly RedBlackTree<LR> set_;
 		private readonly bool mergesAdjacentInterval_;
 
-		public IntervalSetAny(T inf, T minf, bool mergesAdjacentInterval)
+		public IntervalSet64(long inf = long.MaxValue, bool mergesAdjacentInterval = true)
+		{
+			mergesAdjacentInterval_ = mergesAdjacentInterval;
+			set_ = new RedBlackTree<LR>(false) {
+				new LR(-inf, -inf, default),
+				new LR(inf, inf, default),
+			};
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (long l, long r) GetInterval(long p)
+		{
+			var lower = set_.LowerBound(new LR(p, p, default));
+			if (lower.value.L != p) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
+			if (index < 0 || value.R <= p) {
+				return set_[^1].ToTuple();
+			} else {
+				return value.ToTuple();
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool IncludesSameInterval(long p, long q)
+		{
+			var (l, r) = GetInterval(p);
+			return l <= q && q < r;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(long l, long r, T value)
+		{
+			if (l > r) {
+				(l, r) = (r, l);
+			}
+
+			Remove(l, r);
+			set_.Add(new LR(l, r, value));
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public IReadOnlyList<(long l, long r, T value)> Remove(long l, long r)
+		{
+			if (l > r) {
+				(l, r) = (r, l);
+			}
+
+			var itL = set_.LowerBound(new LR(l, l, default));
+			var itR = set_.UpperBound(new LR(r, r, default));
+			itL = set_.Prev(itL);
+			itR = set_.Prev(itR);
+			var removes = new List<(long l, long r, T value)>();
+			for (int i = itR.index; i >= itL.index; i--) {
+				bool isEdge = i == 0 || i == set_.Count - 1;
+				var (found, removed) = set_.RemoveAt(i);
+				if (isEdge == false && found) {
+					removes.Add((Math.Max(l, removed.L), Math.Min(r, removed.R), removed.Value));
+				}
+			}
+
+			if (itL.value.L < l) {
+				set_.Add(new LR(itL.value.L, Math.Min(itL.value.R, l), itL.value.Value));
+			}
+
+			if (r < itR.value.R) {
+				set_.Add(new LR(Math.Max(itR.value.L, r), itR.value.R, itR.value.Value));
+			}
+
+			return removes;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long Mex(long p = 0)
+		{
+			var lower = set_.LowerBound(new LR(p, p, default));
+			if (lower.value.L != p) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
+			if (index < 0 || value.R <= p) {
+				return p;
+			} else {
+				return value.R;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, long l, long r) LowerBound(long p)
+		{
+			var lower = set_.LowerBound(new LR(p, p, default));
+			if (lower.value.L == p) {
+				return (lower.index, lower.value.L, lower.value.R);
+			}
+
+			var (index, value) = set_.Prev(lower);
+			if (value.R > p) {
+				return (index, value.L, value.R);
+			} else {
+				return (lower.index, lower.value.L, lower.value.R);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, long l, long r) UpperBound(long p)
+		{
+			var (index, value) = set_.UpperBound(new LR(p, p, default));
+			return (index, value.L, value.R);
+		}
+
+		private struct LR : IComparable<LR>
+		{
+			public long L { get; set; }
+			public long R { get; set; }
+			public T Value { get; set; }
+			public LR(long l, long r, T value)
+			{
+				L = l;
+				R = r;
+				Value = value;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public (long l, long r) ToTuple() => (L, R);
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public int CompareTo(LR other) => L.CompareTo(other.L);
+		}
+	}
+
+	public class IntervalSetAny<TRange> where TRange : struct, IComparable<TRange>
+	{
+		private readonly RedBlackTree<LR> set_;
+		private readonly bool mergesAdjacentInterval_;
+
+		public IntervalSetAny(TRange inf, TRange minf, bool mergesAdjacentInterval)
 		{
 			mergesAdjacentInterval_ = mergesAdjacentInterval;
 			set_ = new RedBlackTree<LR>(false) {
@@ -440,7 +714,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public (T l, T r) GetInterval(T p)
+		public (TRange l, TRange r) GetInterval(TRange p)
 		{
 			var lower = set_.LowerBound(new LR(p, p));
 			if (lower.value.L.CompareTo(p) != 0) {
@@ -456,14 +730,14 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool IncludesSameInterval(T p, T q)
+		public bool IncludesSameInterval(TRange p, TRange q)
 		{
 			var (l, r) = GetInterval(p);
 			return l.CompareTo(q) <= 0 && q.CompareTo(r) < 0;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Add(T l, T r)
+		public void Add(TRange l, TRange r)
 		{
 			if (l.CompareTo(r) > 0) {
 				(l, r) = (r, l);
@@ -508,7 +782,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public IReadOnlyList<(T l, T r)> Remove(T l, T r)
+		public IReadOnlyList<(TRange l, TRange r)> Remove(TRange l, TRange r)
 		{
 			if (l.CompareTo(r) > 0) {
 				(l, r) = (r, l);
@@ -518,7 +792,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			var itR = set_.UpperBound(new LR(r, r));
 			itL = set_.Prev(itL);
 			itR = set_.Prev(itR);
-			var removes = new List<(T l, T r)>();
+			var removes = new List<(TRange l, TRange r)>();
 			for (int i = itR.index; i >= itL.index; i--) {
 				bool isEdge = i == 0 || i == set_.Count - 1;
 				var (found, removed) = set_.RemoveAt(i);
@@ -532,12 +806,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			if (itL.value.L.CompareTo(l) < 0) {
-				T min = itL.value.R.CompareTo(l) <= 0 ? itL.value.R : l;
+				TRange min = itL.value.R.CompareTo(l) <= 0 ? itL.value.R : l;
 				set_.Add(new LR(itL.value.L, min));
 			}
 
 			if (r.CompareTo(itR.value.R) < 0) {
-				T max = itR.value.L.CompareTo(r) >= 0 ? itR.value.L : r;
+				TRange max = itR.value.L.CompareTo(r) >= 0 ? itR.value.L : r;
 				set_.Add(new LR(max, itR.value.R));
 			}
 
@@ -545,7 +819,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T Mex(T p)
+		public TRange Mex(TRange p)
 		{
 			var lower = set_.LowerBound(new LR(p, p));
 			if (lower.value.L.CompareTo(p) != 0) {
@@ -561,7 +835,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public (int index, T l, T r) LowerBound(T p)
+		public (int index, TRange l, TRange r) LowerBound(TRange p)
 		{
 			var lower = set_.LowerBound(new LR(p, p));
 			if (lower.value.L.CompareTo(p) == 0) {
@@ -577,7 +851,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public (int index, T l, T r) UpperBound(T p)
+		public (int index, TRange l, TRange r) UpperBound(TRange p)
 		{
 			var (index, value) = set_.UpperBound(new LR(p, p));
 			return (index, value.L, value.R);
@@ -585,16 +859,159 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		private struct LR : IComparable<LR>
 		{
-			public T L { get; set; }
-			public T R { get; set; }
-			public LR(T l, T r)
+			public TRange L { get; set; }
+			public TRange R { get; set; }
+			public LR(TRange l, TRange r)
 			{
 				L = l;
 				R = r;
 			}
 
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public (T l, T r) ToTuple() => (L, R);
+			public (TRange l, TRange r) ToTuple() => (L, R);
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public int CompareTo(LR other) => L.CompareTo(other.L);
+		}
+	}
+
+	public class IntervalSetAny<TRange, TValue> where TRange : struct, IComparable<TRange>
+	{
+		private readonly RedBlackTree<LR> set_;
+		private readonly bool mergesAdjacentInterval_;
+
+		public IntervalSetAny(TRange inf, TRange minf, bool mergesAdjacentInterval)
+		{
+			mergesAdjacentInterval_ = mergesAdjacentInterval;
+			set_ = new RedBlackTree<LR>(false) {
+				new LR(minf, minf, default),
+				new LR(inf, inf, default),
+			};
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (TRange l, TRange r) GetInterval(TRange p)
+		{
+			var lower = set_.LowerBound(new LR(p, p, default));
+			if (lower.value.L.CompareTo(p) != 0) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
+			if (index < 0 || value.R.CompareTo(p) <= 0) {
+				return set_[^1].ToTuple();
+			} else {
+				return value.ToTuple();
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool IncludesSameInterval(TRange p, TRange q)
+		{
+			var (l, r) = GetInterval(p);
+			return l.CompareTo(q) <= 0 && q.CompareTo(r) < 0;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add(TRange l, TRange r, TValue value)
+		{
+			if (l.CompareTo(r) > 0) {
+				(l, r) = (r, l);
+			}
+
+			Remove(l, r);
+			set_.Add(new LR(l, r, value));
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public IReadOnlyList<(TRange l, TRange r)> Remove(TRange l, TRange r)
+		{
+			if (l.CompareTo(r) > 0) {
+				(l, r) = (r, l);
+			}
+
+			var itL = set_.LowerBound(new LR(l, l, default));
+			var itR = set_.UpperBound(new LR(r, r, default));
+			itL = set_.Prev(itL);
+			itR = set_.Prev(itR);
+			var removes = new List<(TRange l, TRange r)>();
+			for (int i = itR.index; i >= itL.index; i--) {
+				bool isEdge = i == 0 || i == set_.Count - 1;
+				var (found, removed) = set_.RemoveAt(i);
+				if (isEdge == false && found) {
+					removes.Add((
+						l.CompareTo(removed.L) >= 0 ? l : removed.L,
+						r.CompareTo(removed.R) <= 0 ? r : removed.R));
+				}
+
+				set_.RemoveAt(i);
+			}
+
+			if (itL.value.L.CompareTo(l) < 0) {
+				TRange min = itL.value.R.CompareTo(l) <= 0 ? itL.value.R : l;
+				set_.Add(new LR(itL.value.L, min, itL.value.Value));
+			}
+
+			if (r.CompareTo(itR.value.R) < 0) {
+				TRange max = itR.value.L.CompareTo(r) >= 0 ? itR.value.L : r;
+				set_.Add(new LR(max, itR.value.R, itR.value.Value));
+			}
+
+			return removes;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public TRange Mex(TRange p)
+		{
+			var lower = set_.LowerBound(new LR(p, p, default));
+			if (lower.value.L.CompareTo(p) != 0) {
+				lower = set_.Prev(lower);
+			}
+
+			var (index, value) = lower;
+			if (index < 0 || value.R.CompareTo(p) <= 0) {
+				return p;
+			} else {
+				return value.R;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, TRange l, TRange r) LowerBound(TRange p)
+		{
+			var lower = set_.LowerBound(new LR(p, p, default));
+			if (lower.value.L.CompareTo(p) == 0) {
+				return (lower.index, lower.value.L, lower.value.R);
+			}
+
+			var (index, value) = set_.Prev(lower);
+			if (value.R.CompareTo(p) > 0) {
+				return (index, value.L, value.R);
+			} else {
+				return (lower.index, lower.value.L, lower.value.R);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int index, TRange l, TRange r) UpperBound(TRange p)
+		{
+			var (index, value) = set_.UpperBound(new LR(p, p, default));
+			return (index, value.L, value.R);
+		}
+
+		private struct LR : IComparable<LR>
+		{
+			public TRange L { get; set; }
+			public TRange R { get; set; }
+			public TValue Value { get; set; }
+			public LR(TRange l, TRange r, TValue value)
+			{
+				L = l;
+				R = r;
+				Value = value;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public (TRange l, TRange r) ToTuple() => (L, R);
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public int CompareTo(LR other) => L.CompareTo(other.L);
 		}

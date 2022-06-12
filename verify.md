@@ -201,6 +201,7 @@
 - [ABC194 E Mex Min](https://atcoder.jp/contests/abc194/tasks/abc194_e)
 - [ABC214 E Packing Under Range Regulations](https://atcoder.jp/contests/abc214/tasks/abc214_e)
 - [ABC217 D Cutting Woods](https://atcoder.jp/contests/abc217/tasks/abc217_d)
+- [ABC255 Ex Range Harvest Query](https://atcoder.jp/contests/abc255/tasks/abc255_h)
 
 ## LaplacianMatrix
 
