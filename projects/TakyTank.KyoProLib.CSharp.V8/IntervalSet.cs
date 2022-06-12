@@ -109,11 +109,11 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Remove(int p)
+		public bool Remove(int p)
 		{
 			var (_, value) = set_.Prev(set_.UpperBound(new LR(p, p)));
 			if (value.R <= p) {
-				return;
+				return false;
 			}
 
 			set_.Remove(value);
@@ -124,10 +124,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			if (p + 1 < value.R) {
 				set_.Add(new LR(p + 1, value.R));
 			}
+
+			return true;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Remove(int l, int r)
+		public IReadOnlyList<(int l, int r)> Remove(int l, int r)
 		{
 			if (l > r) {
 				(l, r) = (r, l);
@@ -137,8 +139,13 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			var itR = set_.UpperBound(new LR(r, r));
 			itL = set_.Prev(itL);
 			itR = set_.Prev(itR);
+			var removes = new List<(int l, int r)>();
 			for (int i = itR.index; i >= itL.index; i--) {
-				set_.RemoveAt(i);
+				bool isEdge = i == 0 || i == set_.Count - 1;
+				var (found, removed) = set_.RemoveAt(i);
+				if (isEdge == false && found) {
+					removes.Add((Math.Max(l, removed.L), Math.Min(r, removed.R)));
+				}
 			}
 
 			if (itL.value.L < l) {
@@ -148,6 +155,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			if (r < itR.value.R) {
 				set_.Add(new LR(Math.Max(itR.value.L, r), itR.value.R));
 			}
+
+			return removes;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -310,11 +319,11 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Remove(long p)
+		public bool Remove(long p)
 		{
 			var (_, value) = set_.Prev(set_.UpperBound(new LR(p, p)));
 			if (value.R <= p) {
-				return;
+				return false;
 			}
 
 			set_.Remove(value);
@@ -325,10 +334,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			if (p + 1 < value.R) {
 				set_.Add(new LR(p + 1, value.R));
 			}
+
+			return true;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Remove(long l, long r)
+		public IReadOnlyList<(long l, long r)> Remove(long l, long r)
 		{
 			if (l > r) {
 				(l, r) = (r, l);
@@ -338,8 +349,13 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			var itR = set_.UpperBound(new LR(r, r));
 			itL = set_.Prev(itL);
 			itR = set_.Prev(itR);
+			var removes = new List<(long l, long r)>();
 			for (int i = itR.index; i >= itL.index; i--) {
-				set_.RemoveAt(i);
+				bool isEdge = i == 0 || i == set_.Count - 1;
+				var (found, removed) = set_.RemoveAt(i);
+				if (isEdge == false && found) {
+					removes.Add((Math.Max(l, removed.L), Math.Min(r, removed.R)));
+				}
 			}
 
 			if (itL.value.L < l) {
@@ -349,6 +365,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			if (r < itR.value.R) {
 				set_.Add(new LR(Math.Max(itR.value.L, r), itR.value.R));
 			}
+
+			return removes;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -407,12 +425,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 	}
 
-	public class IntervalSet<T> where T : struct, IComparable<T>
+	public class IntervalSetAny<T> where T : struct, IComparable<T>
 	{
 		private readonly RedBlackTree<LR> set_;
 		private readonly bool mergesAdjacentInterval_;
 
-		public IntervalSet(T inf, T minf, bool mergesAdjacentInterval)
+		public IntervalSetAny(T inf, T minf, bool mergesAdjacentInterval)
 		{
 			mergesAdjacentInterval_ = mergesAdjacentInterval;
 			set_ = new RedBlackTree<LR>(false) {
@@ -490,7 +508,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Remove(T l, T r)
+		public IReadOnlyList<(T l, T r)> Remove(T l, T r)
 		{
 			if (l.CompareTo(r) > 0) {
 				(l, r) = (r, l);
@@ -500,7 +518,16 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			var itR = set_.UpperBound(new LR(r, r));
 			itL = set_.Prev(itL);
 			itR = set_.Prev(itR);
+			var removes = new List<(T l, T r)>();
 			for (int i = itR.index; i >= itL.index; i--) {
+				bool isEdge = i == 0 || i == set_.Count - 1;
+				var (found, removed) = set_.RemoveAt(i);
+				if (isEdge == false && found) {
+					removes.Add((
+						l.CompareTo(removed.L) >= 0 ? l : removed.L,
+						r.CompareTo(removed.R) <= 0 ? r : removed.R));
+				}
+
 				set_.RemoveAt(i);
 			}
 
@@ -513,6 +540,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				T max = itR.value.L.CompareTo(r) >= 0 ? itR.value.L : r;
 				set_.Add(new LR(max, itR.value.R));
 			}
+
+			return removes;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
