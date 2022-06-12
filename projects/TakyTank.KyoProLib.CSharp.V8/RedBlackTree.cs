@@ -122,7 +122,16 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool RemoveAt(int index) => Remove(FindNodeByIndex(index).Item);
+		public (bool found, T removed) RemoveAt(int index)
+		{
+			if (index < 0 || index >= Count) {
+				throw new IndexOutOfRangeException();
+			}
+
+			var target = FindNodeByIndex(index).Item;
+			return (Remove(target), target);
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool Remove(T item)
 		{
@@ -869,7 +878,16 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool RemoveAt(int index) => Remove(FindNodeByIndex(index).Item);
+		public (bool found, T removed) RemoveAt(int index)
+		{
+			if (index < 0 || index >= Count) {
+				throw new IndexOutOfRangeException();
+			}
+
+			var target = FindNodeByIndex(index).Item;
+			return (Remove(target), target);
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool Remove(T item)
 		{
