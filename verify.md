@@ -203,6 +203,10 @@
 - [ABC217 D Cutting Woods](https://atcoder.jp/contests/abc217/tasks/abc217_d)
 - [ABC255 Ex Range Harvest Query](https://atcoder.jp/contests/abc255/tasks/abc255_h)
 
+### NaturalIntervalSet
+
+- [ABC255 Ex Range Harvest Query](https://atcoder.jp/contests/abc255/tasks/abc255_h)
+
 ## LaplacianMatrix
 
 - [第二回日本最強プログラマー学生選手権 G Spanning Tree](https://atcoder.jp/contests/jsc2021/tasks/jsc2021_g) 
