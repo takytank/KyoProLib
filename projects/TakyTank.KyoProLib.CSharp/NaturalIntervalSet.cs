@@ -62,9 +62,20 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			var itL = _set.LowerBound(l);
+			if (itL.r > l) {
+				var temp = itL;
+				itL = _set.Prev(itL.l);
+				if (itL.r <= l) {
+					itL = temp;
+				}
+			}
+
 			var itR = _set.UpperBound(r);
-			itL = _set.Prev(itL.l);
 			itR = _set.Prev(itR.l);
+			if (itR.l >= r) {
+				itR = _set.Prev(itR.l);
+			}
+
 			var removes = new List<(long l, long r, T value)>();
 			var current = itR;
 			while (current.l >= itL.l) {

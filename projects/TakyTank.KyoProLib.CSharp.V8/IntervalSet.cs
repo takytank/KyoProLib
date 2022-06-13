@@ -136,9 +136,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			var itL = _set.LowerBound(new LR(l, l));
+			if (itL.value.R > l) {
+				var temp = itL;
+				itL = _set.Prev(itL);
+				if (itL.value.R <= l) {
+					itL = temp;
+				}
+			}
+
 			var itR = _set.UpperBound(new LR(r, r));
-			itL = _set.Prev(itL);
 			itR = _set.Prev(itR);
+			if (itR.value.L >= r) {
+				itR = _set.Prev(itR);
+			}
+
 			var removes = new List<(int l, int r)>();
 			for (int i = itR.index; i >= itL.index; i--) {
 				bool isEdge = i == 0 || i == _set.Count - 1;
@@ -269,9 +280,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			var itL = _set.LowerBound(new LR(l, l, default));
+			if (itL.value.R > l) {
+				var temp = itL;
+				itL = _set.Prev(itL);
+				if (itL.value.R <= l) {
+					itL = temp;
+				}
+			}
+
 			var itR = _set.UpperBound(new LR(r, r, default));
-			itL = _set.Prev(itL);
 			itR = _set.Prev(itR);
+			if (itR.value.L >= r) {
+				itR = _set.Prev(itR);
+			}
+
 			var removes = new List<(int l, int r, T value)>();
 			for (int i = itR.index; i >= itL.index; i--) {
 				bool isEdge = i == 0 || i == _set.Count - 1;
@@ -481,9 +503,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			var itL = _set.LowerBound(new LR(l, l));
+			if (itL.value.R > l) {
+				var temp = itL;
+				itL = _set.Prev(itL);
+				if (itL.value.R <= l) {
+					itL = temp;
+				}
+			}
+
 			var itR = _set.UpperBound(new LR(r, r));
-			itL = _set.Prev(itL);
 			itR = _set.Prev(itR);
+			if (itR.value.L >= r) {
+				itR = _set.Prev(itR);
+			}
+
 			var removes = new List<(long l, long r)>();
 			for (int i = itR.index; i >= itL.index; i--) {
 				bool isEdge = i == 0 || i == _set.Count - 1;
@@ -614,9 +647,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			var itL = _set.LowerBound(new LR(l, l, default));
+			if (itL.value.R > l) {
+				var temp = itL;
+				itL = _set.Prev(itL);
+				if (itL.value.R <= l) {
+					itL = temp;
+				}
+			}
+
 			var itR = _set.UpperBound(new LR(r, r, default));
-			itL = _set.Prev(itL);
 			itR = _set.Prev(itR);
+			if (itR.value.L >= r) {
+				itR = _set.Prev(itR);
+			}
+
 			var removes = new List<(long l, long r, T value)>();
 			for (int i = itR.index; i >= itL.index; i--) {
 				bool isEdge = i == 0 || i == _set.Count - 1;
@@ -785,9 +829,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			var itL = _set.LowerBound(new LR(l, l));
+			if (itL.value.R.CompareTo(l) > 0) {
+				var temp = itL;
+				itL = _set.Prev(itL);
+				if (itL.value.R.CompareTo(l) <= 0) {
+					itL = temp;
+				}
+			}
+
 			var itR = _set.UpperBound(new LR(r, r));
-			itL = _set.Prev(itL);
 			itR = _set.Prev(itR);
+			if (itR.value.L.CompareTo(r) >= 0) {
+				itR = _set.Prev(itR);
+			}
+
 			var removes = new List<(TRange l, TRange r)>();
 			for (int i = itR.index; i >= itL.index; i--) {
 				bool isEdge = i == 0 || i == _set.Count - 1;
@@ -924,9 +979,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			var itL = _set.LowerBound(new LR(l, l, default));
+			if (itL.value.R.CompareTo(l) > 0) {
+				var temp = itL;
+				itL = _set.Prev(itL);
+				if (itL.value.R.CompareTo(l) <= 0) {
+					itL = temp;
+				}
+			}
+
 			var itR = _set.UpperBound(new LR(r, r, default));
-			itL = _set.Prev(itL);
 			itR = _set.Prev(itR);
+			if (itR.value.L.CompareTo(r) >= 0) {
+				itR = _set.Prev(itR);
+			}
+
 			var removes = new List<(TRange l, TRange r)>();
 			for (int i = itR.index; i >= itL.index; i--) {
 				bool isEdge = i == 0 || i == _set.Count - 1;
