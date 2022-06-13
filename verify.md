@@ -205,6 +205,7 @@
 
 ### NaturalIntervalSet
 
+- [ABC194 E Mex Min](https://atcoder.jp/contests/abc194/tasks/abc194_e)
 - [ABC255 Ex Range Harvest Query](https://atcoder.jp/contests/abc255/tasks/abc255_h)
 
 ## LaplacianMatrix
@@ -297,6 +298,10 @@
 - [CPSCO2019 Session1 E Exclusive OR Queries](https://atcoder.jp/contests/cpsco2019-s1/tasks/cpsco2019_s1_e)
 - [ABC170 E Smart Infants](https://atcoder.jp/contests/abc170/tasks/abc170_e)
 - [ABC217 D Cutting Woods](https://atcoder.jp/contests/abc217/tasks/abc217_d)
+
+### IndexPivotTree
+
+- [ABC170 E Smart Infants](https://atcoder.jp/contests/abc170/tasks/abc170_e)
 
 ## Point
 
