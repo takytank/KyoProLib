@@ -112,6 +112,26 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool Remove(long p)
+		{
+			var (l, r) = _set.Prev(_set.UpperBound(p).l);
+			if (r <= p) {
+				return false;
+			}
+
+			_set.Remove(l);
+			if (l < p) {
+				_set.Add(l, p);
+			}
+
+			if (p + 1 < r) {
+				_set.Add(p + 1, r);
+			}
+
+			return true;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public IReadOnlyList<(long l, long r)> Remove(long l, long r)
 		{
 			if (l > r) {
