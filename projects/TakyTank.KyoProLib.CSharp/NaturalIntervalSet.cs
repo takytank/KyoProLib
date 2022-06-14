@@ -218,6 +218,7 @@ namespace TakyTank.KyoProLib.CSharp
 			public const int OFFSET = 2;
 			private readonly int _height;
 			private readonly Node _root;
+			private readonly Stack<Node> _pool = new Stack<Node>();
 			private int _count = 0;
 
 			public IntervalPivotTree(int height)
@@ -248,7 +249,7 @@ namespace TakyTank.KyoProLib.CSharp
 								node = node.Left;
 							} else {
 								long p = node.Pivot;
-								node.Left = new Node(l, r, p - (p & -p) / 2);
+								node.Left = NewNode(l, r, p - (p & -p) / 2);
 								break;
 							}
 						} else {
@@ -262,7 +263,7 @@ namespace TakyTank.KyoProLib.CSharp
 								r = tempR;
 							} else {
 								long p = node.Pivot;
-								node.Right = new Node(tempL, tempR, p + (p & -p) / 2);
+								node.Right = NewNode(tempL, tempR, p + (p & -p) / 2);
 								break;
 							}
 						}
@@ -278,7 +279,7 @@ namespace TakyTank.KyoProLib.CSharp
 								r = tempR;
 							} else {
 								long p = node.Pivot;
-								node.Left = new Node(tempL, tempR, p - (p & -p) / 2);
+								node.Left = NewNode(tempL, tempR, p - (p & -p) / 2);
 								break;
 							}
 						} else {
@@ -286,7 +287,7 @@ namespace TakyTank.KyoProLib.CSharp
 								node = node.Right;
 							} else {
 								long p = node.Pivot;
-								node.Right = new Node(l, r, p + (p & -p) / 2);
+								node.Right = NewNode(l, r, p + (p & -p) / 2);
 								break;
 							}
 						}
@@ -342,6 +343,7 @@ namespace TakyTank.KyoProLib.CSharp
 						}
 					}
 
+					_pool.Push(node);
 					--_count;
 				} else if (node.Right != null) {
 					var leftest = LeftMost(node.Right);
@@ -439,6 +441,22 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 
 				return node;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			private Node NewNode(long l, long r, long pivot)
+			{
+				if (_pool.Count > 0) {
+					var node = _pool.Pop();
+					node.L = l;
+					node.R = r;
+					node.Pivot = pivot;
+					node.Left = null;
+					node.Right = null;
+					return node;
+				} else {
+					return new Node(l, r, pivot);
+				}
 			}
 
 			private class Node
@@ -597,6 +615,7 @@ namespace TakyTank.KyoProLib.CSharp
 			public const int OFFSET = 2;
 			private readonly int _height;
 			private readonly Node _root;
+			private readonly Stack<Node> _pool = new Stack<Node>();
 			private int _count = 0;
 
 			public IntervalPivotTree(int height)
@@ -627,7 +646,7 @@ namespace TakyTank.KyoProLib.CSharp
 								node = node.Left;
 							} else {
 								long p = node.Pivot;
-								node.Left = new Node(l, r, value, p - (p & -p) / 2);
+								node.Left = NewNode(l, r, value, p - (p & -p) / 2);
 								break;
 							}
 						} else {
@@ -644,7 +663,7 @@ namespace TakyTank.KyoProLib.CSharp
 								value = tempV;
 							} else {
 								long p = node.Pivot;
-								node.Right = new Node(tempL, tempR, tempV, p + (p & -p) / 2);
+								node.Right = NewNode(tempL, tempR, tempV, p + (p & -p) / 2);
 								break;
 							}
 						}
@@ -663,7 +682,7 @@ namespace TakyTank.KyoProLib.CSharp
 								value = tempV;
 							} else {
 								long p = node.Pivot;
-								node.Left = new Node(tempL, tempR, tempV, p - (p & -p) / 2);
+								node.Left = NewNode(tempL, tempR, tempV, p - (p & -p) / 2);
 								break;
 							}
 						} else {
@@ -671,7 +690,7 @@ namespace TakyTank.KyoProLib.CSharp
 								node = node.Right;
 							} else {
 								long p = node.Pivot;
-								node.Right = new Node(l, r, value, p + (p & -p) / 2);
+								node.Right = NewNode(l, r, value, p + (p & -p) / 2);
 								break;
 							}
 						}
@@ -727,6 +746,7 @@ namespace TakyTank.KyoProLib.CSharp
 						}
 					}
 
+					_pool.Push(node);
 					--_count;
 				} else if (node.Right != null) {
 					var leftest = LeftMost(node.Right);
@@ -826,6 +846,23 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 
 				return node;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			private Node NewNode(long l, long r, TValue value, long pivot)
+			{
+				if (_pool.Count > 0) {
+					var node = _pool.Pop();
+					node.L = l;
+					node.R = r;
+					node.Value = value;
+					node.Pivot = pivot;
+					node.Left = null;
+					node.Right = null;
+					return node;
+				} else {
+					return new Node(l, r, value, pivot);
+				}
 			}
 
 			private class Node
