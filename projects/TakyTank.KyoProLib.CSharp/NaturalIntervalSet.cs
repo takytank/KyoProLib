@@ -49,30 +49,30 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(long p)
 		{
-			var right = _set.UpperBound(p);
-			var left = _set.Prev(right.l);
-			if (left.l <= p && p < left.r) {
+			var (rightL, rightR) = _set.UpperBound(p);
+			var (leftL, leftR) = _set.Prev(rightL);
+			if (leftL <= p && p < leftR) {
 				return;
 			}
 
 			bool willMerge = _mergesAdjacentInterval
-				? right.l == p + 1
-				: right.l == p;
-			if (left.r == p) {
+				? rightL == p + 1
+				: rightL == p;
+			if (leftR == p) {
 				if (willMerge == false) {
-					_set.Remove(left.l);
-					_set.Add(left.l, p + 1);
+					_set.Remove(leftL);
+					_set.Add(leftL, p + 1);
 				} else {
-					_set.Remove(left.l);
-					_set.Remove(right.l);
-					_set.Add(left.l, right.r);
+					_set.Remove(leftL);
+					_set.Remove(rightL);
+					_set.Add(leftL, rightR);
 				}
 			} else {
 				if (willMerge == false) {
 					_set.Add(p, p + 1);
 				} else {
-					_set.Remove(right.l);
-					_set.Add(p, right.r);
+					_set.Remove(rightL);
+					_set.Add(p, rightR);
 				}
 			}
 		}
