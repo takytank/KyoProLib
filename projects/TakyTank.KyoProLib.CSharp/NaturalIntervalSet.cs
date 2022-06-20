@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
-	public class NaturalIntervalSet
+	public class NaturalIntervalSet : IEnumerable<(long l, long r)>
 	{
 		private readonly IntervalPivotTree _set;
 		private readonly bool _mergesAdjacentInterval;
@@ -213,7 +214,15 @@ namespace TakyTank.KyoProLib.CSharp
 			return (l, r);
 		}
 
-		private class IntervalPivotTree
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<(long l, long r)> GetEnumerator()
+		{
+			foreach (var lr in _set) {
+				yield return lr;
+			}
+		}
+
+		private class IntervalPivotTree : IEnumerable<(long l, long r)>
 		{
 			public const int OFFSET = 2;
 			private readonly int _height;
@@ -423,6 +432,35 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
+			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+			public IEnumerator<(long l, long r)> GetEnumerator()
+			{
+				long inf = Inf;
+				var stack = new Stack<Node>();
+				Node node = _root;
+				Node next;
+				while (node != null) {
+					next = node.Left;
+					stack.Push(node);
+					node = next;
+				}
+
+				while (stack.Count > 0) {
+					var current = stack.Pop();
+					var (l, r) = (current.L - OFFSET, current.R - OFFSET);
+					if (l >= 0 && r < inf) {
+						yield return (l, r);
+					}
+
+					node = current.Right;
+					while (node != null) {
+						next = node.Left;
+						stack.Push(node);
+						node = next;
+					}
+				}
+			}
+
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			private Node LeftMost(Node node)
 			{
@@ -479,7 +517,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 	}
 
-	public class NaturalIntervalSet<T>
+	public class NaturalIntervalSet<T> : IEnumerable<(long l, long r)>
 	{
 		private readonly IntervalPivotTree<T> _set;
 
@@ -610,7 +648,15 @@ namespace TakyTank.KyoProLib.CSharp
 			return (l, r);
 		}
 
-		private class IntervalPivotTree<TValue>
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<(long l, long r)> GetEnumerator()
+		{
+			foreach (var lr in _set) {
+				yield return lr;
+			}
+		}
+
+		private class IntervalPivotTree<TValue> : IEnumerable<(long l, long r)>
 		{
 			public const int OFFSET = 2;
 			private readonly int _height;
@@ -824,6 +870,35 @@ namespace TakyTank.KyoProLib.CSharp
 						} else {
 							return next.ToInterval();
 						}
+					}
+				}
+			}
+
+			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+			public IEnumerator<(long l, long r)> GetEnumerator()
+			{
+				long inf = Inf;
+				var stack = new Stack<Node>();
+				Node node = _root;
+				Node next;
+				while (node != null) {
+					next = node.Left;
+					stack.Push(node);
+					node = next;
+				}
+
+				while (stack.Count > 0) {
+					var current = stack.Pop();
+					var (l, r) = (current.L - OFFSET, current.R - OFFSET);
+					if (l >= 0 && r < inf) {
+						yield return (l, r);
+					}
+
+					node = current.Right;
+					while (node != null) {
+						next = node.Left;
+						stack.Push(node);
+						node = next;
 					}
 				}
 			}
