@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
-	public class IntervalSet32
+	public class IntervalSet32 : IEnumerable<(int l, int r)>
 	{
+		private readonly int _inf;
 		private readonly RedBlackTree<LR> _set;
 		private readonly bool _mergesAdjacentInterval;
 
 		public IntervalSet32(int inf = int.MaxValue, bool mergesAdjacentInterval = true)
 		{
+			_inf = inf;
 			_mergesAdjacentInterval = mergesAdjacentInterval;
 			_set = new RedBlackTree<LR>(false) {
 				new LR(-inf, -inf),
@@ -209,6 +212,18 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return (index, value.L, value.R);
 		}
 
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<(int l, int r)> GetEnumerator()
+		{
+			foreach (var lr in _set) {
+				if (lr.L == -_inf || lr.R == _inf) {
+					continue;
+				}
+
+				yield return (lr.L, lr.R);
+			}
+		}
+
 		private struct LR : IComparable<LR>
 		{
 			public int L { get; set; }
@@ -226,12 +241,14 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 	}
 
-	public class IntervalSet32<T>
+	public class IntervalSet32<T> : IEnumerable<(int l, int r)>
 	{
+		private readonly int _inf;
 		private readonly RedBlackTree<LR> _set;
 
 		public IntervalSet32(int inf = int.MaxValue)
 		{
+			_inf = inf;
 			_set = new RedBlackTree<LR>(false) {
 				new LR(-inf, -inf, default),
 				new LR(inf, inf, default),
@@ -353,6 +370,18 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return (index, value.L, value.R);
 		}
 
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<(int l, int r)> GetEnumerator()
+		{
+			foreach (var lr in _set) {
+				if (lr.L == -_inf || lr.R == _inf) {
+					continue;
+				}
+
+				yield return (lr.L, lr.R);
+			}
+		}
+
 		private struct LR : IComparable<LR>
 		{
 			public int L { get; set; }
@@ -372,13 +401,15 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 	}
 
-	public class IntervalSet64
+	public class IntervalSet64 : IEnumerable<(long l, long r)>
 	{
+		private readonly long _inf;
 		private readonly RedBlackTree<LR> _set;
 		private readonly bool _mergesAdjacentInterval;
 
 		public IntervalSet64(long inf = long.MaxValue, bool mergesAdjacentInterval = true)
 		{
+			_inf = inf;
 			_mergesAdjacentInterval = mergesAdjacentInterval;
 			_set = new RedBlackTree<LR>(false) {
 				new LR(-inf, -inf),
@@ -576,6 +607,18 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return (index, value.L, value.R);
 		}
 
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<(long l, long r)> GetEnumerator()
+		{
+			foreach (var lr in _set) {
+				if (lr.L == -_inf || lr.R == _inf) {
+					continue;
+				}
+
+				yield return (lr.L, lr.R);
+			}
+		}
+
 		private struct LR : IComparable<LR>
 		{
 			public long L { get; set; }
@@ -593,12 +636,14 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 	}
 
-	public class IntervalSet64<T>
+	public class IntervalSet64<T> : IEnumerable<(long l, long r)>
 	{
+		private readonly long _inf;
 		private readonly RedBlackTree<LR> _set;
 
 		public IntervalSet64(long inf = long.MaxValue)
 		{
+			_inf = inf;
 			_set = new RedBlackTree<LR>(false) {
 				new LR(-inf, -inf, default),
 				new LR(inf, inf, default),
@@ -720,6 +765,18 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return (index, value.L, value.R);
 		}
 
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<(long l, long r)> GetEnumerator()
+		{
+			foreach (var lr in _set) {
+				if (lr.L == -_inf || lr.R == _inf) {
+					continue;
+				}
+
+				yield return (lr.L, lr.R);
+			}
+		}
+
 		private struct LR : IComparable<LR>
 		{
 			public long L { get; set; }
@@ -739,13 +796,18 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 	}
 
-	public class IntervalSetAny<TRange> where TRange : struct, IComparable<TRange>
+	public class IntervalSetAny<TRange> : IEnumerable<(TRange l, TRange r)>
+		where TRange : struct, IComparable<TRange>
 	{
+		private readonly TRange _inf;
+		private readonly TRange _minf;
 		private readonly RedBlackTree<LR> _set;
 		private readonly bool _mergesAdjacentInterval;
 
 		public IntervalSetAny(TRange inf, TRange minf, bool mergesAdjacentInterval)
 		{
+			_inf = inf;
+			_minf = minf;
 			_mergesAdjacentInterval = mergesAdjacentInterval;
 			_set = new RedBlackTree<LR>(false) {
 				new LR(minf, minf),
@@ -908,6 +970,18 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return (index, value.L, value.R);
 		}
 
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<(TRange l, TRange r)> GetEnumerator()
+		{
+			foreach (var lr in _set) {
+				if (lr.L.CompareTo(_minf) == 0 || lr.R.CompareTo(_inf) == 0) {
+					continue;
+				}
+
+				yield return (lr.L, lr.R);
+			}
+		}
+
 		private struct LR : IComparable<LR>
 		{
 			public TRange L { get; set; }
@@ -925,12 +999,17 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 	}
 
-	public class IntervalSetAny<TRange, TValue> where TRange : struct, IComparable<TRange>
+	public class IntervalSetAny<TRange, TValue> : IEnumerable<(TRange l, TRange r)>
+		where TRange : struct, IComparable<TRange>
 	{
+		private readonly TRange _inf;
+		private readonly TRange _minf;
 		private readonly RedBlackTree<LR> _set;
 
 		public IntervalSetAny(TRange inf, TRange minf)
 		{
+			_inf = inf;
+			_minf = minf;
 			_set = new RedBlackTree<LR>(false) {
 				new LR(minf, minf, default),
 				new LR(inf, inf, default),
@@ -1056,6 +1135,18 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		{
 			var (index, value) = _set.UpperBound(new LR(p, p, default));
 			return (index, value.L, value.R);
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<(TRange l, TRange r)> GetEnumerator()
+		{
+			foreach (var lr in _set) {
+				if (lr.L.CompareTo(_minf) == 0 || lr.R.CompareTo(_inf) == 0) {
+					continue;
+				}
+
+				yield return (lr.L, lr.R);
+			}
 		}
 
 		private struct LR : IComparable<LR>
