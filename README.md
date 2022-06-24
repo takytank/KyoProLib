@@ -149,6 +149,13 @@
 - [区間をsetで管理するやつ](https://satanic0258.github.io/snippets/data-structure/SegmentMap.html)
 - [要素の追加・削除と mex を対数時間で処理するよ](https://rsk0315.hatenablog.com/entry/2020/10/11/125049)
 
+### KMP
+
+- [KMPのK](https://snuke.hatenablog.com/entry/2017/07/18/101026)
+- [文字列アルゴリズム](https://www.slideshare.net/hcpc_hokudai/ss-121539419)
+- [Knuth Morrison Pratt](https://kopricky.github.io/code/String/kmp.html)
+- [アルファベットサイズに依存しないリアルタイム KMP 法](https://qiita.com/hdbn/items/b3909ce29a46c5d0cb8c)
+
 ### LaplacianMatrix
 
 - [ラプラシアン行列](https://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%97%E3%83%A9%E3%82%B7%E3%82%A2%E3%83%B3%E8%A1%8C%E5%88%97)

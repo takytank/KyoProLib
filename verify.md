@@ -208,6 +208,10 @@
 - [ABC194 E Mex Min](https://atcoder.jp/contests/abc194/tasks/abc194_e)
 - [ABC255 Ex Range Harvest Query](https://atcoder.jp/contests/abc255/tasks/abc255_h)
 
+## KMP
+
+- [ABC150 F Xor Shift](https://atcoder.jp/contests/abc150/tasks/abc150_f)
+
 ## LaplacianMatrix
 
 - [第二回日本最強プログラマー学生選手権 G Spanning Tree](https://atcoder.jp/contests/jsc2021/tasks/jsc2021_g) 
