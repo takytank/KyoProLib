@@ -211,6 +211,7 @@
 ## KMP
 
 - [ABC150 F Xor Shift](https://atcoder.jp/contests/abc150/tasks/abc150_f)
+- [ABC257 G Prefix Concatenation](https://atcoder.jp/contests/abc257/tasks/abc257_g)
 
 ## LaplacianMatrix
 

@@ -8,6 +8,26 @@ namespace TakyTank.KyoProLib.CSharp.V8
 	public static class KMP
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int[] Match(string text, string pattern)
+			=> Match(text, pattern, LongestStrictBorder(pattern));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int[] Match(string text, string pattern, int[] longestBorder)
+		{
+			var matches = new int[text.Length];
+			int j = 0;
+			for (int i = 0; i < text.Length; ++i) {
+				while (j >= pattern.Length || (j >= 0 && pattern[j] != text[i])) {
+					j = longestBorder[j];
+				}
+
+				++j;
+				matches[i] = j;
+			}
+
+			return matches;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static List<int> Search(string text, string pattern)
 			=> Search(text, pattern, LongestStrictBorder(pattern));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -19,7 +39,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			int j = 0;
 			while (i + j < text.Length) {
 				if (pattern[j] == text[i + j]) {
-					if (++j != m) {
+					++j;
+					if (j != m) {
 						continue;
 					}
 
@@ -81,7 +102,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 
 				++j;
-				if (i < l && s[i + 1] == s[j]) {
+				if (i < l - 1 && s[i + 1] == s[j]) {
 					a[i + 1] = a[j];
 				} else {
 					a[i + 1] = j;
@@ -95,6 +116,26 @@ namespace TakyTank.KyoProLib.CSharp.V8
 	public static class KMP<T>
 		where T : IComparable<T>
 	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int[] Match(ReadOnlySpan<T> text, ReadOnlySpan<T> pattern)
+			=> Match(text, pattern, LongestStrictBorder(pattern));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int[] Match(ReadOnlySpan<T> text, ReadOnlySpan<T> pattern, int[] longestBorder)
+		{
+			var matches = new int[text.Length];
+			int j = 0;
+			for (int i = 0; i < text.Length; ++i) {
+				while (j >= pattern.Length || (j >= 0 && pattern[j].CompareTo(text[i]) != 0)) {
+					j = longestBorder[j];
+				}
+
+				++j;
+				matches[i] = j;
+			}
+
+			return matches;
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static List<int> Search(ReadOnlySpan<T> text, ReadOnlySpan<T> pattern)
 			=> Search(text, pattern, LongestStrictBorder(pattern));
