@@ -11,30 +11,30 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		private const int SHIFT = 6;
 		private const int BITS = 64;
 
-		private readonly int length_;
-		private readonly ulong[] bits_;
-		private readonly int extraBits_;
+		private readonly int _length;
+		private readonly ulong[] _bits;
+		private readonly int _extraBits;
 
 		public int BitCount { get; }
-		public ulong[] Raw => bits_;
+		public ulong[] Raw => _bits;
 		public BitSet(int bitCount, bool fillTrue = false)
 		{
 			BitCount = bitCount;
-			extraBits_ = DivideByBits(BitCount).remainder;
-			length_ = (bitCount - 1 >> SHIFT) + 1;
-			bits_ = new ulong[length_];
+			_extraBits = DivideByBits(BitCount).remainder;
+			_length = (bitCount - 1 >> SHIFT) + 1;
+			_bits = new ulong[_length];
 			if (fillTrue) {
 				int y = bitCount % BITS;
 				if (y == 0) {
-					for (int i = 0; i < length_; i++) {
-						bits_[i] = ulong.MaxValue;
+					for (int i = 0; i < _length; i++) {
+						_bits[i] = ulong.MaxValue;
 					}
 				} else {
-					for (int i = 0; i < length_ - 1; i++) {
-						bits_[i] = ulong.MaxValue;
+					for (int i = 0; i < _length - 1; i++) {
+						_bits[i] = ulong.MaxValue;
 					}
 
-					bits_[length_ - 1] = (1UL << y) - 1;
+					_bits[_length - 1] = (1UL << y) - 1;
 				}
 			}
 		}
@@ -42,17 +42,17 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public BitSet(int bitCount, long initialValue)
 		{
 			BitCount = bitCount;
-			extraBits_ = DivideByBits(BitCount).remainder;
-			length_ = (bitCount - 1 >> SHIFT) + 1;
-			bits_ = new ulong[length_];
-			bits_[0] = (ulong)initialValue;
+			_extraBits = DivideByBits(BitCount).remainder;
+			_length = (bitCount - 1 >> SHIFT) + 1;
+			_bits = new ulong[_length];
+			_bits[0] = (ulong)initialValue;
 		}
 
 		public bool this[int i]
 		{
-			get => (bits_[i >> SHIFT] >> i & 1) != 0;
-			set => bits_[i >> SHIFT]
-				= bits_[i >> SHIFT] & (ulong.MaxValue ^ 1ul << i)
+			get => (_bits[i >> SHIFT] >> i & 1) != 0;
+			set => _bits[i >> SHIFT]
+				= _bits[i >> SHIFT] & (ulong.MaxValue ^ 1ul << i)
 				| (ulong)(value ? 1 : 0) << i;
 		}
 
@@ -85,10 +85,10 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		public static BitSet operator &(BitSet lhs, BitSet rhs)
 		{
-			int min = Math.Min(lhs.length_, rhs.length_);
+			int min = Math.Min(lhs._length, rhs._length);
 			var ret = new BitSet(Math.Max(lhs.BitCount, rhs.BitCount));
 			for (int i = 0; i < min; i++) {
-				ret.bits_[i] = lhs.bits_[i] & rhs.bits_[i];
+				ret._bits[i] = lhs._bits[i] & rhs._bits[i];
 			}
 
 			return ret;
@@ -96,20 +96,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		public static BitSet operator |(BitSet lhs, BitSet rhs)
 		{
-			int max = Math.Max(lhs.length_, rhs.length_);
-			int min = Math.Min(lhs.length_, rhs.length_);
+			int max = Math.Max(lhs._length, rhs._length);
+			int min = Math.Min(lhs._length, rhs._length);
 			var ret = new BitSet(Math.Max(lhs.BitCount, rhs.BitCount));
 			for (int i = 0; i < min; i++) {
-				ret.bits_[i] = lhs.bits_[i] | rhs.bits_[i];
+				ret._bits[i] = lhs._bits[i] | rhs._bits[i];
 			}
 
-			if (lhs.length_ > rhs.length_) {
+			if (lhs._length > rhs._length) {
 				for (int i = min; i < max; i++) {
-					ret.bits_[i] = lhs.bits_[i];
+					ret._bits[i] = lhs._bits[i];
 				}
 			} else {
 				for (int i = min; i < max; i++) {
-					ret.bits_[i] = rhs.bits_[i];
+					ret._bits[i] = rhs._bits[i];
 				}
 			}
 
@@ -118,20 +118,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		public static BitSet operator ^(BitSet lhs, BitSet rhs)
 		{
-			int max = Math.Max(lhs.length_, rhs.length_);
-			int min = Math.Min(lhs.length_, rhs.length_);
+			int max = Math.Max(lhs._length, rhs._length);
+			int min = Math.Min(lhs._length, rhs._length);
 			var ret = new BitSet(Math.Max(lhs.BitCount, rhs.BitCount));
 			for (int i = 0; i < min; i++) {
-				ret.bits_[i] = lhs.bits_[i] ^ rhs.bits_[i];
+				ret._bits[i] = lhs._bits[i] ^ rhs._bits[i];
 			}
 
-			if (lhs.length_ > rhs.length_) {
+			if (lhs._length > rhs._length) {
 				for (int i = min; i < max; i++) {
-					ret.bits_[i] = lhs.bits_[i];
+					ret._bits[i] = lhs._bits[i];
 				}
 			} else {
 				for (int i = min; i < max; i++) {
-					ret.bits_[i] = rhs.bits_[i];
+					ret._bits[i] = rhs._bits[i];
 				}
 			}
 
@@ -141,22 +141,22 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public static BitSet operator <<(BitSet target, int shift)
 		{
 			var ret = new BitSet(target.BitCount);
-			if (shift > target.length_ << SHIFT) {
+			if (shift > target._length << SHIFT) {
 				return ret;
 			}
 
 			int minIndex = shift + (BITS - 1) >> SHIFT;
 			if (shift % BITS == 0) {
-				for (int i = target.length_ - 1; i >= minIndex; i--) {
-					ret.bits_[i] = target.bits_[i - minIndex];
+				for (int i = target._length - 1; i >= minIndex; i--) {
+					ret._bits[i] = target._bits[i - minIndex];
 				}
 			} else {
-				for (int i = target.length_ - 1; i >= minIndex; i--) {
-					ret.bits_[i] = target.bits_[i - minIndex + 1] << shift
-						| target.bits_[i - minIndex] >> BITS - shift;
+				for (int i = target._length - 1; i >= minIndex; i--) {
+					ret._bits[i] = target._bits[i - minIndex + 1] << shift
+						| target._bits[i - minIndex] >> BITS - shift;
 				}
 
-				ret.bits_[minIndex - 1] = target.bits_[0] << shift;
+				ret._bits[minIndex - 1] = target._bits[0] << shift;
 			}
 
 			return ret;
@@ -165,22 +165,22 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public static BitSet operator >>(BitSet target, int shift)
 		{
 			var ret = new BitSet(target.BitCount);
-			if (shift > target.length_ << SHIFT) {
+			if (shift > target._length << SHIFT) {
 				return ret;
 			}
 
 			int minIndex = shift + (BITS - 1) >> SHIFT;
 			if (shift % BITS == 0) {
-				for (int i = 0; i + minIndex < ret.length_; i++) {
-					ret.bits_[i] = target.bits_[i + minIndex];
+				for (int i = 0; i + minIndex < ret._length; i++) {
+					ret._bits[i] = target._bits[i + minIndex];
 				}
 			} else {
-				for (int i = 0; i + minIndex < ret.length_; i++) {
-					ret.bits_[i] = target.bits_[i + minIndex - 1] >> shift
-						| target.bits_[i + minIndex] << BITS - shift;
+				for (int i = 0; i + minIndex < ret._length; i++) {
+					ret._bits[i] = target._bits[i + minIndex - 1] >> shift
+						| target._bits[i + minIndex] << BITS - shift;
 				}
 
-				ret.bits_[ret.length_ - minIndex] = target.bits_[ret.length_ - 1] >> shift;
+				ret._bits[ret._length - minIndex] = target._bits[ret._length - 1] >> shift;
 			}
 
 			return ret;
@@ -196,23 +196,23 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public override bool Equals(object obj) => obj is BitSet x && Equals(x);
 		public bool Equals(BitSet other)
 		{
-			int max = Math.Max(length_, other.length_);
-			int min = Math.Min(length_, other.length_);
+			int max = Math.Max(_length, other._length);
+			int min = Math.Min(_length, other._length);
 			for (int i = 0; i < min; i++) {
-				if (bits_[i] != other.bits_[i]) {
+				if (_bits[i] != other._bits[i]) {
 					return false;
 				}
 			}
 
-			if (length_ > other.length_) {
+			if (_length > other._length) {
 				for (int i = min; i < max; i++) {
-					if (bits_[i] != 0) {
+					if (_bits[i] != 0) {
 						return false;
 					}
 				}
 			} else {
 				for (int i = min; i < max; i++) {
-					if (other.bits_[i] != 0) {
+					if (other._bits[i] != 0) {
 						return false;
 					}
 				}
@@ -223,26 +223,26 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		public int CompareTo(BitSet other)
 		{
-			int max = Math.Max(length_, other.length_);
-			int min = Math.Min(length_, other.length_);
-			if (length_ > other.length_) {
+			int max = Math.Max(_length, other._length);
+			int min = Math.Min(_length, other._length);
+			if (_length > other._length) {
 				for (int i = min; i < max; i++) {
-					if (bits_[i] != 0) {
+					if (_bits[i] != 0) {
 						return 1;
 					}
 				}
 			} else {
 				for (int i = min; i < max; i++) {
-					if (other.bits_[i] != 0) {
+					if (other._bits[i] != 0) {
 						return -1;
 					}
 				}
 			}
 
 			for (int i = min - 1; i >= 0; --i) {
-				if (bits_[i] > other.bits_[i]) {
+				if (_bits[i] > other._bits[i]) {
 					return 1;
-				} else if (bits_[i] < other.bits_[i]) {
+				} else if (_bits[i] < other._bits[i]) {
 					return -1;
 				}
 			}
@@ -252,22 +252,22 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		public void Or(BitSet target)
 		{
-			for (int i = 0; i < Math.Min(length_, target.length_); i++) {
-				bits_[i] |= target.bits_[i];
+			for (int i = 0; i < Math.Min(_length, target._length); i++) {
+				_bits[i] |= target._bits[i];
 			}
 		}
 
 		public void And(BitSet target)
 		{
-			for (int i = 0; i < Math.Min(length_, target.length_); i++) {
-				bits_[i] &= target.bits_[i];
+			for (int i = 0; i < Math.Min(_length, target._length); i++) {
+				_bits[i] &= target._bits[i];
 			}
 		}
 
 		public void Xor(BitSet target)
 		{
-			for (int i = 0; i < Math.Min(length_, target.length_); i++) {
-				bits_[i] ^= target.bits_[i];
+			for (int i = 0; i < Math.Min(_length, target._length); i++) {
+				_bits[i] ^= target._bits[i];
 			}
 		}
 
@@ -282,32 +282,32 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				var (fromIndex, shiftCount) = DivideByBits(shiftBits);
 				if (shiftCount == 0) {
 					unchecked {
-						ulong mask = ulong.MaxValue >> BITS - extraBits_;
-						bits_[length_ - 1] &= mask;
+						ulong mask = ulong.MaxValue >> BITS - _extraBits;
+						_bits[_length - 1] &= mask;
 					}
 
-					Array.Copy(bits_, fromIndex, bits_, 0, length_ - fromIndex);
-					toIndex = length_ - fromIndex;
+					Array.Copy(_bits, fromIndex, _bits, 0, _length - fromIndex);
+					toIndex = _length - fromIndex;
 				} else {
-					int lastIndex = length_ - 1;
+					int lastIndex = _length - 1;
 					unchecked {
 						while (fromIndex < lastIndex) {
-							ulong right = bits_[fromIndex] >> shiftCount;
+							ulong right = _bits[fromIndex] >> shiftCount;
 							fromIndex++;
-							ulong left = bits_[fromIndex] << BITS - shiftCount;
-							bits_[toIndex] = left | right;
+							ulong left = _bits[fromIndex] << BITS - shiftCount;
+							_bits[toIndex] = left | right;
 							toIndex++;
 						}
 
-						ulong mask = ulong.MaxValue >> BITS - extraBits_;
-						mask &= bits_[fromIndex];
-						bits_[toIndex] = mask >> shiftCount;
+						ulong mask = ulong.MaxValue >> BITS - _extraBits;
+						mask &= _bits[fromIndex];
+						_bits[toIndex] = mask >> shiftCount;
 						toIndex++;
 					}
 				}
 			}
 
-			bits_.AsSpan(toIndex, length_ - toIndex).Clear();
+			_bits.AsSpan(toIndex, _length - toIndex).Clear();
 		}
 
 		public void LeftShift(int shiftBits)
@@ -322,26 +322,26 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				int shiftBitCount;
 				(shiftBlockCount, shiftBitCount) = DivideByBits(shiftBits);
 				if (shiftBitCount == 0) {
-					Array.Copy(bits_, 0, bits_, shiftBlockCount, lastIndex + 1 - shiftBlockCount);
+					Array.Copy(_bits, 0, _bits, shiftBlockCount, lastIndex + 1 - shiftBlockCount);
 				} else {
 					int fromIndex = lastIndex - shiftBlockCount;
 					unchecked {
 						while (fromIndex > 0) {
-							ulong left = bits_[fromIndex] << shiftBitCount;
+							ulong left = _bits[fromIndex] << shiftBitCount;
 							--fromIndex;
-							ulong right = bits_[fromIndex] >> BITS - shiftBitCount;
-							bits_[lastIndex] = left | right;
+							ulong right = _bits[fromIndex] >> BITS - shiftBitCount;
+							_bits[lastIndex] = left | right;
 							lastIndex--;
 						}
 
-						bits_[lastIndex] = bits_[fromIndex] << shiftBitCount;
+						_bits[lastIndex] = _bits[fromIndex] << shiftBitCount;
 					}
 				}
 			} else {
-				shiftBlockCount = length_;
+				shiftBlockCount = _length;
 			}
 
-			bits_.AsSpan(0, shiftBlockCount).Clear();
+			_bits.AsSpan(0, shiftBlockCount).Clear();
 		}
 
 		public void OrWithRightShift(int shiftBits)
@@ -355,27 +355,27 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				var (fromIndex, shiftCount) = DivideByBits(shiftBits);
 				if (shiftCount == 0) {
 					unchecked {
-						ulong mask = ulong.MaxValue >> BITS - extraBits_;
-						bits_[length_ - 1] &= mask;
+						ulong mask = ulong.MaxValue >> BITS - _extraBits;
+						_bits[_length - 1] &= mask;
 					}
 
-					for (int i = 0; i < length_ - fromIndex; ++i) {
-						bits_[i] |= bits_[i + fromIndex];
+					for (int i = 0; i < _length - fromIndex; ++i) {
+						_bits[i] |= _bits[i + fromIndex];
 					}
 				} else {
-					int lastIndex = length_ - 1;
+					int lastIndex = _length - 1;
 					unchecked {
 						while (fromIndex < lastIndex) {
-							ulong right = bits_[fromIndex] >> shiftCount;
+							ulong right = _bits[fromIndex] >> shiftCount;
 							fromIndex++;
-							ulong left = bits_[fromIndex] << BITS - shiftCount;
-							bits_[toIndex] |= left | right;
+							ulong left = _bits[fromIndex] << BITS - shiftCount;
+							_bits[toIndex] |= left | right;
 							toIndex++;
 						}
 
-						ulong mask = ulong.MaxValue >> BITS - extraBits_;
-						mask &= bits_[fromIndex];
-						bits_[toIndex] |= mask >> shiftCount;
+						ulong mask = ulong.MaxValue >> BITS - _extraBits;
+						mask &= _bits[fromIndex];
+						_bits[toIndex] |= mask >> shiftCount;
 					}
 				}
 			}
@@ -394,36 +394,36 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				(shiftBlockCount, shiftBitCount) = DivideByBits(shiftBits);
 				if (shiftBitCount == 0) {
 					for (int i = 0; i < lastIndex + 1 - shiftBlockCount; i++) {
-						bits_[lastIndex - i] |= bits_[lastIndex - i - shiftBlockCount];
+						_bits[lastIndex - i] |= _bits[lastIndex - i - shiftBlockCount];
 					}
 				} else {
 					int fromIndex = lastIndex - shiftBlockCount;
 					unchecked {
 						while (fromIndex > 0) {
-							ulong left = bits_[fromIndex] << shiftBitCount;
+							ulong left = _bits[fromIndex] << shiftBitCount;
 							--fromIndex;
-							ulong right = bits_[fromIndex] >> BITS - shiftBitCount;
-							bits_[lastIndex] |= left | right;
+							ulong right = _bits[fromIndex] >> BITS - shiftBitCount;
+							_bits[lastIndex] |= left | right;
 							lastIndex--;
 						}
 
-						bits_[lastIndex] |= bits_[fromIndex] << shiftBitCount;
+						_bits[lastIndex] |= _bits[fromIndex] << shiftBitCount;
 					}
 				}
 
 				unchecked {
 					lastIndex = BitCount - 1 >> SHIFT;
-					ulong mask = ulong.MaxValue >> BITS - extraBits_;
-					bits_[lastIndex] &= mask;
+					ulong mask = ulong.MaxValue >> BITS - _extraBits;
+					_bits[lastIndex] &= mask;
 				}
 			}
 		}
 
 		public int Msb()
 		{
-			for (int i = length_ - 1; i >= 0; i--) {
-				if (bits_[i] != 0) {
-					return BITS - BitOperations.LeadingZeroCount(bits_[i]) + BITS * i;
+			for (int i = _length - 1; i >= 0; i--) {
+				if (_bits[i] != 0) {
+					return BITS - BitOperations.LeadingZeroCount(_bits[i]) + BITS * i;
 				}
 			}
 
@@ -434,8 +434,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public int PopCount()
 		{
 			int count = 0;
-			for (int i = 0; i < bits_.Length; i++) {
-				count += BitOperations.PopCount(bits_[i]);
+			for (int i = 0; i < _bits.Length; i++) {
+				count += BitOperations.PopCount(_bits[i]);
 			}
 
 			return count;
@@ -444,8 +444,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public int PopCount2()
 		{
 			int count = 0;
-			for (int i = 0; i < bits_.Length; i++) {
-				var bits = bits_[i];
+			for (int i = 0; i < _bits.Length; i++) {
+				var bits = _bits[i];
 				bits -= (bits >> 1) & 0x5555555555555555;
 				bits = (bits & 0x3333333333333333) + (bits >> 2 & 0x3333333333333333);
 				count += (int)(((bits + (bits >> 4)) & 0xf0f0f0f0f0f0f0f) * 0x101010101010101 >> 56);
@@ -456,21 +456,21 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(length_, bits_, BitCount);
+			return HashCode.Combine(_length, _bits, BitCount);
 		}
 
 		public override string ToString()
 		{
 			string ret = "";
-			for (int i = 0; i < length_ - 1; i++) {
-				string temp = Convert.ToString((long)bits_[i], 2);
+			for (int i = 0; i < _length - 1; i++) {
+				string temp = Convert.ToString((long)_bits[i], 2);
 				temp = (BITS > temp.Length ? new string('0', BITS - temp.Length) : "")
 					+ temp;
 				ret = temp + ret;
 			}
 
 			{
-				string temp = Convert.ToString((long)bits_[length_ - 1], 2);
+				string temp = Convert.ToString((long)_bits[_length - 1], 2);
 				temp = (BitCount % BITS > temp.Length ? new string('0', BitCount % BITS - temp.Length) : "")
 					+ temp;
 				ret = temp + ret;
