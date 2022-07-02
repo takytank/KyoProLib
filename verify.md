@@ -33,6 +33,7 @@
 - [AGC041 E Balancing Network](https://atcoder.jp/contests/agc041/tasks/agc041_e)
 - [AGC020 C Median Sum](https://atcoder.jp/contests/agc020/tasks/agc020_c)
 - [競プロ典型 90 問 57 Flip Flap](https://atcoder.jp/contests/typical90/tasks/typical90_be)
+- [ABC258 G Triangle](https://atcoder.jp/contests/abc258/tasks/abc258_g)
 
 ## CartesianTree
 

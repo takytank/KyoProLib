@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
@@ -15,6 +16,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		private readonly int extraBits_;
 
 		public int BitCount { get; }
+		public ulong[] Raw => bits_;
 		public BitSet(int bitCount, bool fillTrue = false)
 		{
 			BitCount = bitCount;
@@ -49,7 +51,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public bool this[int i]
 		{
 			get => (bits_[i >> SHIFT] >> i & 1) != 0;
-			set => bits_[i >> 6]
+			set => bits_[i >> SHIFT]
 				= bits_[i >> SHIFT] & (ulong.MaxValue ^ 1ul << i)
 				| (ulong)(value ? 1 : 0) << i;
 		}
@@ -143,7 +145,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				return ret;
 			}
 
-			int minIndex = shift + 63 >> SHIFT;
+			int minIndex = shift + (BITS - 1) >> SHIFT;
 			if (shift % BITS == 0) {
 				for (int i = target.length_ - 1; i >= minIndex; i--) {
 					ret.bits_[i] = target.bits_[i - minIndex];
@@ -167,7 +169,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				return ret;
 			}
 
-			int minIndex = shift + 63 >> SHIFT;
+			int minIndex = shift + (BITS - 1) >> SHIFT;
 			if (shift % BITS == 0) {
 				for (int i = 0; i + minIndex < ret.length_; i++) {
 					ret.bits_[i] = target.bits_[i + minIndex];
@@ -426,6 +428,30 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			return 0;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveOptimization)]
+		public int PopCount()
+		{
+			int count = 0;
+			for (int i = 0; i < bits_.Length; i++) {
+				count += BitOperations.PopCount(bits_[i]);
+			}
+
+			return count;
+		}
+
+		public int PopCount2()
+		{
+			int count = 0;
+			for (int i = 0; i < bits_.Length; i++) {
+				var bits = bits_[i];
+				bits -= (bits >> 1) & 0x5555555555555555;
+				bits = (bits & 0x3333333333333333) + (bits >> 2 & 0x3333333333333333);
+				count += (int)(((bits + (bits >> 4)) & 0xf0f0f0f0f0f0f0f) * 0x101010101010101 >> 56);
+			}
+
+			return count;
 		}
 
 		public override int GetHashCode()
