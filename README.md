@@ -191,6 +191,10 @@
 
 - [CODE THANKS FESTIVAL 2017で解けなかった問題群](https://hyoga.hatenablog.com/entry/2017/12/15/144647)
 
+### MergeSort
+
+- [転倒数 アルゴリズム](https://kira000.hatenadiary.jp/entry/2019/02/23/053917)
+
 ### MinimumSpanningTree
 
 - 蟻本 100P, 101P

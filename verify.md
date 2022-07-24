@@ -40,6 +40,12 @@
 - [ARC115 E LEQ and NEQ](https://atcoder.jp/contests/arc115/submissions/me)
 - [yosupo-judge Cartesian Tree](https://judge.yosupo.jp/problem/cartesian_tree)
 
+## Circle
+
+### CircleI
+
+- [ABC259 D Circumferences](https://atcoder.jp/contests/abc259/tasks/abc259_d)
+
 ## Compression
 
 ### Compression
@@ -246,6 +252,10 @@
 - [CODE THANKS FESTIVAL 2017 G Mixture Drug](https://atcoder.jp/contests/code-thanks-festival-2017/tasks/code_thanks_festival_2017_g)
 - [ACPC2021 Day2 I BreakUp](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/I)
 
+## MergeSort
+
+- [ABC261 F Sorting Color Balls](https://atcoder.jp/contests/abc261/tasks/abc261_f)
+
 ## MexArray
 
 - [ARC038 C 茶碗と豆](https://atcoder.jp/contests/arc038/tasks/arc038_c)
@@ -360,6 +370,9 @@
 - [AGC047 B First Second](https://atcoder.jp/contests/agc047/tasks/agc047_b)
 - [競プロ典型 90 問 47 Monochromatic Diagonal](https://atcoder.jp/contests/typical90/tasks/typical90_au)
 
+## RunLength
+
+- [ABC259 C XX to XXX](https://atcoder.jp/contests/abc259/tasks/abc259_c)
 
 ## SegmentTree
 
