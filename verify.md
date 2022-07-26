@@ -197,6 +197,10 @@
 
 - [AtCoder Library Practice Contest C Floor Sum](https://atcoder.jp/contests/practice2/tasks/practice2_c)
 
+### Sqrt
+
+- [ABC243 G Sqrt](https://atcoder.jp/contests/abc243/tasks/abc243_g)
+
 ### QuotientRange
 
 - [ABC230 E Fraction Floor Sum](https://atcoder.jp/contests/abc230/tasks/abc230_e)

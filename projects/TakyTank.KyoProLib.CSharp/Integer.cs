@@ -15,7 +15,7 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			long ok = 0;
-			long ng = 3000000000;
+			long ng = 3000000001;
 			while (ng - ok > 1) {
 				long mid = (ng + ok) / 2;
 				if (mid * mid <= value) {
