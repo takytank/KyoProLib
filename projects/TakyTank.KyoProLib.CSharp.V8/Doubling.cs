@@ -8,52 +8,41 @@ namespace TakyTank.KyoProLib.CSharp.V8
 {
 	public class Doubling
 	{
-		private readonly int n_;
-		private readonly int[,] indexes_;
-		private readonly int k_;
+		private readonly int _n;
+		private readonly int _k;
+		private readonly int[,] _map;
 
-		public Doubling(
-			int n,
-			long maxStep)
+		public Doubling(long maxStep, int[] transition)
+			: this(transition.Length, maxStep, i => transition[i])
 		{
-			n_ = n;
-			k_ = 0;
+		}
+
+		public Doubling(int n, long maxStep, Func<int, int> transition)
+		{
+			_n = n;
+			_k = 0;
 			while (maxStep > 0) {
-				++k_;
+				++_k;
 				maxStep >>= 1;
 			}
 
-			indexes_ = new int[k_, n];
-		}
-
-		public Doubling(
-			int[] transitions,
-			long maxStep)
-			: this(transitions.Length, maxStep)
-		{
-			Initialize(transitions);
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Initialize(int[] transitions)
-			=> Initialize(x => transitions[x]);
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Initialize(Func<int, int> transit)
-		{
-			for (int i = 0; i < n_; i++) {
-				indexes_[0, i] = transit(i);
+			_map = new int[_k, n];
+			for (int i = 0; i < _n; ++i) {
+				_map[0, i] = transition(i);
 			}
+
+			Build();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Build()
+		private void Build()
 		{
-			for (int i = 0; i < k_ - 1; i++) {
-				for (int j = 0; j < n_; j++) {
-					if (indexes_[i, j] < 0) {
-						indexes_[i + 1, j] = -1;
+			for (int i = 0; i < _k - 1; ++i) {
+				for (int j = 0; j < _n; ++j) {
+					if (_map[i, j] < 0) {
+						_map[i + 1, j] = -1;
 					} else {
-						indexes_[i + 1, j] = indexes_[i, indexes_[i, j]];
+						_map[i + 1, j] = _map[i, _map[i, j]];
 					}
 				}
 			}
@@ -63,9 +52,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public int Query(int s, long length)
 		{
 			int t = s;
-			for (int i = k_ - 1; i >= 0; i--) {
-				if (((1L << i) & length) != 0) {
-					t = indexes_[i, t];
+			for (int i = _k - 1; i >= 0; --i) {
+				if (((1L << i) & length) != 0 && _map[i, t] >= 0) {
+					t = _map[i, t];
 				}
 			}
 
@@ -73,12 +62,28 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long FindRightest(int s, Func<int, bool> checker)
+		{
+			int t = s;
+			long ret = 0;
+			for (int i = _k - 1; i >= 0; i--) {
+				int tempIndex = _map[i, t];
+				if (tempIndex >= 0 && checker(tempIndex)) {
+					t = tempIndex;
+					ret += 1L << i;
+				}
+			}
+
+			return ret;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long LowerBound(int s, int t)
 		{
 			int current = s;
 			long ret = 0;
-			for (int i = k_ - 1; i >= 0; i--) {
-				int temp = indexes_[i, current];
+			for (int i = _k - 1; i >= 0; --i) {
+				int temp = _map[i, current];
 				if (temp >= 0 && temp < t) {
 					current = temp;
 					ret += 1L << i;
@@ -92,57 +97,53 @@ namespace TakyTank.KyoProLib.CSharp.V8
 	public class Doubling<T>
 		where T : struct, IComparable<T>
 	{
-		private readonly int n_;
-		private readonly int[,] indexes_;
-		private readonly T[,] values_;
-		private readonly int k_;
-		private readonly T unit_;
-		private readonly Func<T, T, T> merge_;
+		private readonly int _n;
+		private readonly int[,] _indexMap;
+		private readonly T[] _initialValues;
+		private readonly T[,] _valueMap;
+		private readonly int _k;
+		private readonly Func<T, T, T> _merge;
 
 		public Doubling(
 			int n,
 			long maxStep,
-			T unit,
+			Func<int, T> initializeCost,
+			Func<int, (int index, T cost)> transelate,
 			Func<T, T, T> merge)
 		{
-			n_ = n;
-			unit_ = unit;
-			merge_ = merge;
-			k_ = 0;
+			_n = n;
+			_merge = merge;
+			_k = 0;
 			while (maxStep > 0) {
-				++k_;
+				++_k;
 				maxStep >>= 1;
 			}
 
-			indexes_ = new int[k_, n];
-			values_ = new T[k_, n];
-			MemoryMarshal.CreateSpan<T>(ref values_[0, 0], values_.Length).Fill(unit);
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Initialize(int[] transitions, T[] initialValues)
-			=> Initialize(x => transitions[x], x => initialValues[x]);
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Initialize(Func<int, int> transit, Func<int, T> initialize)
-		{
-			for (int i = 0; i < n_; i++) {
-				indexes_[0, i] = transit(i);
-				values_[0, i] = initialize(i);
+			_indexMap = new int[_k, n];
+			_valueMap = new T[_k, n];
+			_initialValues = new T[n];
+			for (int i = 0; i < n; ++i) {
+				var (index, value) = transelate(i);
+				_indexMap[0, i] = index;
+				_valueMap[0, i] = value;
+				_initialValues[i] = initializeCost(i);
 			}
+
+			Build();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Build()
+		private void Build()
 		{
-			for (int i = 0; i < k_ - 1; i++) {
-				for (int j = 0; j < n_; j++) {
-					if (indexes_[i, j] < 0) {
-						indexes_[i + 1, j] = -1;
+			for (int i = 0; i < _k - 1; i++) {
+				for (int j = 0; j < _n; j++) {
+					if (_indexMap[i, j] < 0) {
+						_indexMap[i + 1, j] = -1;
 					} else {
-						indexes_[i + 1, j] = indexes_[i, indexes_[i, j]];
-						values_[i + 1, j] = merge_(
-							values_[i, j],
-							values_[i, indexes_[i, j]]);
+						_indexMap[i + 1, j] = _indexMap[i, _indexMap[i, j]];
+						_valueMap[i + 1, j] = _merge(
+							_valueMap[i, j],
+							_valueMap[i, _indexMap[i, j]]);
 					}
 				}
 			}
@@ -152,11 +153,11 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public T Query(int s, long length)
 		{
 			int t = s;
-			var ret = unit_;
-			for (int i = k_ - 1; i >= 0; i--) {
+			var ret = _initialValues[s];
+			for (int i = _k - 1; i >= 0; i--) {
 				if (((1L << i) & length) != 0) {
-					ret = merge_(ret, values_[i, t]);
-					t = indexes_[i, t];
+					ret = _merge(ret, _valueMap[i, t]);
+					t = _indexMap[i, t];
 				}
 			}
 
@@ -168,10 +169,10 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		{
 			int t = s;
 			long ret = 0;
-			T current = unit_;
-			for (int i = k_ - 1; i >= 0; i--) {
-				int tempIndex = t = indexes_[i, t];
-				T tempValue = merge_(current, values_[i, t]);
+			T current = _initialValues[s];
+			for (int i = _k - 1; i >= 0; i--) {
+				int tempIndex = _indexMap[i, t];
+				T tempValue = _merge(current, _valueMap[i, t]);
 				if (tempIndex >= 0 && checker(tempValue)) {
 					current = tempValue;
 					t = tempIndex;
@@ -187,13 +188,13 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		{
 			int t = s;
 			long ret = 0;
-			T current = unit_;
-			for (int i = k_ - 1; i >= 0; i--) {
-				int tempIndex = t = indexes_[i, t];
-				T tempValue = merge_(current, values_[i, t]);
+			T current = _initialValues[s];
+			for (int i = _k - 1; i >= 0; i--) {
+				int tempIndex = t = _indexMap[i, t];
+				T tempValue = _merge(current, _valueMap[i, t]);
 				if (tempIndex >= 0 && tempValue.CompareTo(value) < 0) {
 					current = tempValue;
-					t = indexes_[i, t];
+					t = _indexMap[i, t];
 					ret += 1L << i;
 				}
 			}

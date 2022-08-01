@@ -84,6 +84,9 @@
 
 - [ABC175 D Moving Piece](https://atcoder.jp/contests/abc175/tasks/abc175_d)
 - [ARC060 E 高橋君とホテル](https://atcoder.jp/contests/arc060/tasks/arc060_c)
+- [ABC258 E Packing Potatoes](https://atcoder.jp/contests/abc258/tasks/abc258_e)
+- [ABC212 F Greedy Takahashi](https://atcoder.jp/contests/abc212/tasks/abc212_f)
+
 
 ## DP
 
