@@ -11,28 +11,25 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		private const long INF = long.MaxValue;
 		private readonly int _n;
 		private readonly List<(int v, int index)> _edgeInfos;
-		private readonly JagList2<EdgeInternal> _edges;
-		private JagList2<EdgeInternal> _flowedEdges;
+		private readonly List<EdgeInternal>[] _edges;
+		private List<EdgeInternal>[] _flowedEdges;
 
 		public MinCostFlow(int n)
 		{
 			_n = n;
 			_edgeInfos = new List<(int v, int index)>();
-			_edges = new JagList2<EdgeInternal>(n);
+			_edges = new List<EdgeInternal>[n];
+			for (int i = 0; i < n; i++) {
+				_edges[i] = new List<EdgeInternal>();
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void AddEdge(int from, int to, long capacity, long cost = 1)
 		{
-			_edgeInfos.Add((from, _edges.Raw[from].Count));
-			_edges.Add(from, new EdgeInternal(to, capacity, cost, _edges.Raw[to].Count));
-			_edges.Add(to, new EdgeInternal(from, 0, -1 * cost, _edges.Raw[from].Count - 1));
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Build()
-		{
-			_edges.Build();
+			_edgeInfos.Add((from, _edges[from].Count));
+			_edges[from].Add(new EdgeInternal(to, capacity, cost, _edges[to].Count));
+			_edges[to].Add(new EdgeInternal(from, 0, -1 * cost, _edges[from].Count - 1));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -94,7 +91,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 						}
 
 						var edges = _flowedEdges[v];
-						for (int j = 0; j < edges.Length; ++j) {
+						for (int j = 0; j < edges.Count; ++j) {
 							var edge = edges[j];
 							long newDistance = distances[v] + edge.Cost;
 							if (edge.Capacity > 0 && distances[edge.To] > newDistance) {
@@ -127,7 +124,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				f -= d;
 				minCost += d * distances[t];
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					ref var e = ref _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]];
+					var e = _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]];
 					e.Capacity -= d;
 					_flowedEdges[v][e.ReverseEdgeIndex].Capacity += d;
 				}
@@ -183,7 +180,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 					var v = que.Dequeue();
 					pending[v] = false;
 					var edges = _flowedEdges[v];
-					for (int j = 0; j < edges.Length; ++j) {
+					for (int j = 0; j < edges.Count; ++j) {
 						var edge = edges[j];
 						var newDistance = distances[v] + edge.Cost;
 						if (edge.Capacity <= 0 || newDistance >= distances[edge.To]) {
@@ -217,7 +214,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				f -= d;
 				minCost += d * distances[t];
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					ref var e = ref _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]];
+					var e = _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]];
 					e.Capacity -= d;
 					_flowedEdges[v][e.ReverseEdgeIndex].Capacity += d;
 				}
@@ -273,7 +270,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 							}
 
 							var edges = _flowedEdges[v];
-							for (int j = 0; j < edges.Length; ++j) {
+							for (int j = 0; j < edges.Count; ++j) {
 								var edge = edges[j];
 								long newDistance = distances[v] + edge.Cost;
 								if (edge.Capacity > 0 && distances[edge.To] > newDistance) {
@@ -303,7 +300,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 						}
 
 						var edges = _flowedEdges[v];
-						for (int j = 0; j < edges.Length; ++j) {
+						for (int j = 0; j < edges.Count; ++j) {
 							var edge = edges[j];
 							long newDistance = distances[v] + edge.Cost + potentials[v] - potentials[edge.To];
 							if (edge.Capacity > 0 && distances[edge.To] > newDistance) {
@@ -332,7 +329,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				f -= d;
 				minCost += d * potentials[t];
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					ref var e = ref _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]];
+					var e = _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]];
 					e.Capacity -= d;
 					_flowedEdges[v][e.ReverseEdgeIndex].Capacity += d;
 				}
@@ -353,18 +350,17 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void CopyEdges()
 		{
-			_flowedEdges = new JagList2<EdgeInternal>(_n);
+			_flowedEdges = new List<EdgeInternal>[_n];
 			for (int i = 0; i < _n; ++i) {
+				_flowedEdges[i] = new List<EdgeInternal>();
 				var edges = _edges[i];
 				foreach (var edge in edges) {
-					_flowedEdges.Add(i, edge);
+					_flowedEdges[i].Add(edge);
 				}
 			}
-
-			_flowedEdges.Build();
 		}
 
-		private struct EdgeInternal
+		private class EdgeInternal
 		{
 			public int To { get; set; }
 			public int ReverseEdgeIndex { get; set; }
