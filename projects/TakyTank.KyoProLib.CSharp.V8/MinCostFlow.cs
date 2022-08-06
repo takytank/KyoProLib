@@ -9,49 +9,49 @@ namespace TakyTank.KyoProLib.CSharp.V8
 	public class MinCostFlow
 	{
 		private const long INF = long.MaxValue;
-		private readonly int n_;
-		private readonly List<(int v, int index)> edgeInfos_;
-		private readonly JagList2<EdgeInternal> edges_;
-		private JagList2<EdgeInternal> flowedEdges_;
+		private readonly int _n;
+		private readonly List<(int v, int index)> _edgeInfos;
+		private readonly JagList2<EdgeInternal> _edges;
+		private JagList2<EdgeInternal> _flowedEdges;
 
 		public MinCostFlow(int n)
 		{
-			n_ = n;
-			edgeInfos_ = new List<(int v, int index)>();
-			edges_ = new JagList2<EdgeInternal>(n);
+			_n = n;
+			_edgeInfos = new List<(int v, int index)>();
+			_edges = new JagList2<EdgeInternal>(n);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void AddEdge(int from, int to, long capacity, long cost = 1)
 		{
-			edgeInfos_.Add((from, edges_.Raw[from].Count));
-			edges_.Add(from, new EdgeInternal(to, capacity, cost, edges_.Raw[to].Count));
-			edges_.Add(to, new EdgeInternal(from, 0, -1 * cost, edges_.Raw[from].Count - 1));
+			_edgeInfos.Add((from, _edges.Raw[from].Count));
+			_edges.Add(from, new EdgeInternal(to, capacity, cost, _edges.Raw[to].Count));
+			_edges.Add(to, new EdgeInternal(from, 0, -1 * cost, _edges.Raw[from].Count - 1));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Build()
 		{
-			edges_.Build();
+			_edges.Build();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private Edge GetFlowedEdge(int i)
 		{
-			var to = flowedEdges_[edgeInfos_[i].v][edgeInfos_[i].index];
-			var from = flowedEdges_[to.To][to.ReverseEdgeIndex];
+			var to = _flowedEdges[_edgeInfos[i].v][_edgeInfos[i].index];
+			var from = _flowedEdges[to.To][to.ReverseEdgeIndex];
 			return new Edge(
-				edgeInfos_[i].v, to.To, (to.Capacity + from.Capacity), from.Capacity);
+				_edgeInfos[i].v, to.To, (to.Capacity + from.Capacity), from.Capacity);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ReadOnlySpan<Edge> GetFlowedEdges()
 		{
-			if (flowedEdges_ is null) {
-				flowedEdges_ = edges_;
+			if (_flowedEdges is null) {
+				_flowedEdges = _edges;
 			}
 
-			var result = new Edge[edgeInfos_.Count];
+			var result = new Edge[_edgeInfos.Count];
 			for (int i = 0; i < result.Length; ++i) {
 				result[i] = GetFlowedEdge(i);
 			}
@@ -71,12 +71,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			if (keepsEdges) {
 				CopyEdges();
 			} else {
-				flowedEdges_ = edges_;
+				_flowedEdges = _edges;
 			}
 
-			var prevVertexes = new int[n_];
-			var prevEdgeIndexes = new int[n_];
-			var distances = new long[n_];
+			var prevVertexes = new int[_n];
+			var prevEdgeIndexes = new int[_n];
+			var distances = new long[_n];
 
 			var result = new List<(long flow, long cost)>();
 			result.Add((0, 0));
@@ -86,14 +86,14 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			while (f > 0) {
 				distances.AsSpan().Fill(INF);
 				distances[s] = 0;
-				for (int i = 0; i < n_; ++i) {
+				for (int i = 0; i < _n; ++i) {
 					bool changes = false;
-					for (int v = 0; v < n_; ++v) {
+					for (int v = 0; v < _n; ++v) {
 						if (distances[v] == INF) {
 							continue;
 						}
 
-						var edges = flowedEdges_[v];
+						var edges = _flowedEdges[v];
 						for (int j = 0; j < edges.Length; ++j) {
 							var edge = edges[j];
 							long newDistance = distances[v] + edge.Cost;
@@ -106,7 +106,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 						}
 					}
 
-					if (i == n_ - 1 && changes) {
+					if (i == _n - 1 && changes) {
 						return result;
 					}
 
@@ -121,15 +121,15 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 				long d = f;
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					d = Math.Min(d, flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
+					d = Math.Min(d, _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
 				}
 
 				f -= d;
 				minCost += d * distances[t];
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					ref var e = ref flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]];
+					ref var e = ref _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]];
 					e.Capacity -= d;
-					flowedEdges_[v][e.ReverseEdgeIndex].Capacity += d;
+					_flowedEdges[v][e.ReverseEdgeIndex].Capacity += d;
 				}
 
 				if (prevCostPerFlow == distances[t]) {
@@ -155,14 +155,14 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			if (keepsEdges) {
 				CopyEdges();
 			} else {
-				flowedEdges_ = edges_;
+				_flowedEdges = _edges;
 			}
 
-			var prevVertexes = new int[n_];
-			var prevEdgeIndexes = new int[n_];
-			var distances = new long[n_];
-			var pending = new bool[n_];
-			var times = new int[n_];
+			var prevVertexes = new int[_n];
+			var prevEdgeIndexes = new int[_n];
+			var distances = new long[_n];
+			var pending = new bool[_n];
+			var times = new int[_n];
 
 			var result = new List<(long flow, long cost)>();
 			result.Add((0, 0));
@@ -182,7 +182,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				while (que.Count > 0) {
 					var v = que.Dequeue();
 					pending[v] = false;
-					var edges = flowedEdges_[v];
+					var edges = _flowedEdges[v];
 					for (int j = 0; j < edges.Length; ++j) {
 						var edge = edges[j];
 						var newDistance = distances[v] + edge.Cost;
@@ -195,7 +195,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 						prevEdgeIndexes[edge.To] = j;
 						if (pending[edge.To] == false) {
 							++times[edge.To];
-							if (times[edge.To] >= n_) {
+							if (times[edge.To] >= _n) {
 								return result;
 							}
 
@@ -211,15 +211,15 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 				long d = f;
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					d = Math.Min(d, flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
+					d = Math.Min(d, _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
 				}
 
 				f -= d;
 				minCost += d * distances[t];
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					ref var e = ref flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]];
+					ref var e = ref _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]];
 					e.Capacity -= d;
-					flowedEdges_[v][e.ReverseEdgeIndex].Capacity += d;
+					_flowedEdges[v][e.ReverseEdgeIndex].Capacity += d;
 				}
 
 				if (prevCostPerFlow == distances[t]) {
@@ -245,13 +245,13 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			if (keepsEdges) {
 				CopyEdges();
 			} else {
-				flowedEdges_ = edges_;
+				_flowedEdges = _edges;
 			}
 
-			var potentials = new long[n_];
-			var prevVertexes = new int[n_];
-			var prevEdgeIndexes = new int[n_];
-			var distances = new long[n_];
+			var potentials = new long[_n];
+			var prevVertexes = new int[_n];
+			var prevEdgeIndexes = new int[_n];
+			var distances = new long[_n];
 
 			var result = new List<(long flow, long cost)>();
 			result.Add((0, 0));
@@ -265,14 +265,14 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				distances[s] = 0;
 
 				if (first && hasMinusCost) {
-					for (int i = 0; i < n_; ++i) {
+					for (int i = 0; i < _n; ++i) {
 						bool changes = false;
-						for (int v = 0; v < n_; ++v) {
+						for (int v = 0; v < _n; ++v) {
 							if (distances[v] == INF) {
 								continue;
 							}
 
-							var edges = flowedEdges_[v];
+							var edges = _flowedEdges[v];
 							for (int j = 0; j < edges.Length; ++j) {
 								var edge = edges[j];
 								long newDistance = distances[v] + edge.Cost;
@@ -285,7 +285,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 							}
 						}
 
-						if (i == n_ - 1 && changes) {
+						if (i == _n - 1 && changes) {
 							return result;
 						}
 
@@ -302,7 +302,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 							continue;
 						}
 
-						var edges = flowedEdges_[v];
+						var edges = _flowedEdges[v];
 						for (int j = 0; j < edges.Length; ++j) {
 							var edge = edges[j];
 							long newDistance = distances[v] + edge.Cost + potentials[v] - potentials[edge.To];
@@ -320,21 +320,21 @@ namespace TakyTank.KyoProLib.CSharp.V8
 					return result;
 				}
 
-				for (int v = 0; v < n_; ++v) {
+				for (int v = 0; v < _n; ++v) {
 					potentials[v] += distances[v];
 				}
 
 				long d = f;
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					d = Math.Min(d, flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
+					d = Math.Min(d, _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]].Capacity);
 				}
 
 				f -= d;
 				minCost += d * potentials[t];
 				for (int v = t; v != s; v = prevVertexes[v]) {
-					ref var e = ref flowedEdges_[prevVertexes[v]][prevEdgeIndexes[v]];
+					ref var e = ref _flowedEdges[prevVertexes[v]][prevEdgeIndexes[v]];
 					e.Capacity -= d;
-					flowedEdges_[v][e.ReverseEdgeIndex].Capacity += d;
+					_flowedEdges[v][e.ReverseEdgeIndex].Capacity += d;
 				}
 
 				if (prevCostPerFlow == distances[t]) {
@@ -353,15 +353,15 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void CopyEdges()
 		{
-			flowedEdges_ = new JagList2<EdgeInternal>(n_);
-			for (int i = 0; i < n_; ++i) {
-				var edges = edges_[i];
+			_flowedEdges = new JagList2<EdgeInternal>(_n);
+			for (int i = 0; i < _n; ++i) {
+				var edges = _edges[i];
 				foreach (var edge in edges) {
-					flowedEdges_.Add(i, edge);
+					_flowedEdges.Add(i, edge);
 				}
 			}
 
-			flowedEdges_.Build();
+			_flowedEdges.Build();
 		}
 
 		private struct EdgeInternal
