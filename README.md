@@ -340,6 +340,12 @@
 - [セグメント木(Segment-Tree)](https://ei1333.github.io/luzhiled/snippets/structure/segment-tree.html)
 - [Segment Tree(2D RMQ)](http://algoogle.hadrori.jp/algorithm/2d-segment-tree.html)
 
+### SegmentTreeBeats
+
+- [区間chmin/chmaxクエリ, RMQ, RSQ, RAQ, RUQ (Segment tree beats)](https://tjkendev.github.io/procon-library/cpp/range_query/segment_tree_beats_2.html)
+- [Segment Tree Beatsの実装メモ (基本まわり)](https://smijake3.hatenablog.com/entry/2019/04/28/021457)
+- [atcoder::lazy_segtree に1行書き足すだけの抽象化 Segment Tree Beats](https://rsm9.hatenablog.com/entry/2021/02/01/220408)
+
 ### ShortestPath
 
 - 蟻本 95p

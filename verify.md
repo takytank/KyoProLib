@@ -398,10 +398,14 @@
 - [ABC221 E LEQ](https://atcoder.jp/contests/abc221/tasks/abc221_e)
 - [ABC237 G Range Sort Query](https://atcoder.jp/contests/abc237/tasks/abc237_g)
 
-### SegmentTree2D
+## SegmentTree2D
 
 - [ABC106 D AtCoder Express 2](https://atcoder.jp/contests/abc106/tasks/abc106_d)
 - [トヨタシステムズプログラミングコンテスト2021 F Stamp Game](https://atcoder.jp/contests/abc228/tasks/abc228_f)
+
+## SegmentTreeBeats
+
+- [第三回日本最強プログラマー学生選手権 -決勝- B Increment and Rotate](https://atcoder.jp/contests/jsc2022-final-open/tasks/jsc2022_final_b)
 
 ## ShortestPath
 
