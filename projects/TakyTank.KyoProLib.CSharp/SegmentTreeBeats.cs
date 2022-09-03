@@ -43,30 +43,30 @@ namespace TakyTank.KyoProLib.CSharp
 				_lazyUpdate[i] = INF;
 			}
 
-			_length[0] = _n;
-			for (int i = 0; i < _n - 1; ++i) {
-				_length[2 * i + 1] = _length[2 * i + 2] = _length[i] >> 1;
+			_length[1] = _n;
+			for (int i = 1; i < _n; ++i) {
+				_length[i << 1] = _length[(i << 1) | 1] = _length[i] >> 1;
 			}
 
 			for (int i = 0; i < Count; ++i) {
-				_max[_n - 1 + i] = _min[_n - 1 + i] = _sum[_n - 1 + i] = a != null ? a[i] : 0;
-				_max2nd[_n - 1 + i] = -INF;
-				_min2nd[_n - 1 + i] = INF;
-				_maxCount[_n - 1 + i] = _minCount[_n - 1 + i] = 1;
+				_max[_n + i] = _min[_n + i] = _sum[_n + i] = a != null ? a[i] : 0;
+				_max2nd[_n + i] = -INF;
+				_min2nd[_n + i] = INF;
+				_maxCount[_n + i] = _minCount[_n + i] = 1;
 			}
 
 			for (int i = Count; i < _n; ++i) {
-				_max[_n - 1 + i] = _max2nd[_n - 1 + i] = -INF;
-				_min[_n - 1 + i] = _min2nd[_n - 1 + i] = INF;
-				_maxCount[_n - 1 + i] = _minCount[_n - 1 + i] = 0;
+				_max[_n + i] = _max2nd[_n + i] = -INF;
+				_min[_n + i] = _min2nd[_n + i] = INF;
+				_maxCount[_n + i] = _minCount[_n + i] = 0;
 			}
 
-			for (int i = _n - 2; i >= 0; i--) {
+			for (int i = _n - 1; i >= 0; i--) {
 				Update(i);
 			}
 		}
 
-		public void UpdateMin(int left, int right, long x) => UpdateMinCore(left, right, x, 0, 0, _n);
+		public void UpdateMin(int left, int right, long x) => UpdateMinCore(left, right, x, 1, 0, _n);
 		private void UpdateMinCore(int left, int right, long x, int v, int vl, int vr)
 		{
 			if (right <= vl || vr <= left || _max[v] <= x) {
@@ -79,12 +79,13 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			Push(v);
-			UpdateMinCore(left, right, x, 2 * v + 1, vl, (vl + vr) / 2);
-			UpdateMinCore(left, right, x, 2 * v + 2, (vl + vr) / 2, vr);
+			int vc = (vl + vr) >> 1;
+			UpdateMinCore(left, right, x, v << 1, vl, vc);
+			UpdateMinCore(left, right, x, (v << 1) | 1, vc, vr);
 			Update(v);
 		}
 
-		public void UpdateMax(int left, int right, long x) => UdpateMaxCore(left, right, x, 0, 0, _n);
+		public void UpdateMax(int left, int right, long x) => UdpateMaxCore(left, right, x, 1, 0, _n);
 		private void UdpateMaxCore(int left, int right, long x, int v, int vl, int vr)
 		{
 			if (right <= vl || vr <= left || x <= _min[v]) {
@@ -96,12 +97,13 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			Push(v);
-			UdpateMaxCore(left, right, x, 2 * v + 1, vl, (vl + vr) / 2);
-			UdpateMaxCore(left, right, x, 2 * v + 2, (vl + vr) / 2, vr);
+			int vc = (vl + vr) >> 1;
+			UdpateMaxCore(left, right, x, v << 1, vl, vc);
+			UdpateMaxCore(left, right, x, (v << 1) | 1, vc, vr);
 			Update(v);
 		}
 
-		public void AddValue(int left, int right, long x) => AddValueCore(left, right, x, 0, 0, _n);
+		public void AddValue(int left, int right, long x) => AddValueCore(left, right, x, 1, 0, _n);
 		private void AddValueCore(int left, int right, long x, int v, int vl, int vr)
 		{
 			if (right <= vl || vr <= left) {
@@ -114,12 +116,13 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			Push(v);
-			AddValueCore(left, right, x, 2 * v + 1, vl, (vl + vr) / 2);
-			AddValueCore(left, right, x, 2 * v + 2, (vl + vr) / 2, vr);
+			int vc = (vl + vr) >> 1;
+			AddValueCore(left, right, x, v << 1, vl, vc);
+			AddValueCore(left, right, x, (v << 1) | 1, vc, vr);
 			Update(v);
 		}
 
-		public void UpdateValue(int left, int right, long x) => UpdateValueCore(left, right, x, 0, 0, _n);
+		public void UpdateValue(int left, int right, long x) => UpdateValueCore(left, right, x, 1, 0, _n);
 		private void UpdateValueCore(int left, int right, long x, int v, int vl, int vr)
 		{
 			if (right <= vl || vr <= left) {
@@ -132,12 +135,13 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			Push(v);
-			UpdateValueCore(left, right, x, 2 * v + 1, vl, (vl + vr) / 2);
-			UpdateValueCore(left, right, x, 2 * v + 2, (vl + vr) / 2, vr);
+			int vc = (vl + vr) >> 1;
+			UpdateValueCore(left, right, x, v << 1, vl, vc);
+			UpdateValueCore(left, right, x, (v << 1) | 1, vc, vr);
 			Update(v);
 		}
 
-		public long QureyMax(int left, int right) => QueryMaxCore(left, right, 0, 0, _n);
+		public long QureyMax(int left, int right) => QueryMaxCore(left, right, 1, 0, _n);
 		private long QueryMaxCore(int left, int right, int v, int vl, int vr)
 		{
 			if (right <= vl || vr <= left) {
@@ -149,13 +153,13 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			Push(v);
-
-			long lv = QueryMaxCore(left, right, 2 * v + 1, vl, (vl + vr) / 2);
-			long rv = QueryMaxCore(left, right, 2 * v + 2, (vl + vr) / 2, vr);
+			int vc = (vl + vr) >> 1;
+			long lv = QueryMaxCore(left, right, v << 1, vl, vc);
+			long rv = QueryMaxCore(left, right, (v << 1) | 1, vc, vr);
 			return Math.Max(lv, rv);
 		}
 
-		public long QueryMin(int left, int right) => QueryMinCore(left, right, 0, 0, _n);
+		public long QueryMin(int left, int right) => QueryMinCore(left, right, 1, 0, _n);
 		private long QueryMinCore(int left, int right, int v, int vl, int vr)
 		{
 			if (right <= vl || vr <= left) {
@@ -167,13 +171,13 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			Push(v);
-
-			long lv = QueryMinCore(left, right, 2 * v + 1, vl, (vl + vr) / 2);
-			long rv = QueryMinCore(left, right, 2 * v + 2, (vl + vr) / 2, vr);
+			int vc = (vl + vr) >> 1;
+			long lv = QueryMinCore(left, right, v << 1, vl, vc);
+			long rv = QueryMinCore(left, right, (v << 1) | 1, vc, vr);
 			return Math.Min(lv, rv);
 		}
 
-		public long QuerySum(int left, int right) => QuerySumCore(left, right, 0, 0, _n);
+		public long QuerySum(int left, int right) => QuerySumCore(left, right, 1, 0, _n);
 		private long QuerySumCore(int left, int right, int v, int vl, int vr)
 		{
 			if (right <= vl || vr <= left) {
@@ -185,9 +189,9 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			Push(v);
-
-			long lv = QuerySumCore(left, right, 2 * v + 1, vl, (vl + vr) / 2);
-			long rv = QuerySumCore(left, right, 2 * v + 2, (vl + vr) / 2, vr);
+			int vc = (vl + vr) >> 1;
+			long lv = QuerySumCore(left, right, v << 1, vl, vc);
+			long rv = QuerySumCore(left, right, (v << 1) | 1, vc, vr);
 			return lv + rv;
 		}
 
@@ -231,64 +235,70 @@ namespace TakyTank.KyoProLib.CSharp
 				return;
 			}
 
+			int lc = v << 1;
+			int rc = (v << 1) | 1;
+
 			if (_lazyUpdate[v] != INF) {
-				UpdateAll(2 * v + 1, _lazyUpdate[v]);
-				UpdateAll(2 * v + 2, _lazyUpdate[v]);
+				UpdateAll(lc, _lazyUpdate[v]);
+				UpdateAll(rc, _lazyUpdate[v]);
 				_lazyUpdate[v] = INF;
 				return;
 			}
 
 			if (_lazyAdd[v] != 0) {
-				AddAll(2 * v + 1, _lazyAdd[v]);
-				AddAll(2 * v + 2, _lazyAdd[v]);
+				AddAll(lc, _lazyAdd[v]);
+				AddAll(rc, _lazyAdd[v]);
 				_lazyAdd[v] = 0;
 			}
 
-			if (_max[v] < _max[2 * v + 1]) {
-				UpdateNodeMax(2 * v + 1, _max[v]);
+			if (_max[v] < _max[lc]) {
+				UpdateNodeMax(lc, _max[v]);
 			}
-			if (_min[2 * v + 1] < _min[v]) {
-				UpdateNodeMin(2 * v + 1, _min[v]);
+			if (_min[lc] < _min[v]) {
+				UpdateNodeMin(lc, _min[v]);
 			}
 
-			if (_max[v] < _max[2 * v + 2]) {
-				UpdateNodeMax(2 * v + 2, _max[v]);
+			if (_max[v] < _max[rc]) {
+				UpdateNodeMax(rc, _max[v]);
 			}
-			if (_min[2 * v + 2] < _min[v]) {
-				UpdateNodeMin(2 * v + 2, _min[v]);
+			if (_min[rc] < _min[v]) {
+				UpdateNodeMin(rc, _min[v]);
 			}
 		}
 
 		private void Update(int v)
 		{
-			_sum[v] = _sum[2 * v + 1] + _sum[2 * v + 2];
+			int lc = v << 1;
+			int rc = (v << 1) | 1;
 
-			if (_max[2 * v + 1] < _max[2 * v + 2]) {
-				_max[v] = _max[2 * v + 2];
-				_maxCount[v] = _maxCount[2 * v + 2];
-				_max2nd[v] = Math.Max(_max[2 * v + 1], _max2nd[2 * v + 2]);
-			} else if (_max[2 * v + 1] > _max[2 * v + 2]) {
-				_max[v] = _max[2 * v + 1];
-				_maxCount[v] = _maxCount[2 * v + 1];
-				_max2nd[v] = Math.Max(_max2nd[2 * v + 1], _max[2 * v + 2]);
+			_sum[v] = _sum[lc] + _sum[rc];
+
+			if (_max[lc] < _max[rc]) {
+				_max[v] = _max[rc];
+				_maxCount[v] = _maxCount[rc];
+				_max2nd[v] = Math.Max(_max[lc], _max2nd[rc]);
+			} else if (_max[lc] > _max[rc]) {
+				_max[v] = _max[lc];
+				_maxCount[v] = _maxCount[lc];
+				_max2nd[v] = Math.Max(_max2nd[lc], _max[rc]);
 			} else {
-				_max[v] = _max[2 * v + 1];
-				_maxCount[v] = _maxCount[2 * v + 1] + _maxCount[2 * v + 2];
-				_max2nd[v] = Math.Max(_max2nd[2 * v + 1], _max2nd[2 * v + 2]);
+				_max[v] = _max[lc];
+				_maxCount[v] = _maxCount[lc] + _maxCount[rc];
+				_max2nd[v] = Math.Max(_max2nd[lc], _max2nd[rc]);
 			}
 
-			if (_min[2 * v + 1] < _min[2 * v + 2]) {
-				_min[v] = _min[2 * v + 1];
-				_minCount[v] = _minCount[2 * v + 1];
-				_min2nd[v] = Math.Min(_min2nd[2 * v + 1], _min[2 * v + 2]);
-			} else if (_min[2 * v + 1] > _min[2 * v + 2]) {
-				_min[v] = _min[2 * v + 2];
-				_minCount[v] = _minCount[2 * v + 2];
-				_min2nd[v] = Math.Min(_min[2 * v + 1], _min2nd[2 * v + 2]);
+			if (_min[lc] < _min[rc]) {
+				_min[v] = _min[lc];
+				_minCount[v] = _minCount[lc];
+				_min2nd[v] = Math.Min(_min2nd[lc], _min[rc]);
+			} else if (_min[lc] > _min[rc]) {
+				_min[v] = _min[rc];
+				_minCount[v] = _minCount[rc];
+				_min2nd[v] = Math.Min(_min[lc], _min2nd[rc]);
 			} else {
-				_min[v] = _min[2 * v + 1];
-				_minCount[v] = _minCount[2 * v + 1] + _minCount[2 * v + 2];
-				_min2nd[v] = Math.Min(_min2nd[2 * v + 1], _min2nd[2 * v + 2]);
+				_min[v] = _min[lc];
+				_minCount[v] = _minCount[lc] + _minCount[rc];
+				_min2nd[v] = Math.Min(_min2nd[lc], _min2nd[rc]);
 			}
 		}
 
