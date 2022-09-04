@@ -50,7 +50,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdgeI(int u, int v)
+		public void AddEdge2W(int u, int v)
 		{
 			edges_[u].Add(v);
 			edges_[v].Add(u);
@@ -141,6 +141,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 			}
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Depth(int v) => depth_[v];
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Lca(int u, int v)
