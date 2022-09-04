@@ -23,7 +23,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public LevelAncestor(int n)
 		{
 			_edges = new List<int>[n];
-			for (int i = 0; i < n; i++) {
+			for (int i = 0; i < n; ++i) {
 				_edges[i] = new List<int>();
 			}
 
@@ -39,12 +39,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 			int h = 1;
 			while ((1 << h) <= n) {
-				h++;
+				++h;
 			}
 
 			_parents = new int[h, n];
 			MemoryMarshal.CreateSpan<int>(ref _parents[0, 0], _parents.Length).Fill(-1);
-			for (int i = 2; i <= n; i++) {
+			for (int i = 2; i <= n; ++i) {
 				_hs[i] = _hs[i >> 1] + 1;
 			}
 		}
@@ -109,8 +109,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		{
 			int n = _edges.Length;
 			Dfs(root, -1, 0, true);
-			for (int k = 0; k + 1 < _parents.GetLength(0); k++) {
-				for (int v = 0; v < n; v++) {
+			for (int k = 0; k + 1 < _parents.GetLength(0); ++k) {
+				for (int v = 0; v < n; ++v) {
 					if (_parents[k, v] < 0) {
 						_parents[k + 1, v] = -1;
 					} else {
@@ -119,22 +119,23 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 			}
 
-			for (int i = 0; i < _lad.Count; i++) {
-				int v = _lad[i][0], p = _parents[0, v];
+			for (int i = 0; i < _lad.Count; ++i) {
+				int v = _lad[i][0];
+				int p = _parents[0, v];
 				if (~p != 0) {
 					int k = _path[p];
 					int l = Math.Min(_order[p] + 1, _lad[i].Count);
 					_lad[i].AddRange(Enumerable.Repeat(0, l));
-					for (int j = 0, m = _lad[i].Count; j + l < m; j++) {
+					for (int j = 0, m = _lad[i].Count; j + l < m; ++j) {
 						_lad[i][m - (j + 1)] = _lad[i][m - (j + l + 1)];
 					}
 
-					for (int j = 0; j < l; j++) {
+					for (int j = 0; j < l; ++j) {
 						_lad[i][j] = _lad[k][_order[p] - l + j + 1];
 					}
 				}
 
-				for (int j = 0; j < _lad[i].Count; j++) {
+				for (int j = 0; j < _lad[i].Count; ++j) {
 					if (_path[_lad[i][j]] == i) {
 						_order[_lad[i][j]] = j;
 					}
@@ -154,7 +155,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				(u, v) = (v, u);
 			}
 
-			for (int k = 0; k < h; k++) {
+			for (int k = 0; k < h; ++k) {
 				if (((_depth[v] - _depth[u]) >> k & 1) != 0) {
 					v = _parents[k, v];
 				}
@@ -164,7 +165,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				return u;
 			}
 
-			for (int k = h - 1; k >= 0; k--) {
+			for (int k = h - 1; k >= 0; --k) {
 				if (_parents[k, u] == _parents[k, v]) {
 					continue;
 				}
@@ -177,9 +178,11 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Distance(int u, int v)
+		public int Distance(int u, int v) => Distance(u, v, Lca(u, v));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private int Distance(int u, int v, int lca)
 		{
-			return _depth[u] + _depth[v] - _depth[Lca(u, v)] * 2;
+			return _depth[u] + _depth[v] - _depth[lca] * 2;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -204,6 +207,24 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 			int l = Up(v, _depth[v] - _depth[u] - 1);
 			return _parents[0, l] == u ? l : _parents[0, u];
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int Next(int u, int v, int d)
+		{
+			int lca = Lca(u, v);
+			if (Distance(u, v, lca) < d) {
+				return -1;
+			}
+
+			int du = _depth[u] - _depth[lca];
+			if (du >= d) {
+				return Up(u, d);
+			}
+
+			d -= du;
+			int dv = _depth[v] - _depth[lca];
+			return Up(v, dv - d);
 		}
 	}
 }
