@@ -327,6 +327,11 @@
 
 - [ABC170 E Smart Infants](https://atcoder.jp/contests/abc170/tasks/abc170_e)
 
+### MultiPivotTree
+
+- [ARC147 A Max Mod Min](https://atcoder.jp/contests/arc147/tasks/arc147_a)
+- [ABC134 E Sequence Decomposing](https://atcoder.jp/contests/abc134/tasks/abc134_e)
+
 ## Point
 
 - [Aizu Competitive Programming Camp 2021 Day 2 C Typhoon](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/C)
