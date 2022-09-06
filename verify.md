@@ -332,6 +332,11 @@
 - [ARC147 A Max Mod Min](https://atcoder.jp/contests/arc147/tasks/arc147_a)
 - [ABC134 E Sequence Decomposing](https://atcoder.jp/contests/abc134/tasks/abc134_e)
 
+### MultiIndexPivotTree
+
+- [ABC239 E Subtree K-th Max](https://atcoder.jp/contests/abc239/tasks/abc239_e)
+- [ARC033 C データ構造](https://atcoder.jp/contests/arc033/tasks/arc033_3)
+
 ## Point
 
 - [Aizu Competitive Programming Camp 2021 Day 2 C Typhoon](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/C)
