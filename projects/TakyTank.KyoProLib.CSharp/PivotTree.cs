@@ -270,15 +270,23 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 	}
 
-	public class IndexPivotTree
+	public class IndexPivotTree : IReadOnlyCollection<long>
 	{
 		private const int OFFSET = 1;
 		private readonly int _height;
 		private readonly Node _root;
+		private readonly Stack<Node> _pool = new Stack<Node>();
 		private int _count = 0;
 
-		public IndexPivotTree(int height)
+		public IndexPivotTree(long max)
 		{
+			max += OFFSET;
+			int height = 0;
+			while (max > 0) {
+				++height;
+				max >>= 1;
+			}
+
 			_height = height;
 			_root = new Node(1L << height, 1L << height);
 		}
@@ -289,6 +297,9 @@ namespace TakyTank.KyoProLib.CSharp
 		public (int index, long value) Min => Next(-1);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool Contains(long v) => Next(v - 1).value == v;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(long v, bool exclusive = false)
 		{
 			v += OFFSET;
@@ -296,7 +307,7 @@ namespace TakyTank.KyoProLib.CSharp
 			while (true) {
 				if (v == node.Value) {
 					if (exclusive) {
-						Remove(v - 1);
+						Remove(v - OFFSET);
 					}
 
 					return;
@@ -310,9 +321,8 @@ namespace TakyTank.KyoProLib.CSharp
 							v = min;
 						} else {
 							long p = node.Pivot;
-							node.Left = new Node(min, p - (p & -p) / 2) {
-								Parent = node
-							};
+							node.Left = NewNode(min, p - (p & -p) / 2);
+							node.Left.Parent = node;
 							UpdateSize(node);
 							break;
 						}
@@ -323,9 +333,8 @@ namespace TakyTank.KyoProLib.CSharp
 							v = max;
 						} else {
 							long p = node.Pivot;
-							node.Right = new Node(max, p + (p & -p) / 2) {
-								Parent = node
-							};
+							node.Right = NewNode(max, p + (p & -p) / 2);
+							node.Right.Parent = node;
 							UpdateSize(node);
 							break;
 						}
@@ -394,14 +403,13 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 
 				UpdateSize(prev);
+				_pool.Push(node);
 				--_count;
 			} else if (node.Right != null) {
-				var leftest = LeftMost(node.Right);
-				node.Value = leftest.Value;
+				node.Value = LeftMost(node.Right).Value;
 				RemoveCore(node.Value - OFFSET, node.Right, node);
 			} else {
-				var rightest = RightMost(node.Left);
-				node.Value = rightest.Value;
+				node.Value = RightMost(node.Left).Value;
 				RemoveCore(node.Value - OFFSET, node.Left, node);
 			}
 		}
@@ -534,6 +542,46 @@ namespace TakyTank.KyoProLib.CSharp
 			while (node is null == false) {
 				node.Size = 1 + CountOf(node.Left) + CountOf(node.Right);
 				node = node.Parent;
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private Node NewNode(long value, long pivot)
+		{
+			if (_pool.Count > 0) {
+				var node = _pool.Pop();
+				node.Value = value;
+				node.Pivot = pivot;
+				node.Left = null;
+				node.Right = null;
+				return node;
+			} else {
+				return new Node(value, pivot);
+			}
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+		public IEnumerator<long> GetEnumerator()
+		{
+			var stack = new Stack<Node>(_height * 2);
+			var node = _root;
+			Node next;
+			while (node != null) {
+				next = node.Left;
+				stack.Push(node);
+				node = next;
+			}
+
+			while (stack.Count > 0) {
+				var cur = stack.Pop();
+				yield return cur.Value - OFFSET;
+
+				node = cur.Right;
+				while (node != null) {
+					next = node.Left;
+					stack.Push(node);
+					node = next;
+				}
 			}
 		}
 
