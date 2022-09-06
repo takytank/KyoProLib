@@ -13,6 +13,11 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly Stack<Node> _pool = new Stack<Node>();
 		private int _count = 0;
 
+		public int Count => _count;
+		public long Inf => (1L << _height) - OFFSET;
+		public long Max => Prev(Inf);
+		public long Min => Next(-1);
+
 		public MultiPivotTree(long max)
 		{
 			max += OFFSET;
@@ -25,11 +30,6 @@ namespace TakyTank.KyoProLib.CSharp
 			_height = height;
 			_root = new Node(1L << height, 1L << height, 1);
 		}
-
-		public int Count => _count;
-		public long Inf => (1L << _height) - OFFSET;
-		public long Max => Prev(Inf);
-		public long Min => Next(-1);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool Contains(long v) => Next(v - OFFSET) == v;
@@ -317,6 +317,13 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly Stack<Node> _pool = new Stack<Node>();
 		private int _count = 0;
 
+		public int Count => _count;
+		public long Inf => _inf;
+		public (int index, long value) Max => Prev(Inf);
+		public (int index, long value) Min => Next(-1);
+
+		public long this[int index] => FindNodeByIndex(index).Value - OFFSET;
+
 		public MultiIndexPivotTree(long max)
 		{
 			max += OFFSET;
@@ -330,13 +337,6 @@ namespace TakyTank.KyoProLib.CSharp
 			_inf = (1L << _height) - OFFSET;
 			_root = new Node(1L << height, 1L << height, 1);
 		}
-
-		public int Count => _count;
-		public long Inf => _inf;
-		public (int index, long value) Max => Prev(Inf);
-		public (int index, long value) Min => Next(-1);
-
-		public long this[int index] => FindNodeByIndex(index).Value - OFFSET;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool Contains(long v) => Next(v - OFFSET).value == v;

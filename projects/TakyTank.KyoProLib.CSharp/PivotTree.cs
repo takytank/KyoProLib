@@ -13,6 +13,11 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly Stack<Node> _pool = new Stack<Node>();
 		private int _count = 0;
 
+		public int Count => _count;
+		public long Inf => (1L << _height) - OFFSET;
+		public long Max => Prev(Inf);
+		public long Min => Next(-1);
+
 		public PivotTree(long max)
 		{
 			max += OFFSET;
@@ -25,11 +30,6 @@ namespace TakyTank.KyoProLib.CSharp
 			_height = height;
 			_root = new Node(1L << height, 1L << height);
 		}
-
-		public int Count => _count;
-		public long Inf => (1L << _height) - OFFSET;
-		public long Max => Prev(Inf);
-		public long Min => Next(-1);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool Contains(long v) => Next(v - 1) == v;
@@ -278,6 +278,11 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly Stack<Node> _pool = new Stack<Node>();
 		private int _count = 0;
 
+		public int Count => _count;
+		public long Inf => (1L << _height) - OFFSET;
+		public (int index, long value) Max => Prev(Inf);
+		public (int index, long value) Min => Next(-1);
+
 		public IndexPivotTree(long max)
 		{
 			max += OFFSET;
@@ -290,11 +295,6 @@ namespace TakyTank.KyoProLib.CSharp
 			_height = height;
 			_root = new Node(1L << height, 1L << height);
 		}
-
-		public int Count => _count;
-		public long Inf => (1L << _height) - OFFSET;
-		public (int index, long value) Max => Prev(Inf);
-		public (int index, long value) Min => Next(-1);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool Contains(long v) => Next(v - 1).value == v;
@@ -608,16 +608,16 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly Node _root;
 		private int _count = 0;
 
+		public int Count => _count;
+		public long Inf => (1L << _height) - OFFSET;
+		public (int index, (long l, long r, T value) interval) Max => Prev(Inf);
+		public (int index, (long l, long r, T value) interval) Min => Next(-1);
+
 		public IndexIntervalPivotTree(int height)
 		{
 			_height = height;
 			_root = new Node(1L << height, 1L << height, default(T), 1L << height);
 		}
-
-		public int Count => _count;
-		public long Inf => (1L << _height) - OFFSET;
-		public (int index, (long l, long r, T value) interval) Max => Prev(Inf);
-		public (int index, (long l, long r, T value) interval) Min => Next(-1);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(long l, long r, T value)
