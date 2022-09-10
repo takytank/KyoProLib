@@ -283,6 +283,8 @@ namespace TakyTank.KyoProLib.CSharp
 		public (int index, long value) Max => Prev(Inf);
 		public (int index, long value) Min => Next(-1);
 
+		public long this[int index] => FindNodeByIndex(index).Value - OFFSET;
+
 		public IndexPivotTree(long max)
 		{
 			max += OFFSET;

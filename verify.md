@@ -326,6 +326,7 @@
 ### IndexPivotTree
 
 - [ABC170 E Smart Infants](https://atcoder.jp/contests/abc170/tasks/abc170_e)
+- [PAST10 M ランキング](https://atcoder.jp/contests/past202203-open/tasks/past202203_m)
 
 ### MultiPivotTree
 
