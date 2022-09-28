@@ -34,7 +34,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public ModInt CountSppanningTree() => KirchhoffTheorem();
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ModInt KirchhoffTheorem()
-			=> _n > 1 ? Determinant(_n - 1) : 0;
+			=> _n > 1 ? Determinant(_n - 1) : 1;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private ModInt Determinant(int n)
