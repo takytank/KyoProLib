@@ -460,6 +460,8 @@
 ## SuffixArray
 
 - [MojaCoder Shift Max](https://mojacoder.app/users/bayashiko/problems/shift_max)
+- [ABC272 F Two Strings](https://atcoder.jp/contests/abc272/tasks/abc272_f)
+- [AtCoder Library Practice Contest I Number of Substrings](https://atcoder.jp/contests/practice2/tasks/practice2_i)
 
 ## TernarySearch
 
