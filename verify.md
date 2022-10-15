@@ -46,6 +46,12 @@
 
 - [ABC259 D Circumferences](https://atcoder.jp/contests/abc259/tasks/abc259_d)
 
+## CollectionHelper
+
+### BoyerMoore
+
+- [ABC272 G Yet Another mod M](https://atcoder.jp/contests/abc272/tasks/abc272_g)
+
 ## Compression
 
 ### Compression
