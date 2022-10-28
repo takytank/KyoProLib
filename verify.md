@@ -166,6 +166,10 @@
 
 - [ABC133 F Colorful Tree](https://atcoder.jp/contests/abc133/tasks/abc133_f)
 
+### Cycle Detection
+
+- [yosupo-judge Cycle Detection](https://judge.yosupo.jp/problem/cycle_detection)
+
 ## Grid
 
 - [PAST05 K 的あて](https://atcoder.jp/contests/past202012-open/tasks/past202012_k)

@@ -7,62 +7,115 @@ namespace TakyTank.KyoProLib.CSharp
 {
 	public class Graph
 	{
-		private readonly int n_;
-		private readonly List<(long d, int v)>[] tempEdges_;
-		private readonly (long d, int v)[][] edges_;
+		private readonly int _n;
+		private readonly List<(long d, int v, int i)>[] _tempEdges;
+		private readonly (long d, int v, int i)[][] _edges;
 
-		private int k_;
-		private int[,] parents_;
-		private int[] depth_;
+		private int _k;
+		private int[,] _parents;
+		private int[] _depth;
+		private int _edgeCount;
 
-		public (long d, int v)[][] Edges => edges_;
+		public (long d, int v, int i)[][] Edges => _edges;
 
 		public Graph(int n)
 		{
-			n_ = n;
-			tempEdges_ = new List<(long d, int v)>[n];
+			_n = n;
+			_tempEdges = new List<(long d, int v, int i)>[n];
 			for (int i = 0; i < n; i++) {
-				tempEdges_[i] = new List<(long d, int v)>();
+				_tempEdges[i] = new List<(long d, int v, int i)>();
 			}
 
-			edges_ = new (long d, int v)[n][];
+			_edges = new (long d, int v, int i)[n][];
+			_edgeCount = 0;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdgeD(int u, int v, long d) => tempEdges_[u].Add((d, v));
+		public void AddEdge(int u, int v, long d) => _tempEdges[u].Add((d, v, _edgeCount++));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdgeI(int u, int v, long d)
+		public void AddEdge2W(int u, int v, long d)
 		{
-			tempEdges_[u].Add((d, v));
-			tempEdges_[v].Add((d, u));
+			_tempEdges[u].Add((d, v, _edgeCount));
+			_tempEdges[v].Add((d, u, _edgeCount));
+			++_edgeCount;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Build()
 		{
-			for (int i = 0; i < edges_.Length; i++) {
-				edges_[i] = tempEdges_[i].ToArray();
+			for (int i = 0; i < _edges.Length; i++) {
+				_edges[i] = _tempEdges[i].ToArray();
 			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int[] vertexes, int[] edges) DetectCycle()
+		{
+			var used = new int[_n];
+			var prev = new (int v, int e)[_n];
+			var cycleV = new List<int>();
+			var cycleE = new List<int>();
+			for (int i = 0; i < _n; i++) {
+				if (used[i] != 0) {
+					continue;
+				}
+
+				bool ok = Dfs(i);
+				if (ok) {
+					break;
+				}
+			}
+
+			bool Dfs(int v)
+			{
+				used[v] = 1;
+				foreach (var edge in _edges[v]) {
+					if (used[edge.v] == 0) {
+						prev[edge.v] = (v, edge.i);
+						if (Dfs(edge.v)) {
+							return true;
+						}
+					} else if (used[edge.v] == 1) {
+						int cur = v;
+						cycleE.Add(edge.i);
+						while (cur != edge.v) {
+							cycleE.Add(prev[cur].e);
+							cycleV.Add(prev[cur].v);
+							cur = prev[cur].v;
+						}
+
+						cycleV.Add(edge.v);
+						cycleE.Reverse();
+						cycleV.Reverse();
+						return true;
+					}
+				}
+
+				used[v] = 2;
+				return false;
+			}
+
+			return (cycleV.ToArray(), cycleE.ToArray());
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void InitializeLca(int root)
 		{
-			int m = n_ - 1;
-			k_ = 0;
+			int m = _n - 1;
+			_k = 0;
 			while (m > 0) {
-				++k_;
+				++_k;
 				m >>= 1;
 			}
 
-			parents_ = new int[k_, n_];
-			depth_ = new int[n_];
+			_parents = new int[_k, _n];
+			_depth = new int[_n];
 
 			void Dfs(int v, int p, int d)
 			{
-				parents_[0, v] = p;
-				depth_[v] = d;
-				foreach (var next in edges_[v]) {
+				_parents[0, v] = p;
+				_depth[v] = d;
+				foreach (var next in _edges[v]) {
 					if (next.v != p) {
 						Dfs(next.v, v, d + 1);
 					}
@@ -71,12 +124,12 @@ namespace TakyTank.KyoProLib.CSharp
 
 			Dfs(root, -1, 0);
 
-			for (int i = 0; i < k_ - 1; i++) {
-				for (int j = 0; j < n_; j++) {
-					if (parents_[i, j] < 0) {
-						parents_[i + 1, j] = -1;
+			for (int i = 0; i < _k - 1; i++) {
+				for (int j = 0; j < _n; j++) {
+					if (_parents[i, j] < 0) {
+						_parents[i + 1, j] = -1;
 					} else {
-						parents_[i + 1, j] = parents_[i, parents_[i, j]];
+						_parents[i + 1, j] = _parents[i, _parents[i, j]];
 					}
 				}
 			}
@@ -85,13 +138,13 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Lca(int u, int v)
 		{
-			if (depth_[u] > depth_[v]) {
+			if (_depth[u] > _depth[v]) {
 				(u, v) = (v, u);
 			}
 
-			for (int i = 0; i < k_; i++) {
-				if (((depth_[v] - depth_[u]) & (1 << i)) != 0) {
-					v = parents_[i, v];
+			for (int i = 0; i < _k; i++) {
+				if (((_depth[v] - _depth[u]) & (1 << i)) != 0) {
+					v = _parents[i, v];
 				}
 			}
 
@@ -99,77 +152,129 @@ namespace TakyTank.KyoProLib.CSharp
 				return u;
 			}
 
-			for (int i = k_ - 1; i >= 0; i--) {
-				if (parents_[i, u] == parents_[i, v]) {
+			for (int i = _k - 1; i >= 0; i--) {
+				if (_parents[i, u] == _parents[i, v]) {
 					continue;
 				}
 
-				u = parents_[i, u];
-				v = parents_[i, v];
+				u = _parents[i, u];
+				v = _parents[i, v];
 			}
 
-			return parents_[0, u];
+			return _parents[0, u];
 		}
 	}
 
 	public class Graph<T>
 	{
-		private readonly int n_;
-		private readonly List<(int v, T item)>[] tempEdges_;
-		private readonly (int v, T item)[][] edges_;
+		private readonly int _n;
+		private readonly List<(int v, T item, int i)>[] _tempEdges;
+		private readonly (int v, T item, int i)[][] _edges;
 
-		private int k_;
-		private int[,] parents_;
-		private int[] depth_;
+		private int _k;
+		private int[,] _parents;
+		private int[] _depth;
+		private int _edgeCount;
 
-		public (int v, T item)[][] Edges => edges_;
+		public (int v, T item, int i)[][] Edges => _edges;
 
 		public Graph(int n)
 		{
-			n_ = n;
-			tempEdges_ = new List<(int v, T item)>[n];
+			_n = n;
+			_tempEdges = new List<(int v, T item, int i)>[n];
 			for (int i = 0; i < n; i++) {
-				tempEdges_[i] = new List<(int v, T item)>();
+				_tempEdges[i] = new List<(int v, T item, int i)>();
 			}
 
-			edges_ = new (int v, T item)[n_][];
+			_edges = new (int v, T item, int i)[_n][];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdgeD(int u, int v, T item) => tempEdges_[u].Add((v, item));
+		public void AddEdge(int u, int v, T item) => _tempEdges[u].Add((v, item, _edgeCount++));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdgeI(int u, int v, T item)
+		public void AddEdge2W(int u, int v, T item)
 		{
-			tempEdges_[u].Add((v, item));
-			tempEdges_[v].Add((u, item));
+			_tempEdges[u].Add((v, item, _edgeCount));
+			_tempEdges[v].Add((u, item, _edgeCount));
+			++_edgeCount;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Build()
 		{
-			for (int i = 0; i < edges_.Length; i++) {
-				edges_[i] = tempEdges_[i].ToArray();
+			for (int i = 0; i < _edges.Length; i++) {
+				_edges[i] = _tempEdges[i].ToArray();
 			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public (int[] vertexes, int[] edges) DetectCycle()
+		{
+			var used = new int[_n];
+			var prev = new (int v, int e)[_n];
+			var cycleV = new List<int>();
+			var cycleE = new List<int>();
+			for (int i = 0; i < _n; i++) {
+				if (used[i] != 0) {
+					continue;
+				}
+
+				bool ok = Dfs(i);
+				if (ok) {
+					break;
+				}
+			}
+
+			bool Dfs(int v)
+			{
+				used[v] = 1;
+				foreach (var edge in _edges[v]) {
+					if (used[edge.v] == 0) {
+						prev[edge.v] = (v, edge.i);
+						if (Dfs(edge.v)) {
+							return true;
+						}
+					} else if (used[edge.v] == 1) {
+						int cur = v;
+						cycleE.Add(edge.i);
+						while (cur != edge.v) {
+							cycleE.Add(prev[cur].e);
+							cycleV.Add(prev[cur].v);
+							cur = prev[cur].v;
+						}
+
+						cycleV.Add(edge.v);
+						cycleE.Reverse();
+						cycleV.Reverse();
+						return true;
+					}
+				}
+
+				used[v] = 2;
+				return false;
+			}
+
+			return (cycleV.ToArray(), cycleE.ToArray());
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void InitializeLca(int root)
 		{
-			int m = n_ - 1;
-			k_ = 0;
+			int m = _n - 1;
+			_k = 0;
 			while (m > 0) {
-				++k_;
+				++_k;
 				m >>= 1;
 			}
 
-			parents_ = new int[k_, n_];
-			depth_ = new int[n_];
+			_parents = new int[_k, _n];
+			_depth = new int[_n];
 
 			void Dfs(int v, int p, int d)
 			{
-				parents_[0, v] = p;
-				depth_[v] = d;
-				foreach (var next in edges_[v]) {
+				_parents[0, v] = p;
+				_depth[v] = d;
+				foreach (var next in _edges[v]) {
 					if (next.v != p) {
 						Dfs(next.v, v, d + 1);
 					}
@@ -178,12 +283,12 @@ namespace TakyTank.KyoProLib.CSharp
 
 			Dfs(root, -1, 0);
 
-			for (int i = 0; i < k_ - 1; i++) {
-				for (int j = 0; j < n_; j++) {
-					if (parents_[i, j] < 0) {
-						parents_[i + 1, j] = -1;
+			for (int i = 0; i < _k - 1; i++) {
+				for (int j = 0; j < _n; j++) {
+					if (_parents[i, j] < 0) {
+						_parents[i + 1, j] = -1;
 					} else {
-						parents_[i + 1, j] = parents_[i, parents_[i, j]];
+						_parents[i + 1, j] = _parents[i, _parents[i, j]];
 					}
 				}
 			}
@@ -192,13 +297,13 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Lca(int u, int v)
 		{
-			if (depth_[u] > depth_[v]) {
+			if (_depth[u] > _depth[v]) {
 				(u, v) = (v, u);
 			}
 
-			for (int i = 0; i < k_; i++) {
-				if (((depth_[v] - depth_[u]) & (1 << i)) != 0) {
-					v = parents_[i, v];
+			for (int i = 0; i < _k; i++) {
+				if (((_depth[v] - _depth[u]) & (1 << i)) != 0) {
+					v = _parents[i, v];
 				}
 			}
 
@@ -206,16 +311,16 @@ namespace TakyTank.KyoProLib.CSharp
 				return u;
 			}
 
-			for (int i = k_ - 1; i >= 0; i--) {
-				if (parents_[i, u] == parents_[i, v]) {
+			for (int i = _k - 1; i >= 0; i--) {
+				if (_parents[i, u] == _parents[i, v]) {
 					continue;
 				}
 
-				u = parents_[i, u];
-				v = parents_[i, v];
+				u = _parents[i, u];
+				v = _parents[i, v];
 			}
 
-			return parents_[0, u];
+			return _parents[0, u];
 		}
 	}
 }
