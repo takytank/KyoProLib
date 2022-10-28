@@ -95,6 +95,7 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ModInt Pow(long value, long k)
 		{
+			value %= P;
 			long ret = 1;
 			while (k > 0) {
 				if ((k & 1) != 0) {
@@ -233,6 +234,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public static DModInt Pow(DModInt value, long k) => Pow(value.value_, k);
 		public static DModInt Pow(long value, long k)
 		{
+			value %= P;
 			long ret = 1;
 			while (k > 0) {
 				if ((k & 1) != 0) {
