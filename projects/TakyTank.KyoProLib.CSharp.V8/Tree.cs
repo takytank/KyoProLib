@@ -8,14 +8,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 	public class Tree
 	{
 		private readonly int _n;
-		private readonly List<(int v, long d)>[] _tempEdges;
-		private readonly (int v, long d)[][] _edges;
+		private readonly List<(int v, long cost)>[] _tempEdges;
+		private readonly (int v, long cost)[][] _edges;
 
 		private int _k;
 		private int[,] _parents;
 		private int[] _depth;
-
-		public (int v, long d)[] this[int index] => _edges[index];
 
 		public Tree(int n)
 		{
@@ -29,12 +27,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdge(int u, int v, long d) => _tempEdges[u].Add((v, d));
+		public void AddEdge(int u, int v, long cost) => _tempEdges[u].Add((v, cost));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdge2W(int u, int v, long d)
+		public void AddEdge2W(int u, int v, long cost)
 		{
-			_tempEdges[u].Add((v, d));
-			_tempEdges[v].Add((u, d));
+			_tempEdges[u].Add((v, cost));
+			_tempEdges[v].Add((u, cost));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -44,6 +42,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				_edges[i] = _tempEdges[i].ToArray();
 			}
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public ReadOnlySpan<(int v, long cost)> Edges(int index) => _edges[index].AsSpan();
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (long[] distances, int[] prevs) ShortestPath(int start, long inf = long.MaxValue)
@@ -67,6 +68,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			return (distances, prevs);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int[] GetPath(int s, int t, int[] prevs)
+		{
+			var path = new List<int> { t };
+			int cur = t;
+			while (cur != s) {
+				cur = prevs[cur];
+				path.Add(cur);
+			}
+
+			path.Reverse();
+			return path.ToArray();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -182,33 +197,31 @@ namespace TakyTank.KyoProLib.CSharp.V8
 	public class Tree<T>
 	{
 		private readonly int _n;
-		private readonly List<(int v, long d, T value)>[] _tempEdges;
-		private readonly (int v, long d, T value)[][] _edges;
+		private readonly List<(int v, long cost, T info)>[] _tempEdges;
+		private readonly (int v, long cost, T info)[][] _edges;
 
 		private int _k;
 		private int[,] _parents;
 		private int[] _depth;
 
-		public (int v, long d, T value)[] this[int index] => _edges[index];
-
 		public Tree(int n)
 		{
 			_n = n;
-			_tempEdges = new List<(int v, long d, T value)>[n];
+			_tempEdges = new List<(int v, long cost, T info)>[n];
 			for (int i = 0; i < n; i++) {
-				_tempEdges[i] = new List<(int v, long d, T value)>();
+				_tempEdges[i] = new List<(int v, long cost, T info)>();
 			}
 
-			_edges = new (int v, long d, T value)[n][];
+			_edges = new (int v, long cost, T info)[n][];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdge(int u, int v, long d, T value) => _tempEdges[u].Add((v, d, value));
+		public void AddEdge(int u, int v, long cost, T info) => _tempEdges[u].Add((v, cost, info));
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void AddEdge2W(int u, int v, long d, T value)
+		public void AddEdge2W(int u, int v, long cost, T info)
 		{
-			_tempEdges[u].Add((v, d, value));
-			_tempEdges[v].Add((u, d, value));
+			_tempEdges[u].Add((v, cost, info));
+			_tempEdges[v].Add((u, cost, info));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -218,6 +231,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				_edges[i] = _tempEdges[i].ToArray();
 			}
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public ReadOnlySpan<(int v, long cost, T info)> Edges(int index) => _edges[index].AsSpan();
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (long[] distances, int[] prevs) ShortestPath(int start, long inf = long.MaxValue)
@@ -241,6 +257,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			return (distances, prevs);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int[] GetPath(int s, int t, int[] prevs)
+		{
+			var path = new List<int> { t };
+			int cur = t;
+			while (cur != s) {
+				cur = prevs[cur];
+				path.Add(cur);
+			}
+
+			path.Reverse();
+			return path.ToArray();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
