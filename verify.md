@@ -487,6 +487,16 @@
 - [PAST03 M 行商計画問題](https://atcoder.jp/contests/past202005-open/tasks/past202005_m)
 - [ABC190 E Magical Ornament](https://atcoder.jp/contests/abc190/tasks/abc190_e)
 
+## Tree
+
+### Diameter
+
+- [yosupo-judge Tree Diameter](https://judge.yosupo.jp/problem/tree_diameter)
+
+### LCA
+
+- [yosupo-judge Lowest Common Ancestor](https://judge.yosupo.jp/problem/lca)
+
 ## TrieTree
 
 - [AGC047 B First Second](https://atcoder.jp/contests/agc047/tasks/agc047_b)

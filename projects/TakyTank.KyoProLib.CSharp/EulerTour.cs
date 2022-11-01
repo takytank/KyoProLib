@@ -124,7 +124,7 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (int l1, int r1, int l2, int r2) IndexOfPathVertex(int p, int q)
 		{
-			var lca = LeastCommonAnsestor(p, q);
+			var lca = LowestCommonAnsestor(p, q);
 			return (discovery_[lca], discovery_[p], discovery_[lca] + 1, discovery_[q]);
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -134,7 +134,7 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public (int l1, int r1, int l2, int r2) IndexOfPathEdge(int p, int q)
 		{
-			var lca = LeastCommonAnsestor(p, q);
+			var lca = LowestCommonAnsestor(p, q);
 			return (discovery_[lca] + 1, discovery_[p], discovery_[lca] + 1, discovery_[q]);
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -142,9 +142,9 @@ namespace TakyTank.KyoProLib.CSharp
 			=> action.Invoke(IndexOfPathEdge(p, q));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Lca(int u, int v) => LeastCommonAnsestor(u, v);
+		public int Lca(int u, int v) => LowestCommonAnsestor(u, v);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int LeastCommonAnsestor(int u, int v)
+		public int LowestCommonAnsestor(int u, int v)
 		{
 			int left = Math.Min(discovery_[u], discovery_[v]);
 			int right = Math.Max(discovery_[u], discovery_[v]) + 1;
