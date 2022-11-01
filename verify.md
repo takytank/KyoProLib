@@ -162,10 +162,6 @@
 - [ARC106 D Powers](https://atcoder.jp/contests/arc106/tasks/arc106_d)
 - [ABC196 F Substring2](https://atcoder.jp/contests/abc196/tasks/abc196_f)
 
-## Graph
-
-- [ABC133 F Colorful Tree](https://atcoder.jp/contests/abc133/tasks/abc133_f)
-
 ### Cycle Detection
 
 - [yosupo-judge Cycle Detection](https://judge.yosupo.jp/problem/cycle_detection)
@@ -496,6 +492,7 @@
 ### LCA
 
 - [yosupo-judge Lowest Common Ancestor](https://judge.yosupo.jp/problem/lca)
+- [ABC133 F Colorful Tree](https://atcoder.jp/contests/abc133/tasks/abc133_f)
 
 ## TrieTree
 

@@ -329,41 +329,5 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 			return distances;
 		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public (long diameter, int[] path) TreeDiameter(
-			Func<int, (long[] distances, int[] prevs)> getShortestPath)
-		{
-			var (firstDistances, _) = getShortestPath(0);
-			long max = 0;
-			int fi = 0;
-			for (int i = 0; i < n_; i++) {
-				if (firstDistances[i] > max) {
-					max = firstDistances[i];
-					fi = i;
-				}
-			}
-
-			var (distances, prevs) = getShortestPath(fi);
-			max = 0;
-			int si = 0;
-			for (int i = 0; i < n_; i++) {
-				if (distances[i] > max) {
-					max = distances[i];
-					si = i;
-				}
-			}
-
-			long diameter = max;
-			var tempPath = new List<int>();
-			tempPath.Add(si);
-			while (si != fi) {
-				si = prevs[si];
-				tempPath.Add(si);
-			}
-
-			var path = tempPath.ToArray();
-			return (diameter, path);
-		}
 	}
 }

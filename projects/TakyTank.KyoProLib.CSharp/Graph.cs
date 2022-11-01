@@ -11,9 +11,6 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly List<(long d, int v, int i)>[] _tempEdges;
 		private readonly (long d, int v, int i)[][] _edges;
 
-		private int _k;
-		private int[,] _parents;
-		private int[] _depth;
 		private int _edgeCount;
 
 		public (long d, int v, int i)[][] Edges => _edges;
@@ -96,72 +93,6 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			return (cycleV.ToArray(), cycleE.ToArray());
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void InitializeLca(int root)
-		{
-			int m = _n - 1;
-			_k = 0;
-			while (m > 0) {
-				++_k;
-				m >>= 1;
-			}
-
-			_parents = new int[_k, _n];
-			_depth = new int[_n];
-
-			void Dfs(int v, int p, int d)
-			{
-				_parents[0, v] = p;
-				_depth[v] = d;
-				foreach (var next in _edges[v]) {
-					if (next.v != p) {
-						Dfs(next.v, v, d + 1);
-					}
-				}
-			}
-
-			Dfs(root, -1, 0);
-
-			for (int i = 0; i < _k - 1; i++) {
-				for (int j = 0; j < _n; j++) {
-					if (_parents[i, j] < 0) {
-						_parents[i + 1, j] = -1;
-					} else {
-						_parents[i + 1, j] = _parents[i, _parents[i, j]];
-					}
-				}
-			}
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Lca(int u, int v)
-		{
-			if (_depth[u] > _depth[v]) {
-				(u, v) = (v, u);
-			}
-
-			for (int i = 0; i < _k; i++) {
-				if (((_depth[v] - _depth[u]) & (1 << i)) != 0) {
-					v = _parents[i, v];
-				}
-			}
-
-			if (u == v) {
-				return u;
-			}
-
-			for (int i = _k - 1; i >= 0; i--) {
-				if (_parents[i, u] == _parents[i, v]) {
-					continue;
-				}
-
-				u = _parents[i, u];
-				v = _parents[i, v];
-			}
-
-			return _parents[0, u];
 		}
 	}
 }
