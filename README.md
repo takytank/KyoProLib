@@ -113,6 +113,10 @@
 - 蟻本 188p
 - [単一始点最短路(SPFA)](https://ei1333.github.io/luzhiled/snippets/graph/shortest-path-faster-algorithm.html)
 
+### Graph
+
+- [Cycle Detection(閉路検出)](https://ei1333.github.io/library/graph/others/cycle-detection.hpp.html)
+
 ### HadamardMatrix
 
 - [アダマール行列の定義と性質](https://mathtrain.jp/hadamardmatrix)

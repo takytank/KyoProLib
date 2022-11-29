@@ -49,6 +49,10 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			var used = new int[_n];
 			var prev = new (int v, int e)[_n];
+			for (int i = 0; i < _n; i++) {
+				prev[i] = (-1, -1);
+			}
+
 			var cycleV = new List<int>();
 			var cycleE = new List<int>();
 			for (int i = 0; i < _n; i++) {
@@ -66,6 +70,16 @@ namespace TakyTank.KyoProLib.CSharp
 			{
 				used[v] = 1;
 				foreach (var edge in _edges[v]) {
+					if (edge.i == prev[v].e) {
+						continue;
+					}
+
+					if (edge.v == v) {
+						cycleE.Add(edge.i);
+						cycleV.Add(v);
+						return true;
+					}
+
 					if (used[edge.v] == 0) {
 						prev[edge.v] = (v, edge.i);
 						if (Dfs(edge.v)) {
@@ -74,13 +88,13 @@ namespace TakyTank.KyoProLib.CSharp
 					} else if (used[edge.v] == 1) {
 						int cur = v;
 						cycleE.Add(edge.i);
+						cycleV.Add(v);
 						while (cur != edge.v) {
 							cycleE.Add(prev[cur].e);
 							cycleV.Add(prev[cur].v);
 							cur = prev[cur].v;
 						}
 
-						cycleV.Add(edge.v);
 						cycleE.Reverse();
 						cycleV.Reverse();
 						return true;
@@ -138,6 +152,10 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			var used = new int[_n];
 			var prev = new (int v, int e)[_n];
+			for (int i = 0; i < _n; i++) {
+				prev[i] = (-1, -1);
+			}
+
 			var cycleV = new List<int>();
 			var cycleE = new List<int>();
 			for (int i = 0; i < _n; i++) {
@@ -155,6 +173,16 @@ namespace TakyTank.KyoProLib.CSharp
 			{
 				used[v] = 1;
 				foreach (var edge in _edges[v]) {
+					if (edge.i == prev[v].e) {
+						continue;
+					}
+
+					if (edge.v == v) {
+						cycleE.Add(edge.i);
+						cycleV.Add(v);
+						return true;
+					}
+
 					if (used[edge.v] == 0) {
 						prev[edge.v] = (v, edge.i);
 						if (Dfs(edge.v)) {
@@ -163,13 +191,13 @@ namespace TakyTank.KyoProLib.CSharp
 					} else if (used[edge.v] == 1) {
 						int cur = v;
 						cycleE.Add(edge.i);
+						cycleV.Add(v);
 						while (cur != edge.v) {
 							cycleE.Add(prev[cur].e);
 							cycleV.Add(prev[cur].v);
 							cur = prev[cur].v;
 						}
 
-						cycleV.Add(edge.v);
 						cycleE.Reverse();
 						cycleV.Reverse();
 						return true;

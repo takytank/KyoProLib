@@ -162,9 +162,12 @@
 - [ARC106 D Powers](https://atcoder.jp/contests/arc106/tasks/arc106_d)
 - [ABC196 F Substring2](https://atcoder.jp/contests/abc196/tasks/abc196_f)
 
+## Graph
+
 ### Cycle Detection
 
-- [yosupo-judge Cycle Detection](https://judge.yosupo.jp/problem/cycle_detection)
+- [yosupo-judge Cycle Detection (Directed)](https://judge.yosupo.jp/problem/cycle_detection)
+- [yosupo-judge Cycle Detection (Undirected)](https://judge.yosupo.jp/problem/cycle_detection_undirected)
 
 ## Grid
 
