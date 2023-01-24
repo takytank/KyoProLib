@@ -350,6 +350,7 @@
 ## Point
 
 - [Aizu Competitive Programming Camp 2021 Day 2 C Typhoon](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/C)
+- [ABC286 Ex Don't Swim](https://atcoder.jp/contests/abc286/tasks/abc286_h)
 
 ## Prime
 

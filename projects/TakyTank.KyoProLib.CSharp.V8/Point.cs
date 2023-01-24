@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
-	public struct Ipt
+	public struct Ipt : IEquatable<Ipt>
 	{
 		public long X { get; set; }
 		public long Y { get; set; }
@@ -70,16 +70,21 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			=> new Ipt(src.X * value, src.Y * value);
 		public static Ipt operator *(long value, Ipt src)
 			=> new Ipt(src.X * value, src.Y * value);
+		public static bool operator ==(Ipt x1, Ipt x2) => x1.Equals(x2);
+		public static bool operator !=(Ipt x1, Ipt x2) => !x1.Equals(x2);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long Dot(Ipt target) => X * target.X + Y * target.Y;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long Det(Ipt target) => X * target.Y - Y * target.X;
 
+		public bool Equals(Ipt other) => X == other.X && Y == other.Y;
+		public override bool Equals(object obj) => obj is Ipt x && Equals(x);
+
 		public override int GetHashCode() => HashCode.Combine(X, Y);
 	}
 
-	public struct Dpt
+	public struct Dpt : IEquatable<Dpt>
 	{
 		private const double EPS = 1e-10;
 		public static Dpt Origin => new Dpt(0, 0);
@@ -186,6 +191,8 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			=> new Dpt(src.X * value, src.Y * value);
 		public static Dpt operator /(Dpt src, double value)
 			=> new Dpt(src.X / value, src.Y / value);
+		public static bool operator ==(Dpt x1, Dpt x2) => x1.Equals(x2);
+		public static bool operator !=(Dpt x1, Dpt x2) => !x1.Equals(x2);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public double Dot(Dpt target) => Add(X * target.X, Y * target.Y);
@@ -202,6 +209,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static double Add(double a, double b)
 			=> Math.Abs(a + b) < EPS * (Math.Abs(a) + Math.Abs(b)) ? 0 : a + b;
+
+		public bool Equals(Dpt other) => X == other.X && Y == other.Y;
+		public override bool Equals(object obj) => obj is Dpt x && Equals(x);
 
 		public override int GetHashCode() => HashCode.Combine(X, Y);
 		public override string ToString() => $"{X} {Y}";
