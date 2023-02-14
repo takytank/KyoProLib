@@ -181,6 +181,11 @@
 - [DP(編集距離)とDPの問題を解くコツ](https://www.slideshare.net/utgw/dpdp-63918394)
 - [意外と解説がない！動的計画法で得た最適解を「復元」する一般的な方法](https://qiita.com/drken/items/0c7bab0384438f285f93)
 
+### LiChaoTree
+
+- [Li Chao Treeのメモ](https://smijake3.hatenablog.com/entry/2018/06/16/144548)
+- [Convex Hull Trick (Li-Chao (Segment) Tree)](https://tjkendev.github.io/procon-library/cpp/convex_hull_trick/li_chao_tree.html)
+
 ### Lucas
 
 - [二項係数(nCk)を素数(p)で割った余りの計算](https://algo-logic.info/binomial-coefficient-lucas/)

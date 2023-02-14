@@ -72,6 +72,14 @@
 
 - [競プロ典型 90 問 41 Piles in AtCoder Farm](https://atcoder.jp/contests/typical90/tasks/typical90_ao)
 
+## ConvexHullTrick
+
+### LiChaoTree
+
+- [ABC289 G Shopping in AtCoder store](https://atcoder.jp/contests/abc289/tasks/abc289_g)
+- [yukicoder 703 ゴミ拾い Easy](https://yukicoder.me/problems/no/703)
+- [yukicoder 704 ゴミ拾い Medium](https://yukicoder.me/problems/no/704)
+
 ## Convolution
 
 - [ABC196 F Substring 2](https://atcoder.jp/contests/abc196/tasks/abc196_f)
