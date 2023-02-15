@@ -360,6 +360,16 @@
 - [Aizu Competitive Programming Camp 2021 Day 2 C Typhoon](https://onlinejudge.u-aizu.ac.jp/beta/room.html#ACPC2021Day2/problems/C)
 - [ABC286 Ex Don't Swim](https://atcoder.jp/contests/abc286/tasks/abc286_h)
 
+## PersistentUnionFind
+
+### PartialPersistentUnionFind
+
+- [CODE THANKS FESTIVAL 2017 H Union Sets](https://atcoder.jp/contests/code-thanks-festival-2017/tasks/code_thanks_festival_2017_h)
+
+### PersistentUnionFind
+
+- [CODE THANKS FESTIVAL 2017 H Union Sets](https://atcoder.jp/contests/code-thanks-festival-2017/tasks/code_thanks_festival_2017_h)
+
 ## Prime
 
 ### PrimeFactorsByPollardsRho

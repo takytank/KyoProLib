@@ -254,6 +254,10 @@
 
 - [mod で計算するときに零の重複度も持つテク](https://kimiyuki.net/blog/2021/04/23/modulo-with-zero/)
 
+### PartialPersistentUnionFind
+
+- [Partial Persistent Union Find](https://kopricky.github.io/code/DataStructure_OnGraph/partial_persistent_union_find.html)
+
 ### PascalTriangle
 
 - [パスカルの三角形による二項係数(nCk)の計算](https://algo-logic.info/pascal-triangle/)
@@ -262,6 +266,10 @@
 
 - [std::next_permutation](https://cpprefjp.github.io/reference/algorithm/next_permutation.html)
 - [順列の列挙](http://www.tbasic.org/reference/old/Permutation.html)
+
+### PersistentUnionFind
+
+- [つくってなぐろ (永続配列/永続Union-Find木/永続セグメント木の作り方と意義、具体例)](https://qiita.com/hotman78/items/9c643feae1de087e6fc5)
 
 ### PivotTree
 
