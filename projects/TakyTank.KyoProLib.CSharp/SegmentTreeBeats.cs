@@ -141,7 +141,7 @@ namespace TakyTank.KyoProLib.CSharp
 			Update(v);
 		}
 
-		public long QureyMax(int left, int right) => QueryMaxCore(left, right, 1, 0, _n);
+		public long QueryMax(int left, int right) => QueryMaxCore(left, right, 1, 0, _n);
 		private long QueryMaxCore(int left, int right, int v, int vl, int vr)
 		{
 			if (right <= vl || vr <= left) {
@@ -231,7 +231,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 		private void Push(int v)
 		{
-			if (_n - 1 <= v) {
+			if (_n <= v) {
 				return;
 			}
 
