@@ -445,6 +445,7 @@
 ## SegmentTreeBeats
 
 - [第三回日本最強プログラマー学生選手権 -決勝- B Increment and Rotate](https://atcoder.jp/contests/jsc2022-final-open/tasks/jsc2022_final_b)
+- [ABC292 Ex Rating Estimator](https://atcoder.jp/contests/abc292/tasks/abc292_h)
 
 ## ShortestPath
 
