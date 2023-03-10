@@ -153,6 +153,14 @@
 - [区間をsetで管理するやつ](https://satanic0258.github.io/snippets/data-structure/SegmentMap.html)
 - [要素の追加・削除と mex を対数時間で処理するよ](https://rsk0315.hatenablog.com/entry/2020/10/11/125049)
 
+### KDTree
+
+- [直交領域探索](https://www.slideshare.net/okuraofvegetable/ss-65377588)
+- [k-d tree のお手軽実装について](https://trap.jp/post/1489/)
+- [kd-tree (2次元)](https://tjkendev.github.io/procon-library/cpp/range_query/kd-tree.html)
+- [C言語によるkd-treeの実装](https://qiita.com/fj-th/items/1bb2dc39f3088549ad6e)
+- [kd-treeを実装してみた](https://atkg.hatenablog.com/entry/2016/12/18/002353)
+
 ### KMP
 
 - [KMPのK](https://snuke.hatenablog.com/entry/2017/07/18/101026)

@@ -240,6 +240,10 @@
 - [ABC194 E Mex Min](https://atcoder.jp/contests/abc194/tasks/abc194_e)
 - [ABC255 Ex Range Harvest Query](https://atcoder.jp/contests/abc255/tasks/abc255_h)
 
+## KDTree
+
+- [ARC010 D 情報伝播](https://atcoder.jp/contests/arc010/tasks/arc010_4)
+
 ## KMP
 
 - [ABC150 F Xor Shift](https://atcoder.jp/contests/abc150/tasks/abc150_f)
