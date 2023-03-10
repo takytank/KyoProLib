@@ -325,6 +325,10 @@
 
 - [ZONeエナジー プログラミングコンテスト “HELLO SPACE” F 出会いと別れ](https://atcoder.jp/contests/zone2021/tasks/zone2021_f)
 
+## NthElement
+
+- [ARC010 D 情報伝播](https://atcoder.jp/contests/arc010/tasks/arc010_4)
+
 ## PairMod
 
 - [ARC117 C Tricolor Pyramid](https://atcoder.jp/contests/arc117/tasks/arc117_c)

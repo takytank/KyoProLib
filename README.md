@@ -246,6 +246,11 @@
 - [xor の掃き出しすごい簡単に出来るんですね](https://twitter.com/noshi91/status/1200702280128856064?s=20)
 - [ZONeエナジー プログラミングコンテスト “HELLO SPACE” F 解説](https://atcoder.jp/contests/zone2021/editorial/1203)
 
+### NthElement
+
+- [Median of medians](https://en.wikipedia.org/wiki/Median_of_medians)
+- [選択アルゴリズム：線形](https://37zigen.com/selection-algorithm/)
+
 ### NTT
 
 - [Fast Number Theoretic Transform](https://kopricky.github.io/code/FFTs/ntt.html)
