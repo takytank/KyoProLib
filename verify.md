@@ -100,6 +100,7 @@
 - [ARC060 E 高橋君とホテル](https://atcoder.jp/contests/arc060/tasks/arc060_c)
 - [ABC258 E Packing Potatoes](https://atcoder.jp/contests/abc258/tasks/abc258_e)
 - [ABC212 F Greedy Takahashi](https://atcoder.jp/contests/abc212/tasks/abc212_f)
+- [ABC300 F More Holidays](https://atcoder.jp/contests/abc300/tasks/abc300_f)
 
 
 ## DP

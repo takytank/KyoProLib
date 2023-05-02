@@ -9,6 +9,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 	public class Doubling
 	{
 		private readonly int _n;
+		private readonly long _maxStep;
 		private readonly int _k;
 		private readonly int[,] _map;
 
@@ -20,6 +21,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public Doubling(int n, long maxStep, Func<int, int> transition)
 		{
 			_n = n;
+			_maxStep = maxStep;
 			_k = 0;
 			while (maxStep > 0) {
 				++_k;
@@ -62,35 +64,45 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long FindRightest(int s, Func<int, bool> checker)
+		public long FindRightest(int s, Func<int, bool> checker, long maxStep = -1)
 		{
+			if (maxStep == -1) {
+				maxStep = _maxStep;
+			}
+
 			int t = s;
-			long ret = 0;
+			long step = 0;
 			for (int i = _k - 1; i >= 0; i--) {
 				int tempIndex = _map[i, t];
-				if (tempIndex >= 0 && checker(tempIndex)) {
+				long tempStep = step + (1L << i);
+				if (tempIndex >= 0 && tempStep <= maxStep && checker(tempIndex)) {
 					t = tempIndex;
-					ret += 1L << i;
+					step = tempStep;
 				}
 			}
 
-			return ret;
+			return step;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long LowerBound(int s, int t)
+		public long LowerBound(int s, int t, long maxStep = -1)
 		{
+			if (maxStep == -1) {
+				maxStep = _maxStep;
+			}
+
 			int current = s;
-			long ret = 0;
+			long step = 0;
 			for (int i = _k - 1; i >= 0; --i) {
 				int temp = _map[i, current];
-				if (temp >= 0 && temp < t) {
+				long tempStep = step + (1L << i);
+				if (temp >= 0 && tempStep <= maxStep && temp < t) {
 					current = temp;
-					ret += 1L << i;
+					step = tempStep;
 				}
 			}
 
-			return ret + 1;
+			return step + 1;
 		}
 	}
 
@@ -98,6 +110,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		where T : struct, IComparable<T>
 	{
 		private readonly int _n;
+		private readonly long _maxStep;
 		private readonly int[,] _indexMap;
 		private readonly T[] _initialValues;
 		private readonly T[,] _valueMap;
@@ -112,6 +125,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			Func<T, T, T> merge)
 		{
 			_n = n;
+			_maxStep = maxStep;
 			_merge = merge;
 			_k = 0;
 			while (maxStep > 0) {
@@ -165,41 +179,51 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long FindRightest(int s, Func<T, bool> checker)
+		public (long step, T value) FindRightest(int s, Func<T, bool> checker, long maxStep = -1)
 		{
+			if (maxStep == -1) {
+				maxStep = _maxStep;
+			}
+
 			int t = s;
-			long ret = 0;
-			T current = _initialValues[s];
+			long step = 0;
+			T value = _initialValues[s];
 			for (int i = _k - 1; i >= 0; i--) {
 				int tempIndex = _indexMap[i, t];
-				T tempValue = _merge(current, _valueMap[i, t]);
-				if (tempIndex >= 0 && checker(tempValue)) {
-					current = tempValue;
+				T tempValue = _merge(value, _valueMap[i, t]);
+				long tempStep = step + (1L << i);
+				if (tempIndex >= 0 && tempStep <= maxStep && checker(tempValue)) {
+					value = tempValue;
 					t = tempIndex;
-					ret += 1L << i;
+					step = tempStep;
 				}
 			}
 
-			return ret;
+			return (step, value);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long LowerBound(int s, T value)
+		public (long step, T value) LowerBound(int s, T target, long maxStep = -1)
 		{
+			if (maxStep == -1) {
+				maxStep = _maxStep;
+			}
+
 			int t = s;
-			long ret = 0;
-			T current = _initialValues[s];
+			long step = 0;
+			T value = _initialValues[s];
 			for (int i = _k - 1; i >= 0; i--) {
-				int tempIndex = t = _indexMap[i, t];
-				T tempValue = _merge(current, _valueMap[i, t]);
-				if (tempIndex >= 0 && tempValue.CompareTo(value) < 0) {
-					current = tempValue;
+				int tempIndex = _indexMap[i, t];
+				T tempValue = _merge(value, _valueMap[i, t]);
+				long tempStep = step + (1L << i);
+				if (tempIndex >= 0 && tempStep <= maxStep && tempValue.CompareTo(target) < 0) {
+					value = tempValue;
 					t = _indexMap[i, t];
-					ret += 1L << i;
+					step = tempStep;
 				}
 			}
 
-			return ret + 1;
+			return (step + 1, value);
 		}
 	}
 }
