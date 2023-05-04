@@ -112,6 +112,8 @@
 ## DynamicConnectivity
 
 - [PAST05 N 旅行会社](https://atcoder.jp/contests/past202012-open/tasks/past202012_n)
+- [PAST12 K 連結チェック](https://atcoder.jp/contests/past202209-open/tasks/past202209_k)
+
 
 ## DynamicSegmentTree
 
