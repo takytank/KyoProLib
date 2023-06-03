@@ -261,6 +261,8 @@
 
 - [ABC187 E Through Path](https://atcoder.jp/contests/abc187/tasks/abc187_e)
 - [ABC133 F Colorful Tree](https://atcoder.jp/contests/abc133/tasks/abc133_f)
+- [ABC267 F Exactly K Steps](https://atcoder.jp/contests/abc267/tasks/abc267_f)
+- [yukicoder 2337 Equidistant](https://yukicoder.me/problems/no/2337)
 
 ## Lucas
 
