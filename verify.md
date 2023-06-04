@@ -559,7 +559,8 @@
 
 - [ABC087 D People on a Line](https://atcoder.jp/contests/abc087/tasks/arc090_b)
 
-### ZetaTransform
+## ZetaTransform
 
 - [ARC100 E Or Plus Max](https://atcoder.jp/contests/arc100/tasks/arc100_c)
 - [ABC162 E Sum of gcd of Tuples (Hard)](https://atcoder.jp/contests/abc162/tasks/abc162_e)
+- [ABC304 F Shift Table](https://atcoder.jp/contests/abc304/tasks/abc304_f)
