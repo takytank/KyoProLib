@@ -147,6 +147,11 @@
 - [商列挙](https://ei1333.github.io/luzhiled/snippets/math/quotient-range.html)
 - [Divide Both](https://maspypy.com/divide-both（abc206-e）)
 
+### IntervalHeap
+
+- [両端優先度付きキューのInterval-Heap実装](https://natsugiri.hatenablog.com/entry/2016/10/10/035445)
+- [Double-Ended Priority Queue](https://topcoder-g-hatena-ne-jp.jag-icpc.org/spaghetti_source/20121006/1349491389.html)
+
 ### IntervalSet
 
 - [std::setで区間を管理する奴](https://kkt89.hatenablog.com/entry/2020/10/14/std::set%E3%81%A7%E5%8C%BA%E9%96%93%E3%82%92%E7%AE%A1%E7%90%86%E3%81%99%E3%82%8B%E5%A5%B4)
