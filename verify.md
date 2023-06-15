@@ -117,6 +117,11 @@
 
 ## DynamicSegmentTree
 
+### DynamicSegmentTree
+
+- [ARC008 D タコヤキオイシクナール](https://atcoder.jp/contests/arc008/submissions/42255742)
+- [AtCoder Library Practice Contest J Segment Tree](https://atcoder.jp/contests/practice2/tasks/practice2_j)
+
 ### DynamicLazySegmentTree
 
 - [ARC115 E LEQ and NEQ](https://atcoder.jp/contests/arc115/tasks/arc115_e)
