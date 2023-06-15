@@ -46,23 +46,23 @@ namespace TakyTank.KyoProLib.CSharp
 		public T QueryAll()
 			=> _root is null == false ? _root.Product : _identity;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T Query(long l, long r) => QueryCore(_root, l, r, 0, _n);
+		public T Query(long left, long right) => QueryCore(_root, left, right, 0, _n);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Reset(long l, long r) => ResetCore(ref _root, l, r, 0, _n);
+		public void Reset(long left, long right) => ResetCore(ref _root, left, right, 0, _n);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long MaxRight(long l, Predicate<T> satisfies)
+		public long MaxRight(long left, Predicate<T> satisfies)
 		{
 			T product = _identity;
-			return MaxRightCore(_root, l, 0, _n, satisfies, ref product);
+			return MaxRightCore(_root, left, 0, _n, satisfies, ref product);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public long MinLeft(long r, Predicate<T> satisfies)
+		public long MinLeft(long right, Predicate<T> satisfies)
 		{
 			T product = _identity;
-			return MinLeftCore(_root, r, 0, _n, satisfies, ref product);
+			return MinLeftCore(_root, right, 0, _n, satisfies, ref product);
 		}
 
 		private void SetCore(ref Node node, long index, long sl, long sr, T value)
@@ -268,88 +268,63 @@ namespace TakyTank.KyoProLib.CSharp
 
 	public class DynamicLazySegmentTree<TData, TUpdate>
 	{
-		private readonly Stack<Node> pool_ = new Stack<Node>();
-		private readonly long n_;
-		private readonly Func<TData, TData, TData> operate_;
-		private readonly Func<TData, TUpdate, long, TData> update_;
-		private readonly TData unitData_;
-		private readonly TUpdate identity_;
-		private Node root_;
+		private readonly Stack<Node> _pool = new Stack<Node>();
+		private readonly long _n;
+		private readonly Func<TData, TData, TData> _operate;
+		private readonly Func<TData, TUpdate, long, TData> _update;
+		private readonly TData _identity;
+		private readonly TUpdate _identityMap;
+		private Node _root;
 
 		public TData this[int index]
 		{
-			get => GetCore(root_, index, 0, n_);
-			set => SetCore(ref root_, index, 0, n_, value);
+			get => GetCore(_root, index, 0, _n);
+			set => SetCore(ref _root, index, 0, _n, value);
 		}
 
 		public DynamicLazySegmentTree(
 			long count,
-			TData unitData,
-			TUpdate unitUpdate,
+			TData identity,
+			TUpdate identityMap,
 			Func<TData, TData, TData> operate,
 			Func<TData, TUpdate, long, TData> update,
 			Func<TUpdate, TUpdate, TUpdate> compose)
 		{
-			n_ = count;
-			unitData_ = unitData;
-			identity_ = unitUpdate;
-			operate_ = operate;
-			update_ = update;
-			root_ = null;
+			_n = count;
+			_identity = identity;
+			_identityMap = identityMap;
+			_operate = operate;
+			_update = update;
+			_root = null;
 
-			Node.unitData_ = unitData;
-			Node.identity_ = identity_;
-			Node.operate_ = operate;
-			Node.update_ = update;
-			Node.compose_ = compose;
+			Node._identity = identity;
+			Node._identityMap = _identityMap;
+			Node._operate = operate;
+			Node._update = update;
+			Node._compose = compose;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public TData QueryAll()
-			=> root_ is null == false ? root_.Value : unitData_;
-
+		public void Update(long index, TUpdate f)
+			=> UpdateCore(ref _root, index, 0, _n, f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public TData Query(long left, long right)
-			=> QueryCore(ref root_, left, right, 0, n_);
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private TData QueryCore(ref Node node, long left, long right, long l, long r)
-		{
-			if (node is null || r <= left || right <= l) {
-				return unitData_;
-			}
-
-			if (left <= l && r <= right) {
-				return node.Value;
-			}
-
-			Propagate(node);
-			long c = (l + r) >> 1;
-			return operate_(
-				QueryCore(ref node.Left, left, right, l, c),
-				QueryCore(ref node.Right, left, right, c, r));
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Update(long p, TUpdate f)
-			=> UpdateCore(ref root_, p, 0, n_, f);
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void UpdateCore(ref Node node, long p, long l, long r, TUpdate f)
+		private void UpdateCore(ref Node node, long index, long sl, long sr, TUpdate f)
 		{
 			if (node is null) {
-				node = NewNode(unitData_, r - l);
+				node = NewNode(_identity, sr - sl);
 			}
 
-			if (r - l == 1) {
-				node.Value = update_(node.Value, f, 1);
+			if (sr - sl == 1) {
+				node.Value = _update(node.Value, f, 1);
 				return;
 			}
 
 			Propagate(node);
-			long c = (l + r) >> 1;
-			if (p < c) {
-				UpdateCore(ref node.Left, p, l, c, f);
+			long c = (sl + sr) >> 1;
+			if (index < c) {
+				UpdateCore(ref node.Left, index, sl, c, f);
 			} else {
-				UpdateCore(ref node.Right, p, c, r, f);
+				UpdateCore(ref node.Right, index, c, sr, f);
 			}
 
 			node.Update();
@@ -357,93 +332,118 @@ namespace TakyTank.KyoProLib.CSharp
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Update(long left, long right, TUpdate f)
-			=> UpdateCore(ref root_, left, right, 0, n_, f);
+			=> UpdateCore(ref _root, left, right, 0, _n, f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void UpdateCore(ref Node node, long left, long right, long l, long r, TUpdate f)
+		private void UpdateCore(ref Node node, long il, long ir, long sl, long sr, TUpdate f)
 		{
-			if (r <= left || right <= l) {
+			if (sr <= il || ir <= sl) {
 				return;
 			}
 
 			if (node is null) {
-				node = NewNode(unitData_, r - l);
+				node = NewNode(_identity, sr - sl);
 			}
 
-			if (left <= l && r <= right) {
+			if (il <= sl && sr <= ir) {
 				node.AllApply(f);
 				return;
 			}
 
 			Propagate(node);
-			long c = (l + r) >> 1;
-			UpdateCore(ref node.Left, left, right, l, c, f);
-			UpdateCore(ref node.Right, left, right, c, r, f);
+			long c = (sl + sr) >> 1;
+			UpdateCore(ref node.Left, il, ir, sl, c, f);
+			UpdateCore(ref node.Right, il, ir, c, sr, f);
 			node.Update();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Reset(long left, long right)
-			=> ResetCore(ref root_, left, right, 0, n_);
+		public TData QueryAll()
+			=> _root is null == false ? _root.Value : _identity;
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void ResetCore(ref Node node, long left, long right, long l, long r)
+		public TData Query(long left, long right)
+			=> QueryCore(ref _root, left, right, 0, _n);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private TData QueryCore(ref Node node, long il, long ir, long sl, long sr)
 		{
-			if (node is null || r <= left || right <= l) {
+			if (node is null || sr <= il || ir <= sl) {
+				return _identity;
+			}
+
+			if (il <= sl && sr <= ir) {
+				return node.Value;
+			}
+
+			Propagate(node);
+			long c = (sl + sr) >> 1;
+			return _operate(
+				QueryCore(ref node.Left, il, ir, sl, c),
+				QueryCore(ref node.Right, il, ir, c, sr));
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Reset(long left, long right)
+			=> ResetCore(ref _root, left, right, 0, _n);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void ResetCore(ref Node node, long il, long ir, long sl, long sr)
+		{
+			if (node is null || sr <= il || ir <= sl) {
 				return;
 			}
 
-			if (left <= l && r <= right) {
-				pool_.Push(node);
+			if (il <= sl && sr <= ir) {
+				_pool.Push(node);
 				node = null;
 				return;
 			}
 
 			Propagate(node);
-			long c = (l + r) >> 1;
-			ResetCore(ref node.Left, left, right, l, c);
-			ResetCore(ref node.Right, left, right, c, r);
+			long c = (sl + sr) >> 1;
+			ResetCore(ref node.Left, il, ir, sl, c);
+			ResetCore(ref node.Right, il, ir, c, sr);
 			node.Update();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void SetCore(ref Node node, long p, long l, long r, TData x)
+		private void SetCore(ref Node node, long index, long sl, long sr, TData x)
 		{
 			if (node is null) {
-				node = NewNode(x, r - l);
+				node = NewNode(x, sr - sl);
 			}
 
-			if (r - l == 1) {
+			if (sr - sl == 1) {
 				node.Value = x;
 				return;
 			}
 
 			Propagate(node);
-			long c = (l + r) >> 1;
-			if (p < c) {
-				SetCore(ref node.Left, p, l, c, x);
+			long c = (sl + sr) >> 1;
+			if (index < c) {
+				SetCore(ref node.Left, index, sl, c, x);
 			} else {
-				SetCore(ref node.Right, p, c, r, x);
+				SetCore(ref node.Right, index, c, sr, x);
 			}
 
 			node.Update();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private TData GetCore(Node node, long p, long l, long r)
+		private TData GetCore(Node node, long index, long sl, long sr)
 		{
 			if (node is null) {
-				return unitData_;
+				return _identity;
 			}
 
-			if (r - l == 1) {
+			if (sr - sl == 1) {
 				return node.Value;
 			}
 
 			Propagate(node);
-			long c = (l + r) >> 1;
-			if (p < c) {
-				return GetCore(node.Left, p, l, c);
+			long c = (sl + sr) >> 1;
+			if (index < c) {
+				return GetCore(node.Left, index, sl, c);
 			} else {
-				return GetCore(node.Right, p, c, r);
+				return GetCore(node.Right, index, c, sr);
 			}
 		}
 
@@ -456,37 +456,37 @@ namespace TakyTank.KyoProLib.CSharp
 
 			if (node.Size > 1) {
 				if (node.Left is null) {
-					node.Left = NewNode(unitData_, node.Size >> 1);
+					node.Left = NewNode(_identity, node.Size >> 1);
 				}
 
 				if (node.Right is null) {
-					node.Right = NewNode(unitData_, (node.Size + 1) >> 1);
+					node.Right = NewNode(_identity, (node.Size + 1) >> 1);
 				}
 
 				node.Left.AllApply(node.Lazy);
 				node.Right.AllApply(node.Lazy);
 			}
 
-			node.Lazy = identity_;
+			node.Lazy = _identityMap;
 			node.HasLazy = false;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private Node NewNode(TData value, long size)
 		{
-			if (pool_.Count > 0) {
-				var node = pool_.Pop();
+			if (_pool.Count > 0) {
+				var node = _pool.Pop();
 				node.Value = value;
 				node.Size = size;
-				node.Lazy = identity_;
+				node.Lazy = _identityMap;
 				node.HasLazy = false;
 				if (node.Left is null == false) {
-					pool_.Push(node.Left);
+					_pool.Push(node.Left);
 					node.Left = null;
 				}
 
 				if (node.Right is null == false) {
-					pool_.Push(node.Right);
+					_pool.Push(node.Right);
 					node.Right = null;
 				}
 
@@ -498,11 +498,11 @@ namespace TakyTank.KyoProLib.CSharp
 
 		private class Node
 		{
-			public static Func<TData, TData, TData> operate_;
-			public static Func<TData, TUpdate, long, TData> update_;
-			public static Func<TUpdate, TUpdate, TUpdate> compose_;
-			public static TData unitData_;
-			public static TUpdate identity_;
+			public static Func<TData, TData, TData> _operate;
+			public static Func<TData, TUpdate, long, TData> _update;
+			public static Func<TUpdate, TUpdate, TUpdate> _compose;
+			public static TData _identity;
+			public static TUpdate _identityMap;
 
 			public long Size;
 			public TData Value;
@@ -514,7 +514,7 @@ namespace TakyTank.KyoProLib.CSharp
 			public Node(TData value, long size)
 			{
 				Value = value;
-				Lazy = identity_;
+				Lazy = _identityMap;
 				HasLazy = false;
 				Size = size;
 				Left = null;
@@ -524,17 +524,17 @@ namespace TakyTank.KyoProLib.CSharp
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public void Update()
 			{
-				Value = operate_(
-					Left is null == false ? Left.Value : unitData_,
-					Right is null == false ? Right.Value : unitData_);
+				Value = _operate(
+					Left is null == false ? Left.Value : _identity,
+					Right is null == false ? Right.Value : _identity);
 			}
 
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public void AllApply(TUpdate f)
 			{
-				Value = update_(Value, f, Size);
+				Value = _update(Value, f, Size);
 				if (HasLazy) {
-					Lazy = compose_(f, Lazy);
+					Lazy = _compose(f, Lazy);
 				} else {
 					Lazy = f;
 					HasLazy = true;
