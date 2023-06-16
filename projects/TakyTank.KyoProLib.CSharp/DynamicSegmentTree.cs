@@ -276,13 +276,217 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly TUpdate _identityMap;
 		private Node _root;
 
+		public DynamicLazySegmentTree(
+			long count,
+			TData identity,
+			TUpdate identityMap,
+			Func<TData, TData, TData> operate,
+			Func<TData, TUpdate, long, TData> update,
+			Func<TUpdate, TUpdate, TUpdate> compose)
+		{
+			_n = count;
+			_identity = identity;
+			_identityMap = identityMap;
+			_operate = operate;
+			_update = update;
+			_root = null;
+
+			Node._identity = identity;
+			Node._identityMap = identityMap;
+			Node._operate = operate;
+			Node._update = update;
+			Node._compose = compose;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Update(long left, long right, TUpdate f)
+			=> UpdateCore(ref _root, Math.Max(0, left), Math.Min(right, _n), 0, _n, f);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void UpdateCore(ref Node node, long il, long ir, long sl, long sr, TUpdate f)
+		{
+			if (node is null) {
+				node = NewNode(f, il, ir);
+				return;
+			}
+
+			if (node.SL == il && ir == node.SR) {
+				node.AllApply(f);
+				return;
+			}
+
+			Propagate(node);
+			long c = (sl + sr) >> 1;
+			if (ir - il > node.SR - node.SL) {
+				(node.SL, il) = (il, node.SL);
+				(node.SR, ir) = (ir, node.SR);
+				(node.Value, f) = (f, node.Value);
+			}
+
+			if (il < c) {
+				UpdateCore(ref node.Left, il, Math.Min(ir, c), sl, c, f);
+			}
+
+			if (c < ir) {
+				UpdateCore(ref node.Right, Math.Max(c, il), ir, c, sr, f);
+			}
+
+			node.Update();
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public TData QueryAll()
+			=> _root is null == false ? _root.Product : _identity;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public TData Query(long left, long right)
+			=> QueryCore(_root, left, right, 0, _n);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private TData QueryCore(Node node, long il, long ir, long sl, long sr)
+		{
+			if (node is null || sr <= il || ir <= sl) {
+				return _identity;
+			}
+
+			if (il <= sl && sr <= ir) {
+				return node.Product;
+			}
+
+			Propagate(node);
+
+			long c = (sl + sr) >> 1;
+			TData result = QueryCore(node.Left, il, ir, sl, c);
+			long nl = Math.Max(il, node.SL);
+			long nr = Math.Min(ir, node.SR);
+			if (nl < nr) {
+				result = _operate(result, _update(_identity, node.Value, nr - nl));
+			}
+
+			return _operate(result, QueryCore(node.Right, il, ir, c, sr));
+		}
+
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Propagate(Node node)
+		{
+			if (node.HasLazy == false) {
+				return;
+			}
+
+			if (node.SR - node.SL > 1) {
+				if (node.Left is null == false) {
+					node.Left.AllApply(node.Lazy);
+				}
+
+				if (node.Right is null == false) {
+					node.Right.AllApply(node.Lazy);
+				}
+			}
+
+			node.Lazy = _identityMap;
+			node.HasLazy = false;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private Node NewNode(TUpdate value, long sl, long sr)
+		{
+			if (_pool.Count > 0) {
+				var node = _pool.Pop();
+				node.Value = value;
+				node.SL = sl;
+				node.SR = sr;
+				node.Lazy = _identityMap;
+				node.HasLazy = false;
+				if (node.Left is null == false) {
+					_pool.Push(node.Left);
+					node.Left = null;
+				}
+
+				if (node.Right is null == false) {
+					_pool.Push(node.Right);
+					node.Right = null;
+				}
+
+				return node;
+			} else {
+				return new Node(value, sl, sr);
+			}
+		}
+
+		private class Node
+		{
+			public static Func<TData, TData, TData> _operate;
+			public static Func<TData, TUpdate, long, TData> _update;
+			public static Func<TUpdate, TUpdate, TUpdate> _compose;
+			public static TData _identity;
+			public static TUpdate _identityMap;
+
+			// ノードが管理している区間 [SL, SR)
+			public long SL;
+			public long SR;
+			// ノード内の1区間における値。管理しているノード全体に行われた処理の結果でも同値。
+			// 子ノードを作成するときに渡すことになる。
+			public TUpdate Value;
+			// 管理している区間の演算結果
+			public TData Product;
+			public TUpdate Lazy;
+			public Node Left;
+			public Node Right;
+			public bool HasLazy;
+
+			public Node(TUpdate f, long sl, long sr)
+			{
+				Value = f;
+				Product = _update(_identity, f, sr - sl);
+				Lazy = _identityMap;
+				HasLazy = false;
+				SL = sl;
+				SR = sr;
+				Left = null;
+				Right = null;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public void Update()
+			{
+				Product = _operate(
+					_operate(
+						Left is null == false ? Left.Product : _identity,
+						 _update(_identity, Value, SR - SL)),
+					Right is null == false ? Right.Product : _identity);
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public void AllApply(TUpdate f)
+			{
+				Value = _compose(f, Value);
+				Product = _update(Product, f, SR - SL);
+				if (HasLazy) {
+					Lazy = _compose(f, Lazy);
+				} else {
+					Lazy = f;
+					HasLazy = true;
+				}
+			}
+		}
+	}
+
+	public class DynamicLazySegmentTree2<TData, TUpdate>
+	{
+		private readonly Stack<Node> _pool = new Stack<Node>();
+		private readonly long _n;
+		private readonly Func<TData, TData, TData> _operate;
+		private readonly Func<TData, TUpdate, long, TData> _update;
+		private readonly TData _identity;
+		private readonly TUpdate _identityMap;
+		private Node _root;
+
 		public TData this[int index]
 		{
 			get => GetCore(_root, index, 0, _n);
 			set => SetCore(ref _root, index, 0, _n, value);
 		}
 
-		public DynamicLazySegmentTree(
+		public DynamicLazySegmentTree2(
 			long count,
 			TData identity,
 			TUpdate identityMap,
