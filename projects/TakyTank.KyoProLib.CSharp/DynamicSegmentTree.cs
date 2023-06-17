@@ -276,6 +276,12 @@ namespace TakyTank.KyoProLib.CSharp
 		private readonly TUpdate _identityMap;
 		private Node _root;
 
+		public TData Get(int index) => GetCore(_root, index, 0, _n);
+		public TUpdate this[int index]
+		{
+			set => SetCore(ref _root, index, 0, _n, value);
+		}
+
 		public DynamicLazySegmentTree(
 			long count,
 			TData identity,
@@ -298,6 +304,9 @@ namespace TakyTank.KyoProLib.CSharp
 			Node._compose = compose;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Update(long index, TUpdate f)
+			=> UpdateCore(ref _root, Math.Max(0, index), Math.Min(index + 1, _n), 0, _n, f);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Update(long left, long right, TUpdate f)
 			=> UpdateCore(ref _root, Math.Max(0, left), Math.Min(right, _n), 0, _n, f);
@@ -364,6 +373,99 @@ namespace TakyTank.KyoProLib.CSharp
 			return _operate(result, QueryCore(node.Right, il, ir, c, sr));
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void SetCore(ref Node node, long index, long sl, long sr, TUpdate f)
+		{
+			if (node is null) {
+				node = NewNode(f, index, index + 1);
+				return;
+			}
+
+			if (node.SL == index && index + 1 == node.SR) {
+				node.Value = f;
+				node.Product = _update(_identity, f, 1);
+				return;
+			}
+
+			Propagate(node);
+			long c = (sl + sr) >> 1;
+			if (index < c) {
+				SetCore(ref node.Left, index, sl, c, f);
+			} else {
+				SetCore(ref node.Right, index, c, sr, f);
+			}
+
+			node.Update();
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private TData GetCore(Node node, long index, long sl, long sr)
+		{
+			if (node is null) {
+				return _identity;
+			}
+
+			if (node.SL == index && index + 1 == node.SR) {
+				return node.Product;
+			}
+
+			Propagate(node);
+			long c = (sl + sr) >> 1;
+			if (index < c) {
+				return GetCore(node.Left, index, sl, c);
+			} else {
+				return GetCore(node.Right, index, c, sr);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Reset(long left, long right) => ResetCore(ref _root, left, right, 0, _n);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void ResetCore(ref Node node, long il, long ir, long sl, long sr)
+		{
+			if (node is null || sr <= il || ir <= sl) {
+				return;
+			}
+
+			if (il <= sl && sr <= ir) {
+				_pool.Push(node);
+				node = null;
+				return;
+			}
+
+			Propagate(node);
+			long c = (sl + sr) >> 1;
+			ResetCore(ref node.Left, il, ir, sl, c);
+			ResetCore(ref node.Right, il, ir, c, sr);
+
+			if (node.SL < il && ir < node.SR) {
+				long nexIL;
+				long nexIR;
+				if (il - node.SL >= node.SR - ir) {
+					nexIL = ir;
+					nexIR = node.SR;
+					node.SR = il;
+				} else {
+					nexIL = node.SL;
+					nexIR = il;
+					node.SL = ir;
+				}
+
+				if (nexIL < c) {
+					UpdateCore(ref node.Left, nexIL, Math.Min(nexIR, c), sl, c, node.Value);
+				}
+
+				if (c < nexIR) {
+					UpdateCore(ref node.Right, Math.Max(c, nexIL), nexIR, c, sr, node.Value);
+				}
+			} else if (node.SL < il && il < node.SR) {
+				node.SR = il;
+			} else if (node.SL < ir && ir < node.SR) {
+				node.SL = ir;
+			}
+
+			node.Update();
+		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Propagate(Node node)

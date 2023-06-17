@@ -121,6 +121,7 @@
 
 - [ARC008 D タコヤキオイシクナール](https://atcoder.jp/contests/arc008/submissions/42255742)
 - [AtCoder Library Practice Contest J Segment Tree](https://atcoder.jp/contests/practice2/tasks/practice2_j)
+- [第二回日本最強プログラマー学生選手権 F Max Matrix](https://atcoder.jp/contests/jsc2021/tasks/jsc2021_f)
 
 ### DynamicLazySegmentTree
 
