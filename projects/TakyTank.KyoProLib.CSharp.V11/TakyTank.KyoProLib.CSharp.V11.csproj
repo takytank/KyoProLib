@@ -7,4 +7,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="ReorderArray.cs~RFf69ad.TMP" />
+  </ItemGroup>
+
 </Project>
