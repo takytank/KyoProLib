@@ -13,7 +13,7 @@ namespace TakyTank.KyoProLib.CSharp
 			double testCaseCount,
 			bool isParallel,
 			Func<int, T> run,
-			Func<object, int, T, (long score, int loop)> outputCaseInformation,
+			Func<object, int, T, (long score, int loop, int up)> outputCaseInformation,
 			Action addOutput = null)
 		{
 #if DEBUG
@@ -21,6 +21,7 @@ namespace TakyTank.KyoProLib.CSharp
 			long scoreSum = 0;
 			double scoreLogSum = 0;
 			long loopSum = 0;
+			long upSum = 0;
 			long scoreMin = long.MaxValue;
 			long scoreMax = long.MinValue;
 			if (isParallel) {
@@ -36,12 +37,13 @@ namespace TakyTank.KyoProLib.CSharp
 			void RunCases(int i)
 			{
 				var ret = run(i);
-				var (score, loop) = outputCaseInformation(locker, i, ret);
+				var (score, loop, up) = outputCaseInformation(locker, i, ret);
 				Console.Out.Flush();
 				lock (locker) {
 					scoreSum += score;
 					scoreLogSum += Math.Log10(score);
 					loopSum += loop;
+					upSum += up;
 					scoreMin = Math.Min(score, scoreMin);
 					scoreMax = Math.Max(score, scoreMax);
 				}
@@ -57,7 +59,8 @@ namespace TakyTank.KyoProLib.CSharp
 			Console.WriteLine($"min: {scoreMin}");
 			Console.WriteLine($"max: {scoreMax}");
 			Console.WriteLine($"log: {scoreLogSum / testCaseCount}");
-			Console.WriteLine($"loop ave.: {loopSum / runCaseCount}");
+			Console.WriteLine($"loop ave.: {loopSum / (double)runCaseCount:f3}");
+			Console.WriteLine($"up ave.: {upSum / (double)runCaseCount:f3}");
 
 			addOutput?.Invoke();
 
