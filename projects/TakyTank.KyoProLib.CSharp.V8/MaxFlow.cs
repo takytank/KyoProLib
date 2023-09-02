@@ -43,9 +43,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ReadOnlySpan<Edge> GetFlowedEdges()
 		{
-			if (_flowedEdges is null) {
-				_flowedEdges = _edges;
-			}
+			_flowedEdges ??= _edges;
 
 			var result = new Edge[_edgeInfos.Count];
 			for (int i = 0; i < result.Length; ++i) {
@@ -191,9 +189,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				}
 			}
 
-			if (_flowedEdges is null) {
-				_flowedEdges = _edges;
-			}
+			_flowedEdges ??= _edges;
 
 			var minCutEdges = new List<(int u, int v, long flow)>();
 			for (int i = 0; i < _edgeInfos.Count; ++i) {
