@@ -225,9 +225,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		{
 			var chars = src.ToCharArray();
 			for (int i = 0, j = chars.Length - 1; i < j; ++i, --j) {
-				var tmp = chars[i];
-				chars[i] = chars[j];
-				chars[j] = tmp;
+				(chars[j], chars[i]) = (chars[i], chars[j]);
 			}
 
 			return new string(chars);
