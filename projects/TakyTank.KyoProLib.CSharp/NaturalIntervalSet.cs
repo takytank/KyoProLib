@@ -226,24 +226,26 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			public const int OFFSET = 2;
 			private readonly int _height;
+			private readonly long _inf;
 			private readonly Node _root;
 			private readonly Stack<Node> _pool = new Stack<Node>();
 			private int _count = 0;
 
-			public IntervalPivotTree(int height)
-			{
-				_height = height;
-				_root = new Node(1L << height, 1L << height, 1L << height);
-				_count = 1;
-				Add(-1, -1);
-			}
-
 			public int Count => _count;
-			public long Inf => (1L << _height) - OFFSET;
+			public long Inf => _inf;
 			public (long l, long r) Max => Prev(Inf);
 			public (long l, long r) Min => Next(-1);
 
 			public bool IsEdge(long l) => l < 0 || l >= Inf;
+
+			public IntervalPivotTree(int height)
+			{
+				_height = height;
+				_inf = (1L << _height) - OFFSET;
+				_root = new Node(_inf + OFFSET, _inf + OFFSET, _inf + OFFSET);
+				_count = 1;
+				Add(-1, -1);
+			}
 
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public void Add(long l, long r)
@@ -660,24 +662,26 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			public const int OFFSET = 2;
 			private readonly int _height;
+			private readonly long _inf;
 			private readonly Node _root;
 			private readonly Stack<Node> _pool = new Stack<Node>();
 			private int _count = 0;
 
-			public IntervalPivotTree(int height)
-			{
-				_height = height;
-				_root = new Node(1L << height, 1L << height, default(TValue), 1L << height);
-				_count = 1;
-				Add(-1, -1, default(TValue));
-			}
-
 			public int Count => _count;
-			public long Inf => (1L << _height) - OFFSET;
+			public long Inf => _inf;
 			public (long l, long r, TValue value) Max => Prev(Inf);
 			public (long l, long r, TValue value) Min => Next(-1);
 
 			public bool IsEdge(long l) => l < 0 || l >= Inf;
+
+			public IntervalPivotTree(int height)
+			{
+				_height = height;
+				_inf = (1L << _height) - OFFSET;
+				_root = new Node(_inf + OFFSET, _inf + OFFSET, default(TValue), _inf + OFFSET);
+				_count = 1;
+				Add(-1, -1, default(TValue));
+			}
 
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public void Add(long l, long r, TValue value)

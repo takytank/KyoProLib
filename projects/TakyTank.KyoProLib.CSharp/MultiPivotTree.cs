@@ -9,12 +9,13 @@ namespace TakyTank.KyoProLib.CSharp
 	{
 		private const int OFFSET = 1;
 		private readonly int _height;
+		private readonly long _inf;
 		private readonly Node _root;
 		private readonly Stack<Node> _pool = new Stack<Node>();
 		private int _count = 0;
 
 		public int Count => _count;
-		public long Inf => (1L << _height) - OFFSET;
+		public long Inf => _inf;
 		public long Max => Prev(Inf);
 		public long Min => Next(-1);
 
@@ -28,7 +29,8 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			_height = height;
-			_root = new Node(1L << height, 1L << height, 1);
+			_inf = (1L << _height) - OFFSET;
+			_root = new Node(_inf + OFFSET, _inf + OFFSET, 1);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -279,8 +281,11 @@ namespace TakyTank.KyoProLib.CSharp
 
 			while (stack.Count > 0) {
 				var cur = stack.Pop();
-				for (int i = 0; i < cur.Count; i++) {
-					yield return cur.Value - OFFSET;
+				long value = cur.Value - OFFSET;
+				if (value != _inf) {
+					for (int i = 0; i < cur.Count; i++) {
+						yield return value;
+					}
 				}
 
 				node = cur.Right;
@@ -335,7 +340,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 			_height = height;
 			_inf = (1L << _height) - OFFSET;
-			_root = new Node(1L << height, 1L << height, 1);
+			_root = new Node(_inf + OFFSET, _inf + OFFSET, 1);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -663,9 +668,10 @@ namespace TakyTank.KyoProLib.CSharp
 
 			while (stack.Count > 0) {
 				var cur = stack.Pop();
-				if (cur.Value != _inf + OFFSET) {
+				long value = cur.Value - OFFSET;
+				if (value != _inf) {
 					for (int i = 0; i < cur.Count; i++) {
-						yield return cur.Value - OFFSET;
+						yield return value;
 					}
 				}
 
