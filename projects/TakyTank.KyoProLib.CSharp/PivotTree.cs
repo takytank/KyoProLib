@@ -626,8 +626,15 @@ namespace TakyTank.KyoProLib.CSharp
 		public (int index, (long l, long r, T value) interval) Max => Prev(Inf);
 		public (int index, (long l, long r, T value) interval) Min => Next(-1);
 
-		public IndexIntervalPivotTree(int height)
+		public IndexIntervalPivotTree(long max)
 		{
+			max += OFFSET;
+			int height = 0;
+			while (max > 0) {
+				++height;
+				max >>= 1;
+			}
+
 			_height = height;
 			_inf = (1L << _height) - OFFSET;
 			_root = new Node(_inf + OFFSET, _inf + OFFSET, default(T), 1L << height);

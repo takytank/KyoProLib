@@ -14,14 +14,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public NaturalIntervalSet(long max, bool mergesAdjacentInterval = true)
 		{
 			_mergesAdjacentInterval = mergesAdjacentInterval;
-			max += IntervalPivotTree.OFFSET;
-			int height = 0;
-			while (max > 0) {
-				++height;
-				max >>= 1;
-			}
-
-			_set = new IntervalPivotTree(height);
+			_set = new IntervalPivotTree(max);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -238,8 +231,15 @@ namespace TakyTank.KyoProLib.CSharp
 
 			public bool IsEdge(long l) => l < 0 || l >= Inf;
 
-			public IntervalPivotTree(int height)
+			public IntervalPivotTree(long max)
 			{
+				max += OFFSET;
+				int height = 0;
+				while (max > 0) {
+					++height;
+					max >>= 1;
+				}
+
 				_height = height;
 				_inf = (1L << _height) - OFFSET;
 				_root = new Node(_inf + OFFSET, _inf + OFFSET, _inf + OFFSET);
@@ -525,14 +525,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public NaturalIntervalSet(long max)
 		{
-			max += IntervalPivotTree<T>.OFFSET;
-			int height = 0;
-			while (max > 0) {
-				++height;
-				max >>= 1;
-			}
-
-			_set = new IntervalPivotTree<T>(height);
+			_set = new IntervalPivotTree<T>(max);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -674,8 +667,15 @@ namespace TakyTank.KyoProLib.CSharp
 
 			public bool IsEdge(long l) => l < 0 || l >= Inf;
 
-			public IntervalPivotTree(int height)
+			public IntervalPivotTree(long max)
 			{
+				max += OFFSET;
+				int height = 0;
+				while (max > 0) {
+					++height;
+					max >>= 1;
+				}
+
 				_height = height;
 				_inf = (1L << _height) - OFFSET;
 				_root = new Node(_inf + OFFSET, _inf + OFFSET, default(TValue), _inf + OFFSET);
