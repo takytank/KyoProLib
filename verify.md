@@ -187,6 +187,10 @@
 - [yosupo-judge Cycle Detection (Directed)](https://judge.yosupo.jp/problem/cycle_detection)
 - [yosupo-judge Cycle Detection (Undirected)](https://judge.yosupo.jp/problem/cycle_detection_undirected)
 
+### Bipartite Graph
+
+- [ABC327 D Good Tuple Problem](https://atcoder.jp/contests/abc327/tasks/abc327_d)
+
 ## Grid
 
 - [PAST05 K 的あて](https://atcoder.jp/contests/past202012-open/tasks/past202012_k)
