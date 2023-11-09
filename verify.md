@@ -278,6 +278,11 @@
 - [ABC267 F Exactly K Steps](https://atcoder.jp/contests/abc267/tasks/abc267_f)
 - [yukicoder 2337 Equidistant](https://yukicoder.me/problems/no/2337)
 
+## LIS
+
+- [競プロ典型 90 問 60 Chimera](https://atcoder.jp/contests/typical90/tasks/typical90_bh)
+- [第2回 ドワンゴからの挑戦状 本選 C 電波塔](https://atcoder.jp/contests/dwango2016-honsen/tasks/dwango2016final_c)
+
 ## LowLink
 
 - [ABC075 C Bridge](https://atcoder.jp/contests/abc075/tasks/abc075_c)
