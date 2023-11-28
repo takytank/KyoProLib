@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
@@ -34,9 +32,9 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				count2++;
 			}
 
-			long[] v = value <= 291831L ? sprpBase1
-				: value <= 1050535501L ? sprpBase2
-				: value <= 47636622961201 ? sprpBase3
+			long[] v = value < 291831L ? sprpBase1
+				: value < 1050535501L ? sprpBase2
+				: value < 47636622961201 ? sprpBase3
 				: sprpBase4;
 
 			foreach (var a in v) {
