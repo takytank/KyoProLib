@@ -410,6 +410,12 @@
 
 - [CODE THANKS FESTIVAL 2017 H Union Sets](https://atcoder.jp/contests/code-thanks-festival-2017/tasks/code_thanks_festival_2017_h)
 
+## PrefixSum
+
+- [
+DISCO presents ディスカバリーチャンネル コードコンテスト2016 本戦 C 01文字列](https://atcoder.jp/contests/ddcc2016-final/tasks/ddcc_2016_final_c)
+- [ABC334 C Socks 2](https://atcoder.jp/contests/abc334/tasks/abc334_c)
+
 ## Prime
 
 ### PrimeFactorsByPollardsRho
