@@ -93,6 +93,8 @@
 ### Deque
 
 - [ABC176 D Wizard in Maze](https://atcoder.jp/contests/abc176/tasks/abc176_d)
+- [PAST6 E 前から３番目](https://atcoder.jp/contests/past202104-open/tasks/past202104_e)
+- [ZONeエナジー プログラミングコンテスト D 宇宙人からのメッセージ](https://atcoder.jp/contests/zone2021/tasks/zone2021_d)
 
 ### ReverseableDeque
 
