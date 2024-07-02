@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
@@ -266,6 +265,8 @@ namespace TakyTank.KyoProLib.CSharp
 
 	}
 
+	// DynamicLazySegmentTree2の余分なnodeを作らないように高速化したものだが、
+	// Update範囲に被りがあるときにおかしくなるバグが残っている。
 	public class DynamicLazySegmentTree<TData, TUpdate>
 	{
 		private readonly Stack<Node> _pool = new Stack<Node>();
@@ -750,6 +751,62 @@ namespace TakyTank.KyoProLib.CSharp
 				return GetCore(node.Left, index, sl, c);
 			} else {
 				return GetCore(node.Right, index, c, sr);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long FindLeftest(int left, int right, Func<TData, bool> check)
+			=> FindLeftestCore(_root, left, right, 0, _n, check);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private long FindLeftestCore(Node node, int il, int ir, long sl, long sr, Func<TData, bool> check)
+		{
+			if (node is null || sr <= il || ir <= sl) {
+				return ir;
+			}
+
+			Propagate(node);
+			if (check(node.Value) == false) {
+				return ir;
+			}
+
+			if (node.Size == 1) {
+				return sl;
+			} else {
+				long mid = (sl + sr) >> 1;
+				long vl = FindLeftestCore(node.Left, il, ir, sl, mid, check);
+				if (vl != ir) {
+					return vl;
+				} else {
+					return FindLeftestCore(node.Right, il, ir, mid, sr, check);
+				}
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public long FindRightest(int left, int right, Func<TData, bool> check)
+				=> FindRightestCore(_root, left, right, 0, _n, check);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private long FindRightestCore(Node node, int il, int ir, long sl, long sr, Func<TData, bool> check)
+		{
+			if (node is null || sr <= il || ir <= sl) {
+				return il - 1;
+			}
+
+			Propagate(node);
+			if (check(node.Value) == false) {
+				return il - 1;
+			}
+
+			if (node.Size == 1) {
+				return sl;
+			} else {
+				long mid = (sl + sr) >> 1;
+				long vr = FindRightestCore(node.Right, il, ir, mid, sr, check);
+				if (vr != il - 1) {
+					return vr;
+				} else {
+					return FindRightestCore(node.Left, il, ir, sl, mid, check);
+				}
 			}
 		}
 
