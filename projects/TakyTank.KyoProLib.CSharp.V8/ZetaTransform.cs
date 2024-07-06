@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
@@ -22,15 +20,15 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Span<long> FastMoebiusTransform(SetOp op, Span<long> values) => Fmt(op, values);
+		public static Span<long> FastMobiusTransform(SetOp op, Span<long> values) => Fmt(op, values);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<long> Fmt(SetOp op, Span<long> values)
 		{
 			return op switch {
-				SetOp.Super => MoebiusSuperSet(values),
-				SetOp.Sub => MoebiusSubSet(values),
-				SetOp.Divisor => MoebiusDivisor(values),
-				SetOp.Multiple => MoebiusMultiple(values),
+				SetOp.Super => MobiusSuperSet(values),
+				SetOp.Sub => MobiusSubSet(values),
+				SetOp.Divisor => MobiusDivisor(values),
+				SetOp.Multiple => MobiusMultiple(values),
 				_ => null,
 			};
 		}
@@ -51,7 +49,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Span<long> MoebiusSuperSet(Span<long> values)
+		public static Span<long> MobiusSuperSet(Span<long> values)
 		{
 			int n = values.Length;
 			for (int i = 1; i < n; i <<= 1) {
@@ -81,7 +79,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Span<long> MoebiusSubSet(Span<long> values)
+		public static Span<long> MobiusSubSet(Span<long> values)
 		{
 			int n = values.Length;
 			for (int i = 1; i < n; i <<= 1) {
@@ -113,7 +111,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Span<long> MoebiusDivisor(Span<long> values)
+		public static Span<long> MobiusDivisor(Span<long> values)
 		{
 			int n = values.Length;
 			var sieve = new bool[n];
@@ -149,7 +147,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Span<long> MoebiusMultiple(Span<long> values)
+		public static Span<long> MobiusMultiple(Span<long> values)
 		{
 			int n = values.Length;
 			var sieve = new bool[n];
@@ -235,7 +233,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public Span<T> MoebiusSuperSet(Span<T> values)
+		public Span<T> MobiusSuperSet(Span<T> values)
 		{
 			int n = values.Length;
 			for (int i = 1; i < n; i <<= 1) {
@@ -265,7 +263,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public Span<T> MoebiusSubSet(Span<T> values)
+		public Span<T> MobiusSubSet(Span<T> values)
 		{
 			int n = values.Length;
 			for (int i = 1; i < n; i <<= 1) {
@@ -297,7 +295,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public Span<T> MoebiusDivisor(Span<T> values)
+		public Span<T> MobiusDivisor(Span<T> values)
 		{
 			int n = values.Length;
 			var sieve = new bool[n];
@@ -333,7 +331,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public Span<T> MoebiusMultiple(Span<T> values)
+		public Span<T> MobiusMultiple(Span<T> values)
 		{
 			int n = values.Length;
 			var sieve = new bool[n];
