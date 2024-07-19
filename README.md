@@ -432,6 +432,10 @@
 
 - [トポロジカルソートのアルゴリズム](https://algo-logic.info/topological-sort/)
 
+### Tree
+
+- [ツリーの重心分解 (木の重心分解) の図解](https://qiita.com/drken/items/4b4c3f1824339b090202)
+
 ### TwoOpt
 
 - [巡回セールスマン問題の近似解法を眺める](https://y-uti.hatenablog.jp/entry/2017/11/04/135809)

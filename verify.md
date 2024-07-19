@@ -563,6 +563,10 @@ DISCO presents ディスカバリーチャンネル コードコンテスト2016
 
 ## Tree
 
+### Centroid
+
+- [ABC362 F Perfect Matching on a Tree](https://atcoder.jp/contests/abc362/tasks/abc362_f)
+
 ### Diameter
 
 - [yosupo-judge Tree Diameter](https://judge.yosupo.jp/problem/tree_diameter)
