@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
-	public class PriorityQueue<T> where T : IComparable<T>
+	public class HeapQueue<T> where T : IComparable<T>
 	{
 		private readonly int reverseFactor_;
 		private T[] heap_;
@@ -13,10 +12,10 @@ namespace TakyTank.KyoProLib.CSharp
 		public T Top => heap_[0];
 		public int Count { get; private set; } = 0;
 
-		public PriorityQueue(bool reverses = false)
+		public HeapQueue(bool reverses = false)
 			: this(1024, reverses) { }
 
-		public PriorityQueue(
+		public HeapQueue(
 			int capacity,
 			bool reverses = false)
 		{
@@ -113,7 +112,7 @@ namespace TakyTank.KyoProLib.CSharp
 			=> $"{Priority} {Item}";
 	}
 
-	public class PriorityQueueP<TPriority, TItem> where TPriority : IComparable<TPriority>
+	public class HeapQueueP<TPriority, TItem> where TPriority : IComparable<TPriority>
 	{
 		private readonly int reverseFactor_;
 		private PriorityPair<TPriority, TItem>[] heap_;
@@ -121,10 +120,10 @@ namespace TakyTank.KyoProLib.CSharp
 		public PriorityPair<TPriority, TItem> Top => heap_[0];
 		public int Count { get; private set; } = 0;
 
-		public PriorityQueueP(bool reverses = false)
+		public HeapQueueP(bool reverses = false)
 			: this(1024, reverses) { }
 
-		public PriorityQueueP(
+		public HeapQueueP(
 			int capacity,
 			bool reverses = false)
 		{
@@ -203,7 +202,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 	}
 
-	public class PriorityQueueG<T>
+	public class HeapQueueG<T>
 	{
 		private readonly int reverseFactor_;
 		private readonly Comparison<T> comparison_;
@@ -212,19 +211,19 @@ namespace TakyTank.KyoProLib.CSharp
 		public T Top => heap_[0];
 		public int Count { get; private set; } = 0;
 
-		public PriorityQueueG(bool reverses = false)
+		public HeapQueueG(bool reverses = false)
 			: this(Comparer<T>.Default, reverses) { }
 
-		public PriorityQueueG(int capacity, bool reverses = false)
+		public HeapQueueG(int capacity, bool reverses = false)
 			: this(capacity, Comparer<T>.Default.Compare, reverses) { }
 
-		public PriorityQueueG(IComparer<T> comparer, bool reverses = false)
+		public HeapQueueG(IComparer<T> comparer, bool reverses = false)
 			: this(1024, comparer.Compare, reverses) { }
 
-		public PriorityQueueG(Comparison<T> comparison, bool reverses = false)
+		public HeapQueueG(Comparison<T> comparison, bool reverses = false)
 			: this(1024, comparison, reverses) { }
 
-		public PriorityQueueG(
+		public HeapQueueG(
 			int capacity,
 			Comparison<T> comparison,
 			bool reverses = false)
@@ -304,7 +303,7 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 	}
 
-	public class PriorityQueue<TObject, TPriority> where TPriority : IComparable<TPriority>
+	public class HeapQueue<TObject, TPriority> where TPriority : IComparable<TPriority>
 	{
 		private readonly Func<TObject, TPriority> selector_;
 		private readonly int reverseFactory_;
@@ -313,12 +312,12 @@ namespace TakyTank.KyoProLib.CSharp
 		public TObject Top => heap_[0];
 		public int Count { get; private set; }
 
-		public PriorityQueue(
+		public HeapQueue(
 			Func<TObject, TPriority> selector,
 			bool reverses = false)
 			: this(1024, selector, reverses) { }
 
-		public PriorityQueue(
+		public HeapQueue(
 			int capacity,
 			Func<TObject, TPriority> selector,
 			bool reverses = false)

@@ -80,7 +80,7 @@ namespace TakyTank.KyoProLib.CSharp
 			var edges = new (int u, int v, long cost)[_n - 1];
 			int count = 0;
 			var done = new bool[_n];
-			var que = new PriorityQueue<(int u, int v, long c), long>(x => x.c, true);
+			var que = new HeapQueue<(int u, int v, long c), long>(x => x.c, true);
 			done[0] = true;
 			foreach (var e in _edges[0]) {
 				que.Enqueue((0, e.to, e.d));
