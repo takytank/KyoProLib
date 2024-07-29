@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
@@ -49,21 +47,28 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsCross(Ipt p1, Ipt p2, Ipt q1, Ipt q2)
 		{
-			var pp = p2 - p1;
-			var det1 = pp.Det(q1 - p1);
-			var det2 = pp.Det(q2 - p1);
-			if (((det1 >> 63) - (-det1 >> 63)) * ((det2 >> 63) - (-det2 >> 63)) > 0) {
-				return false;
-			}
+			if (IsParallel(p1, p2, q1, q2)) {
+				return IsOnSegment(p1, p2, q1)
+					|| IsOnSegment(p1, p2, q2)
+					|| IsOnSegment(q1, q2, p1)
+					|| IsOnSegment(q1, q2, p2);
+			} else {
+				var pp = p2 - p1;
+				var det1 = pp.Det(q1 - p1);
+				var det2 = pp.Det(q2 - p1);
+				if (((det1 >> 63) - (-det1 >> 63)) * ((det2 >> 63) - (-det2 >> 63)) > 0) {
+					return false;
+				}
 
-			var qq = q2 - q1;
-			det1 = qq.Det(p1 - q1);
-			det2 = qq.Det(p2 - q1);
-			if (((det1 >> 63) - (-det1 >> 63)) * ((det2 >> 63) - (-det2 >> 63)) > 0) {
-				return false;
-			}
+				var qq = q2 - q1;
+				det1 = qq.Det(p1 - q1);
+				det2 = qq.Det(p2 - q1);
+				if (((det1 >> 63) - (-det1 >> 63)) * ((det2 >> 63) - (-det2 >> 63)) > 0) {
+					return false;
+				}
 
-			return true;
+				return true;
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
