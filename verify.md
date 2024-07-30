@@ -304,6 +304,11 @@
 
 - [ARC117 C Tricolor Pyramid](https://atcoder.jp/contests/arc117/tasks/arc117_c)
 
+## Manachar
+
+- [鉄則本 B56 Palindrome Queries](https://atcoder.jp/contests/tessoku-book/tasks/tessoku_book_ec)
+- [yosupo judge Enumerate Palindromes](https://judge.yosupo.jp/problem/enumerate_palindromes)
+
 ## Matrix
 
 ### Matrix

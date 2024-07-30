@@ -216,6 +216,11 @@
 - [二項係数(nCk)を素数(p)で割った余りの計算](https://algo-logic.info/binomial-coefficient-lucas/)
 - [二項係数(nCk)の偶奇判定のアルゴリズム](https://algo-logic.info/is-nck-odd-even/)
 
+### Manachar
+
+- [文字列の頭良い感じの線形アルゴリズムたち２](https://snuke.hatenablog.com/entry/2014/12/02/235837)
+- [回文検出(Manacher)](https://klee.hatenablog.jp/entry/2020/06/18/210754)
+
 ### Matrix
 
 - [Gauss-Jordan の掃き出し法と、連立一次方程式の解き方](https://drken1215.hatenablog.com/entry/2019/03/20/202800)
