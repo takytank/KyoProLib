@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
@@ -25,6 +24,7 @@ namespace TakyTank.KyoProLib.CSharp
 			_tempR = new List<int>();
 		}
 
+		// 半開区間[L, R)
 		public void Add(int l, int r)
 		{
 			_tempL.Add(l);
