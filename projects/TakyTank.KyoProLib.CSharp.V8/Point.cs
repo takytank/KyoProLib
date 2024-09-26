@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
-	public struct Ipt : IEquatable<Ipt>
+	public struct Ipt : IEquatable<Ipt>, IComparable<Ipt>
 	{
 		public long X { get; set; }
 		public long Y { get; set; }
@@ -94,7 +94,38 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public bool Equals(Ipt other) => X == other.X && Y == other.Y;
 		public override bool Equals(object obj) => obj is Ipt x && Equals(x);
 
+		public override string ToString() => $"({X}, {Y})";
 		public override int GetHashCode() => HashCode.Combine(X, Y);
+
+		// 0~2πの偏角順。Atan2の順と異なるので注意。
+		// また、(0, 0)が入ると壊れるので注意。
+		// 偏角が同じ場合は0を返すので、偏角が同じ異なる点の順序は不定。
+		// 座標がクロス積でオーバーフローするサイズの場合、Int128なりに書き換えて使うこと。
+		public int CompareTo(Ipt other)
+		{
+			// 0度から順番に並べる。
+			// 0度を跨いだ時の判定を楽にするため、[0, 180) と [180, 360) の領域に分ける。
+			// これは、(y, x) < (0, 0) が false のときに前者で、そうでないとき後者となる。
+			// またこの時、(0, 0)と比較すると前者が正で後者が負となる。
+			var cmpP = CompareTo00(X, Y);
+			var cmpQ = CompareTo00(other.X, other.Y);
+			if (cmpP != cmpQ) {
+				// 負の方を後にしたいので、逆に比較。
+				return cmpQ.CompareTo(cmpP);
+			}
+
+			// 同一象限内にある場合、Pに対するQのクロス積が正の場合に、
+			// Pを反時計回り方向に動かした方向にQがあるため、ソート順としてはP->Qの順になる。
+			// つまり、P.X * Q.Y よりも P.Y * Q.X の方が小さければよい。
+			return (Y * other.X).CompareTo(X * other.Y);
+
+			static int CompareTo00(long x, long y)
+			{
+				return y == 0
+					? x >= 0 ? 1 : -1
+					: y > 0 ? 1 : -1;
+			}
+		}
 	}
 
 	public struct Dpt : IEquatable<Dpt>
