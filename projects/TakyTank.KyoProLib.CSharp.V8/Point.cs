@@ -128,7 +128,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 	}
 
-	public readonly struct Dpt : IEquatable<Dpt>
+	public readonly struct Dpt : IEquatable<Dpt>, IComparable<Dpt>
 	{
 		private const double EPS = 1e-10;
 		public static Dpt Origin => new Dpt(0, 0);
@@ -250,6 +250,15 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			return new Dpt(x, y);
 		}
 
+		/// <summary>XY平面上で第何象限にあるかを返す</summary>
+		public int Quadrant()
+		{
+			// 軸上の点は数が小さい方に寄せる
+			return Y >= 0
+				? X >= 0 ? 1 : 2
+				: X <= 0 ? 3 : 4;
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static double Add(double a, double b)
 			=> Math.Abs(a + b) < EPS * (Math.Abs(a) + Math.Abs(b)) ? 0 : a + b;
@@ -259,5 +268,20 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		public override int GetHashCode() => HashCode.Combine(X, Y);
 		public override string ToString() => $"{X} {Y}";
+
+		// 0~2πの偏角順。Atan2の順と異なるので注意。
+		public int CompareTo(Dpt other)
+		{
+			if (Quadrant() == other.Quadrant()) {
+				// 同一象限内にある場合、Pに対するQのクロス積が正の場合に、
+				// Pを反時計回り方向に動かした方向にQがあるため、ソート順としてはP->Qの順になる。
+				// つまり、クロス積の逆数を返せばよい。
+				// ただ、doubleは返せないので符号を反転して返す。
+				return -1 * Math.Sign(Det(other));
+			} else {
+				// 第1象限から順番に並べるので、象限数が小さい方が先。
+				return Quadrant().CompareTo(other.Quadrant());
+			}
+		}
 	}
 }
