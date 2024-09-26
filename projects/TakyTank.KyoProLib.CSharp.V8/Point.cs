@@ -3,10 +3,10 @@ using System.Runtime.CompilerServices;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
-	public struct Ipt : IEquatable<Ipt>, IComparable<Ipt>
+	public readonly struct Ipt : IEquatable<Ipt>, IComparable<Ipt>
 	{
-		public long X { get; set; }
-		public long Y { get; set; }
+		public long X { get; }
+		public long Y { get; }
 
 		public Ipt(long x, long y)
 		{
@@ -128,13 +128,13 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 	}
 
-	public struct Dpt : IEquatable<Dpt>
+	public readonly struct Dpt : IEquatable<Dpt>
 	{
 		private const double EPS = 1e-10;
 		public static Dpt Origin => new Dpt(0, 0);
 
-		public double X { get; set; }
-		public double Y { get; set; }
+		public double X { get; }
+		public double Y { get; }
 		public double D => Math.Sqrt(X * X + Y * Y);
 
 		public Dpt(double x, double y)
