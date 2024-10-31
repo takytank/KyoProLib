@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V11;
@@ -83,6 +84,20 @@ public class IOManager : IDisposable
 		for (int i = 0; i < count; ++i) {
 			// キャプチャーを避けるために自身を引数として渡す。
 			array[i] = read(this);
+		}
+
+		return array;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public T[,] Repeat<T>(int height, int width, Func<IOManager, T> read)
+	{
+		var array = new T[height, width];
+		for (int i = 0; i < height; ++i) {
+			for (int j = 0; j < width; ++j) {
+				// キャプチャーを避けるために自身を引数として渡す。
+				array[i, j] = read(this);
+			}
 		}
 
 		return array;
@@ -327,6 +342,34 @@ public class IOManager : IDisposable
 	public void Write(BigInteger value) => _writer.Write(value);
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void Write(string value) => _writer.Write(value);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void YesNo(bool ok, bool isUpper = false)
+	{
+		_writer.WriteLine(
+			isUpper == false
+				? ok ? "Yes" : "No"
+				: ok ? "YES" : "NO");
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void JoinNL<T>(IEnumerable<T> values) => Join(values, Environment.NewLine);
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void Join<T>(IEnumerable<T> values, string separator = " ")
+		=> _writer.WriteLine(string.Join(separator, values));
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void JoinNL<T>(T[,] valuess) => Join(valuess, Environment.NewLine);
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void Join<T>(T[,] valuess, string separator = " ")
+	{
+		int height = valuess.GetLength(0);
+		int width = valuess.GetLength(1);
+		for (int i = 0; i < height; i++) {
+			_writer.WriteLine(
+				string.Join(separator, MemoryMarshal.CreateSpan<T>(ref valuess[i, 0], width).ToArray()));
+		}
+	}
 
 	private byte Read()
 	{
