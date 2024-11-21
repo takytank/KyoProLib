@@ -166,6 +166,7 @@
 
 - [AtCoder Library Practice Contest B Renwick Tree](https://atcoder.jp/contests/practice2/tasks/practice2_b)
 - [ARC033 C データ構造](https://atcoder.jp/contests/arc033/tasks/arc033_3)
+- [ABC380 G Another Shuffle Window](https://atcoder.jp/contests/abc380/tasks/abc380_g)
 
 ### RangeFenwickTree
 

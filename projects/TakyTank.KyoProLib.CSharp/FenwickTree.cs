@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
 	public class FenwickTree
 	{
+		/// <summary>
+		/// 配列全体の転倒数をO(N*logN)で計算
+		/// </summary>
 		public static long InversionNumber(IReadOnlyList<int> numbers)
 			=> InversionNumber(numbers, numbers.Max());
 		public static long InversionNumber(IReadOnlyList<int> numbers, int max)
@@ -15,7 +16,9 @@ namespace TakyTank.KyoProLib.CSharp
 			int n = numbers.Count;
 			var bit = new FenwickTree(max + 1);
 			long ret = 0;
-			for (int i = 0; i < n; i++) {
+			for (int i = 0; i < n; ++i) {
+				// ここまでの数のうち、自分より大きいものの数を足す。
+				// Sumが以下のものの数を返すので、補集合の数を計算。
 				ret += i - bit.Sum(numbers[i]);
 				bit.Add(numbers[i], 1);
 			}
@@ -23,38 +26,91 @@ namespace TakyTank.KyoProLib.CSharp
 			return ret;
 		}
 
-		private readonly int n_;
-		private readonly long[] bit_;
+		public static long[] InversionNumbers(IReadOnlyList<int> numbers, int k)
+			=> InversionNumbers(numbers, k, numbers.Max());
+		/// <summary>
+		/// 連続する長さKの区間ごとの転倒数をO(N*logN)で計算
+		/// </summary>
+		public static long[] InversionNumbers(IReadOnlyList<int> numbers, int k, int max)
+		{
+			int n = numbers.Count;
+			int count = n - k + 1;
+
+			var bit = new FenwickTree(max + 1);
+			long ret = 0;
+			for (int i = 0; i < k - 1; ++i) {
+				ret += i - bit.Sum(numbers[i]);
+				bit.Add(numbers[i], 1);
+			}
+
+			var rets = new long[count];
+			for (int i = 0; i < count; i++) {
+				int j = i + k - 1;
+				// jを含めない直近K-1個のうち、num[j]より大きいものの数を足す。
+				// Sumが以下のものの数を返すので、補集合の数を計算。
+				ret += k - 1 - bit.Sum(numbers[j]);
+				bit.Add(numbers[j], 1);
+
+				rets[i] = ret;
+
+				// jを含めた直近K-1個のうち、num[i]より小さいものの数を引く。
+				// 自分を含めないように先にBITから外しておく。
+				bit.Add(numbers[i], -1);
+				// 以下ではなく未満の数を数えられるように-1。
+				ret -= bit.Sum(numbers[i] - 1);
+			}
+
+			return rets;
+		}
+
+		// bitのi番目の要素は、iの最下位bitに対応する長さ、かつ、iを右端とした閉区間に対応する。
+		// 内部的には1-indexedで考え、0番目は使用しない。
+		// bit[1] : [1, 1]
+		// bit[2] : [1, 2]
+		// bit[3] : [3, 3]
+		// bit[4] : [1, 4]
+		private readonly int _n;
+		private readonly long[] _bit;
 
 		public long this[int index]
 		{
 			get => Sum(index, index + 1);
-			set => Add(index, value);
+			// 代入ではなくて加算なのが非直感的で間違えやすいのでsetは実装しない
+			// set => Add(index, value);
 		}
 
 		public FenwickTree(int count)
 		{
-			n_ = count;
-			bit_ = new long[count + 1];
+			_n = count;
+			_bit = new long[count + 1];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(int index, long value)
 		{
+			// 最初に1-indexedにしてから処理。
 			++index;
-			while (index <= n_) {
-				bit_[index] += value;
+			// 元のindexを含む区間全てに加算したい。
+			// これは下のbitから順次繰り上げていくことで実現可能。
+			while (index <= _n) {
+				_bit[index] += value;
 				index += index & -index;
 			}
 		}
 
+		/// <summary>
+		/// 閉区間[0, index]の和をO(longN)で計算
+		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long Sum(int index)
 		{
+			// 最初に1-indexedにしてから処理。
 			++index;
+			// 元のindexの区間から繋がる1を含む区間までの和を計算。
+			// これは下のbitから順次落としていくことで実現可能。
 			long sum = 0;
 			while (index > 0) {
-				sum += bit_[index];
+				sum += _bit[index];
 				index -= index & -index;
 			}
 
@@ -63,13 +119,19 @@ namespace TakyTank.KyoProLib.CSharp
 
 		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		//public long Sum(Range range) => Sum(range.Start.Value, range.End.Value);
+		/// <summary>
+		/// 半開区間[L, R)の和をO(logN)で計算
+		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long Sum(int l, int r) => Sum(r - 1) - Sum(l - 1);
 
+		/// <summary>
+		/// [0, x]の和がW以上になる最小のXをO(longN)で返す
+		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int LowerBound(long w)
 		{
-			int m = n_ + 1;
+			int m = _n + 1;
 			if (w <= 0) {
 				return -1;
 			} else {
@@ -80,8 +142,8 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 
 				for (int d = r; d > 0; d >>= 1) {
-					if (x + d < m && bit_[x + d] < w) {
-						w -= bit_[x + d];
+					if (x + d < m && _bit[x + d] < w) {
+						w -= _bit[x + d];
 						x += d;
 					}
 				}
@@ -92,7 +154,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public IEnumerator<long> GetEnumerator()
 		{
-			for (int i = 0; i < n_; i++) {
+			for (int i = 0; i < _n; i++) {
 				yield return this[i];
 			}
 		}
@@ -100,8 +162,8 @@ namespace TakyTank.KyoProLib.CSharp
 
 	public class ModFenwickTree
 	{
-		private readonly int n_;
-		private readonly ModInt[] bit_;
+		private readonly int _n;
+		private readonly ModInt[] _bit;
 
 		public ModInt this[int index]
 		{
@@ -111,16 +173,16 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public ModFenwickTree(int count)
 		{
-			n_ = count;
-			bit_ = new ModInt[count + 1];
+			_n = count;
+			_bit = new ModInt[count + 1];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(int index, ModInt value)
 		{
 			++index;
-			while (index <= n_) {
-				bit_[index] += value;
+			while (index <= _n) {
+				_bit[index] += value;
 				index += index & -index;
 			}
 		}
@@ -131,7 +193,7 @@ namespace TakyTank.KyoProLib.CSharp
 			++index;
 			ModInt sum = 0;
 			while (index > 0) {
-				sum += bit_[index];
+				sum += _bit[index];
 				index -= index & -index;
 			}
 
@@ -145,7 +207,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public IEnumerator<ModInt> GetEnumerator()
 		{
-			for (int i = 0; i < n_; i++) {
+			for (int i = 0; i < _n; i++) {
 				yield return this[i];
 			}
 		}
@@ -153,8 +215,8 @@ namespace TakyTank.KyoProLib.CSharp
 
 	public class RangeFenwickTree
 	{
-		private readonly int n_;
-		private readonly long[,] bit_;
+		private readonly int _n;
+		private readonly long[,] _bit;
 
 		public long this[int index]
 		{
@@ -164,8 +226,8 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public RangeFenwickTree(int count)
 		{
-			n_ = count;
-			bit_ = new long[2, n_ + 1];
+			_n = count;
+			_bit = new long[2, _n + 1];
 		}
 
 		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -184,8 +246,8 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void AddCore(int p, int a_1, long value)
 		{
-			for (int i = a_1; i <= n_; i += i & -i) {
-				bit_[p, i] += value;
+			for (int i = a_1; i <= _n; i += i & -i) {
+				_bit[p, i] += value;
 			}
 		}
 
@@ -206,7 +268,7 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			long res = 0;
 			for (int i = index_1; i > 0; i -= i & -i) {
-				res += bit_[p, i];
+				res += _bit[p, i];
 			}
 
 			return res;
@@ -214,7 +276,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public IEnumerator<long> GetEnumerator()
 		{
-			for (int i = 0; i < n_; i++) {
+			for (int i = 0; i < _n; i++) {
 				yield return this[i];
 			}
 		}
@@ -222,8 +284,8 @@ namespace TakyTank.KyoProLib.CSharp
 
 	public class ModRangeFenwickTree
 	{
-		private readonly int n_;
-		private readonly ModInt[,] bit_;
+		private readonly int _n;
+		private readonly ModInt[,] _bit;
 
 		public ModInt this[int index]
 		{
@@ -233,8 +295,8 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public ModRangeFenwickTree(int count)
 		{
-			n_ = count;
-			bit_ = new ModInt[2, n_ + 1];
+			_n = count;
+			_bit = new ModInt[2, _n + 1];
 		}
 
 		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -253,8 +315,8 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void AddCore(int p, int a_1, ModInt value)
 		{
-			for (int i = a_1; i <= n_; i += i & -i) {
-				bit_[p, i] += value;
+			for (int i = a_1; i <= _n; i += i & -i) {
+				_bit[p, i] += value;
 			}
 		}
 
@@ -275,7 +337,7 @@ namespace TakyTank.KyoProLib.CSharp
 		{
 			ModInt res = 0;
 			for (int i = index_1; i > 0; i -= i & -i) {
-				res += bit_[p, i];
+				res += _bit[p, i];
 			}
 
 			return res;
@@ -283,7 +345,7 @@ namespace TakyTank.KyoProLib.CSharp
 
 		public IEnumerator<ModInt> GetEnumerator()
 		{
-			for (int i = 0; i < n_; i++) {
+			for (int i = 0; i < _n; i++) {
 				yield return this[i];
 			}
 		}
