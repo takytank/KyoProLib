@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
@@ -26,12 +24,12 @@ namespace TakyTank.KyoProLib.CSharp
 		public int GetSizeOf(int k) => -data_[Find(k)];
 
 		public bool IsUnited(int x, int y) => Find(x) == Find(y);
-		public bool Unite(int x, int y)
+		public (bool unites, int p, int c) Unite(int x, int y)
 		{
 			x = Find(x);
 			y = Find(y);
 			if (x == y) {
-				return false;
+				return (false, x, y);
 			}
 
 			if (data_[x] > data_[y]) {
@@ -41,7 +39,7 @@ namespace TakyTank.KyoProLib.CSharp
 			--GroupCount;
 			data_[x] += data_[y];
 			data_[y] = x;
-			return true;
+			return (true, x, y);
 		}
 
 		public int Find(int k)
@@ -96,12 +94,12 @@ namespace TakyTank.KyoProLib.CSharp
 		public T GetValueOf(int k) => values_[Find(k)];
 
 		public bool IsUnited(int x, int y) => Find(x) == Find(y);
-		public bool Unite(int x, int y)
+		public (bool unites, int p, int c) Unite(int x, int y)
 		{
 			x = Find(x);
 			y = Find(y);
 			if (x == y) {
-				return false;
+				return (false, x, y);
 			}
 
 			if (data_[x] > data_[y]) {
@@ -112,7 +110,7 @@ namespace TakyTank.KyoProLib.CSharp
 			data_[x] += data_[y];
 			values_[x] = merge_(values_[x], values_[y]);
 			data_[y] = x;
-			return true;
+			return (true, x, y);
 		}
 
 		public int Find(int k)
@@ -169,14 +167,14 @@ namespace TakyTank.KyoProLib.CSharp
 		public int GetSizeOf(int v) => -data_[Find(v)];
 
 		public bool IsUnited(int x, int y) => Find(x) == Find(y);
-		public bool Unite(int x, int y, T w)
+		public (bool unites, int p, int c) Unite(int x, int y, T w)
 		{
 			w = merge_(w, GetPotentialOf(x));
 			w = merge_(w, invert_(GetPotentialOf(y)));
 			x = Find(x);
 			y = Find(y);
 			if (x == y) {
-				return false;
+				return (false, x, y);
 			}
 
 			if (data_[x] > data_[y]) {
@@ -189,7 +187,7 @@ namespace TakyTank.KyoProLib.CSharp
 			data_[y] = x;
 
 			deltaPotentials_[y] = w;
-			return true;
+			return (true, x, y);
 		}
 
 		public int Find(int v)
