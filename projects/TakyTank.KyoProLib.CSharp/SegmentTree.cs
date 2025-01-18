@@ -380,12 +380,12 @@ namespace TakyTank.KyoProLib.CSharp
 	[DebuggerTypeProxy(typeof(DualSegmentTree<>.DebugView))]
 	public class DualSegmentTree<T> : IEnumerable<T>
 	{
-		private readonly int n_;
-		private readonly int height_;
-		private readonly T unit_;
-		private readonly T[] tree_;
-		private readonly bool[] should_;
-		private readonly Func<T, T, T> operate_;
+		private readonly int _n;
+		private readonly int _height;
+		private readonly T _unit;
+		private readonly T[] _tree;
+		private readonly bool[] _should;
+		private readonly Func<T, T, T> _operate;
 
 		public int Count { get; }
 
@@ -395,27 +395,27 @@ namespace TakyTank.KyoProLib.CSharp
 			set
 			{
 				PropagateTopDown(i);
-				tree_[i + n_] = value;
+				_tree[i + _n] = value;
 			}
 		}
 
 		public DualSegmentTree(int count, T unit, Func<T, T, T> operate)
 		{
-			operate_ = operate;
-			unit_ = unit;
+			_operate = operate;
+			_unit = unit;
 
 			Count = count;
-			n_ = 1;
-			height_ = 0;
-			while (n_ < count) {
-				n_ <<= 1;
-				++height_;
+			_n = 1;
+			_height = 0;
+			while (_n < count) {
+				_n <<= 1;
+				++_height;
 			}
 
-			tree_ = new T[n_ << 1];
-			should_ = new bool[n_ << 1];
-			for (int i = 0; i < tree_.Length; i++) {
-				tree_[i] = unit;
+			_tree = new T[_n << 1];
+			_should = new bool[_n << 1];
+			for (int i = 0; i < _tree.Length; i++) {
+				_tree[i] = unit;
 			}
 		}
 
@@ -423,7 +423,7 @@ namespace TakyTank.KyoProLib.CSharp
 			: this(src.Count, unit, operate)
 		{
 			for (int i = 0; i < src.Count; i++) {
-				tree_[i + n_] = src[i];
+				_tree[i + _n] = src[i];
 			}
 		}
 
@@ -431,7 +431,7 @@ namespace TakyTank.KyoProLib.CSharp
 		public T Query(int i)
 		{
 			int l = 0;
-			int r = n_;
+			int r = _n;
 			int k = 1;
 			while (r - l > 1) {
 				Propagate(k);
@@ -445,7 +445,7 @@ namespace TakyTank.KyoProLib.CSharp
 				}
 			}
 
-			return tree_[k];
+			return _tree[k];
 		}
 
 		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -458,21 +458,21 @@ namespace TakyTank.KyoProLib.CSharp
 				return;
 			}
 
-			int l = left + n_;
-			int r = right + n_;
+			int l = left + _n;
+			int r = right + _n;
 			PropagateTopDown(l);
 			PropagateTopDown(r - 1);
 			while (l < r) {
 				if ((l & 1) != 0) {
-					tree_[l] = operate_(value, tree_[l]);
-					should_[l] = true;
+					_tree[l] = _operate(value, _tree[l]);
+					_should[l] = true;
 					++l;
 				}
 
 				if ((r & 1) != 0) {
 					--r;
-					tree_[r] = operate_(value, tree_[r]);
-					should_[r] = true;
+					_tree[r] = _operate(value, _tree[r]);
+					_should[r] = true;
 				}
 
 				l >>= 1;
@@ -480,64 +480,13 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
-		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		//public int FindLeftest(Range range, Func<T, bool> check)
-		//	=> FindLeftest(range.Start.Value, range.End.Value, check);
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int FindLeftest(int left, int right, Func<T, bool> check)
-			=> FindLeftestCore(left, right, 1, 0, n_, check);
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int FindLeftestCore(int left, int right, int v, int l, int r, Func<T, bool> check)
-		{
-			Propagate(v);
-			if (check(tree_[v]) == false || r <= left || right <= l || Count <= left) {
-				return right;
-			} else if (v >= n_) {
-				return v - n_;
-			} else {
-				int lc = v << 1;
-				int rc = (v << 1) | 1;
-				int mid = (l + r) >> 1;
-				int vl = FindLeftestCore(left, right, lc, l, mid, check);
-				if (vl != right) {
-					return vl;
-				} else {
-					return FindLeftestCore(left, right, rc, mid, r, check);
-				}
-			}
-		}
-
-		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		//public int FindRightest(Range range, Func<T, bool> check)
-		//	=> FindRightest(range.Start.Value, range.End.Value, check);
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int FindRightest(int left, int right, Func<T, bool> check)
-			=> FindRightestCore(left, right, 1, 0, n_, check);
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int FindRightestCore(int left, int right, int v, int l, int r, Func<T, bool> check)
-		{
-			Propagate(v);
-			if (check(tree_[v]) == false || r <= left || right <= l || Count <= left) {
-				return left - 1;
-			} else if (v >= n_) {
-				return v - n_;
-			} else {
-				int lc = v << 1;
-				int rc = (v << 1) | 1;
-				int mid = (l + r) >> 1;
-				int vr = FindRightestCore(left, right, rc, mid, r, check);
-				if (vr != left - 1) {
-					return vr;
-				} else {
-					return FindRightestCore(left, right, lc, l, mid, check);
-				}
-			}
-		}
+		// 葉以外の部分には、区間演算の結果ではなく、遅延評価分が格納されているので、
+		// FindLeftestやFindRightestは動作しない。
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void PropagateTopDown(int v)
 		{
-			for (int i = height_; i > 0; i--) {
+			for (int i = _height; i > 0; i--) {
 				Propagate(v >> i);
 			}
 		}
@@ -545,18 +494,18 @@ namespace TakyTank.KyoProLib.CSharp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Propagate(int v)
 		{
-			if (should_[v]) {
-				if (v < n_) {
+			if (_should[v]) {
+				if (v < _n) {
 					int lc = v << 1;
 					int rc = (v << 1) | 1;
-					tree_[lc] = operate_(tree_[v], tree_[lc]);
-					should_[lc] = true;
-					tree_[rc] = operate_(tree_[v], tree_[rc]);
-					should_[rc] = true;
-					tree_[v] = unit_;
+					_tree[lc] = _operate(_tree[v], _tree[lc]);
+					_should[lc] = true;
+					_tree[rc] = _operate(_tree[v], _tree[rc]);
+					_should[rc] = true;
+					_tree[v] = _unit;
 				}
 
-				should_[v] = false;
+				_should[v] = false;
 			}
 		}
 
@@ -602,9 +551,9 @@ namespace TakyTank.KyoProLib.CSharp
 				get
 				{
 					var items = new List<DebugItem>(tree_.Count);
-					int length = tree_.n_;
+					int length = tree_._n;
 					while (length > 0) {
-						int unit = tree_.n_ / length;
+						int unit = tree_._n / length;
 						for (int i = 0; i < length; i++) {
 							int l = i * unit;
 							int r = l + unit;
@@ -613,7 +562,7 @@ namespace TakyTank.KyoProLib.CSharp
 								items.Add(new DebugItem(
 									l,
 									r,
-									tree_.tree_[dataIndex]));
+									tree_._tree[dataIndex]));
 							}
 						}
 
