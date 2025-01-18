@@ -3,41 +3,63 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
+	/// <summary>セグメント木</summary>
+	/// <typeparam name="T">載せるモノイドの型</typeparam>
 	[DebuggerTypeProxy(typeof(SegmentTree<>.DebugView))]
 	public class SegmentTree<T> : IEnumerable<T>
 	{
-		private readonly int n_;
-		private readonly T unit_;
-		private readonly T[] tree_;
-		private readonly Func<T, T, T> operate_;
+		/// <summary>count以上になる最小の2冪の数</summary>
+		/// <remarks>
+		/// 木の葉の個数に等しい。
+		/// </remarks>
+		private readonly int _n;
+
+		/// <summary>モノイドの単位元</summary>
+		private readonly T _unit;
+
+		/// <summary>セグ木の完全二分木に対応する配列</summary>
+		/// <remarks>
+		/// 親子や葉のインデックス計算を楽にするため、根を[1]に置く。
+		/// そのため、[0]は使わない。
+		/// </remarks>
+		private readonly T[] _tree;
+
+		/// <summary>モノイドの二項演算に対応するデリゲート</summary>
+		/// <remarks>
+		/// TODO このデリゲート呼び出しのオーバーヘッドのせいで、
+		/// モノイドを構造体として渡す実装方式に比べてパフォーマンスが落ちる。
+		/// ただ、ぱっと作るにはデリゲート方式の方が楽なので、なんとも。
+		/// </remarks>
+		private readonly Func<T, T, T> _operate;
 
 		public int Count { get; }
-		public T Top => tree_[1];
+		public T Top => _tree[1];
 
 		public T this[int index]
 		{
-			get => tree_[index + n_];
+			get => _tree[index + _n];
 			set => Update(index, value);
 		}
 
 		public SegmentTree(int count, T unit, Func<T, T, T> operate)
 		{
-			operate_ = operate;
-			unit_ = unit;
+			_operate = operate;
+			_unit = unit;
 
 			Count = count;
-			n_ = 1;
-			while (n_ < count) {
-				n_ <<= 1;
+			_n = 1;
+			while (_n < count) {
+				_n <<= 1;
 			}
 
-			tree_ = new T[n_ << 1];
-			for (int i = 0; i < tree_.Length; i++) {
-				tree_[i] = unit;
+			// 葉の数がNの完全に分岐の頂点数はN*2-1
+			// つまり、[0]を使わない場合でも、2倍の長さを確保しておけば足りる。
+			_tree = new T[_n << 1];
+			for (int i = 0; i < _tree.Length; i++) {
+				_tree[i] = unit;
 			}
 		}
 
@@ -45,11 +67,11 @@ namespace TakyTank.KyoProLib.CSharp
 			: this(src.Length, unit, operate)
 		{
 			for (int i = 0; i < src.Length; ++i) {
-				tree_[i + n_] = src[i];
+				_tree[i + _n] = src[i];
 			}
 
-			for (int i = n_ - 1; i > 0; --i) {
-				tree_[i] = operate_(tree_[i << 1], tree_[(i << 1) | 1]);
+			for (int i = _n - 1; i > 0; --i) {
+				_tree[i] = _operate(_tree[i << 1], _tree[(i << 1) | 1]);
 			}
 		}
 
@@ -60,11 +82,11 @@ namespace TakyTank.KyoProLib.CSharp
 				return;
 			}
 
-			index += n_;
-			tree_[index] = value;
+			index += _n;
+			_tree[index] = value;
 			index >>= 1;
 			while (index != 0) {
-				tree_[index] = operate_(tree_[index << 1], tree_[(index << 1) | 1]);
+				_tree[index] = _operate(_tree[index << 1], _tree[(index << 1) | 1]);
 				index >>= 1;
 			}
 		}
@@ -75,47 +97,72 @@ namespace TakyTank.KyoProLib.CSharp
 		public T Query(int left, int right)
 		{
 			if (left > right || right < 0 || left >= Count) {
-				return unit_;
+				return _unit;
 			}
 
-			int l = left + n_;
-			int r = right + n_;
-			T valL = unit_;
-			T valR = unit_;
+			int l = left + _n;
+			int r = right + _n;
+			T valL = _unit;
+			T valR = _unit;
 			while (l < r) {
 				if ((l & 1) != 0) {
-					valL = operate_(valL, tree_[l]);
+					valL = _operate(valL, _tree[l]);
 					++l;
 				}
 				if ((r & 1) != 0) {
 					--r;
-					valR = operate_(tree_[r], valR);
+					valR = _operate(_tree[r], valR);
 				}
 
 				l >>= 1;
 				r >>= 1;
 			}
 
-			return operate_(valL, valR);
+			return _operate(valL, valR);
 		}
 
 		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		//public int FindLeftest(Range range, Func<T, bool> check)
+		//public int FindLeftest(Range range, Predicate<T> check)
 		//	=> FindLeftest(range.Start.Value, range.End.Value, check);
+
+		/// <summary>
+		/// [left, right)の範囲で条件を満たす一番左の要素のインデックスを返す
+		/// </summary>
+		/// <remarks>
+		/// 最終的に返すのは単一要素のインデックスだが、探索中は範囲で見るため、
+		/// [left, right)の時点で条件を満たす必要がある。
+		/// つまり、演算をMaxにして、一番左にあるX以上の数の位置を求めることは出来るが、
+		/// 演算をSumにして、合計がX以下になる[left, Y)のYを求めることは出来ない。
+		/// </remarks>
+		/// <param name="left">探索範囲[L, R)のL</param>
+		/// <param name="right">探索範囲[L, R)のR</param>
+		/// <param name="check">
+		/// 条件を満たすかを判定するデリゲート。
+		/// 引数には、インデックスではなく、モノイドが渡される。
+		/// </param>
+		/// <returns>
+		/// 条件を満たす一番左の要素のインデックス。
+		/// 条件を満たす要素が無い場合はrightが返る。
+		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int FindLeftest(int left, int right, Func<T, bool> check)
-			=> FindLeftestCore(left, right, 1, 0, n_, check);
+		public int FindLeftest(int left, int right, Predicate<T> check)
+			=> FindLeftestCore(left, right, 1, 0, _n, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int FindLeftestCore(int left, int right, int v, int l, int r, Func<T, bool> check)
+		private int FindLeftestCore(int left, int right, int v, int l, int r, Predicate<T> check)
 		{
-			if (check(tree_[v]) == false || r <= left || right <= l || Count <= left) {
+			if (check(_tree[v]) == false || r <= left || right <= l || Count <= left) {
+				// 条件を満たさないとき、解はこの範囲よりも右にあるとする。
 				return right;
-			} else if (v >= n_) {
-				return v - n_;
+			} else if (v >= _n) {
+				// 葉に辿り着いたらそれが答え。
+				// 葉から元の配列のインデックスに直すには、葉の数を引けばよい。
+				return v - _n;
 			} else {
 				int lc = v << 1;
 				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
+				// 左の子の範囲で条件を満たすものを見つけたら右は見る必要がない。
+				// なので、先に左を見る。
 				int vl = FindLeftestCore(left, right, lc, l, mid, check);
 				if (vl != right) {
 					return vl;
@@ -126,18 +173,35 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		//public int FindRightest(Range range, Func<T, bool> check)
+		//public int FindRightest(Range range, Predicate<T> check)
 		//	=> FindRightest(range.Start.Value, range.End.Value, check);
+
+		/// <summary>
+		/// [left, right)の範囲で条件を満たす一番右の要素のインデックスを返す
+		/// </summary>
+		/// <remarks>
+		/// 詳細はFindLeftestと同じ。
+		/// </remarks>
+		/// <param name="left">探索範囲[L, R)のL</param>
+		/// <param name="right">探索範囲[L, R)のR</param>
+		/// <param name="check">
+		/// 条件を満たすかを判定するデリゲート。
+		/// 引数には、インデックスではなく、モノイドが渡される。
+		/// </param>
+		/// <returns>
+		/// 条件を満たす一番右の要素のインデックス。
+		/// 条件を満たす要素が無い場合は left - 1 が返る。
+		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int FindRightest(int left, int right, Func<T, bool> check)
-			=> FindRightestCore(left, right, 1, 0, n_, check);
+		public int FindRightest(int left, int right, Predicate<T> check)
+			=> FindRightestCore(left, right, 1, 0, _n, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int FindRightestCore(int left, int right, int v, int l, int r, Func<T, bool> check)
+		private int FindRightestCore(int left, int right, int v, int l, int r, Predicate<T> check)
 		{
-			if (check(tree_[v]) == false || r <= left || right <= l || Count <= left) {
+			if (check(_tree[v]) == false || r <= left || right <= l || Count <= left) {
 				return left - 1;
-			} else if (v >= n_) {
-				return v - n_;
+			} else if (v >= _n) {
+				return v - _n;
 			} else {
 				int lc = v << 1;
 				int rc = (v << 1) | 1;
@@ -151,6 +215,19 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 		}
 
+		/// <summary>
+		/// satisfies(operate([l], [l + 1], ..., [r - 1]))がtrueとなる最大のrを返す
+		/// </summary>
+		/// <param name="l">探索範囲[L, Count)のL</param>
+		/// <param name="satisfies">
+		/// 条件を満たすかを判定するデリゲート。
+		/// 判定結果は、区間に対して単調である必要がある。
+		/// 引数には、インデックスではなく、モノイドが渡される。
+		/// </param>
+		/// <returns>
+		/// 条件を満たす最大のR。
+		/// 満たさない場合はCountが返る。
+		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int MaxRight(int l, Predicate<T> satisfies)
 		{
@@ -158,33 +235,48 @@ namespace TakyTank.KyoProLib.CSharp
 				return Count;
 			}
 
-			l += n_;
-			var sum = unit_;
+			l += _n;
+			var sum = _unit;
 			do {
 				while (l % 2 == 0) {
 					l >>= 1;
 				}
 
-				if (satisfies(operate_(sum, tree_[l])) == false) {
-					while (l < n_) {
+				if (satisfies(_operate(sum, _tree[l])) == false) {
+					while (l < _n) {
 						l <<= 1;
-						var temp = operate_(sum, tree_[l]);
+						var temp = _operate(sum, _tree[l]);
 						if (satisfies(temp)) {
 							sum = temp;
 							++l;
 						}
 					}
 
-					return l - n_;
+					return l - _n;
 				}
 
-				sum = operate_(sum, tree_[l]);
+				sum = _operate(sum, _tree[l]);
 				++l;
 			} while ((l & -l) != l);
 
 			return Count;
 		}
 
+		/// <summary>
+		/// satisfies(operate([l], [l + 1], ..., [r - 1]))がtrueとなる最小のlを返す
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <param name="r">探索範囲[0, R)のR</param>
+		/// <param name="satisfies">
+		/// 条件を満たすかを判定するデリゲート。
+		/// 判定結果は、区間に対して単調である必要がある。
+		/// 引数には、インデックスではなく、モノイドが渡される。
+		/// </param>
+		/// <returns>
+		/// 条件を満たす最小のL。
+		/// 満たさない場合はRが返る、
+		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int MinLeft(int r, Predicate<T> satisfies)
 		{
@@ -192,28 +284,28 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			r += n_;
-			var sum = unit_;
+			r += _n;
+			var sum = _unit;
 			do {
 				--r;
 				while (r > 1 && (r % 2) != 0) {
 					r >>= 1;
 				}
 
-				if (satisfies(operate_(tree_[r], sum)) == false) {
-					while (r < n_) {
+				if (satisfies(_operate(_tree[r], sum)) == false) {
+					while (r < _n) {
 						r = (r << 1) | 1;
-						var temp = operate_(tree_[r], sum);
+						var temp = _operate(_tree[r], sum);
 						if (satisfies(temp)) {
 							sum = temp;
 							--r;
 						}
 					}
 
-					return r + 1 - n_;
+					return r + 1 - _n;
 				}
 
-				sum = operate_(tree_[r], sum);
+				sum = _operate(_tree[r], sum);
 			} while ((r & -r) != r);
 
 			return 0;
@@ -261,9 +353,9 @@ namespace TakyTank.KyoProLib.CSharp
 				get
 				{
 					var items = new List<DebugItem>(tree_.Count);
-					int length = tree_.n_;
+					int length = tree_._n;
 					while (length > 0) {
-						int unit = tree_.n_ / length;
+						int unit = tree_._n / length;
 						for (int i = 0; i < length; i++) {
 							int l = i * unit;
 							int r = l + unit;
@@ -272,7 +364,7 @@ namespace TakyTank.KyoProLib.CSharp
 								items.Add(new DebugItem(
 									l,
 									r,
-									tree_.tree_[dataIndex]));
+									tree_._tree[dataIndex]));
 							}
 						}
 
