@@ -579,14 +579,22 @@ namespace TakyTank.KyoProLib.CSharp
 	public class LazySegmentTree<TData, TUpdate> : IEnumerable<TData>
 		where TUpdate : IEquatable<TUpdate>
 	{
-		private readonly int n_;
-		private readonly TData[] data_;
-		private readonly TUpdate[] lazy_;
-		private readonly Func<TData, TData, TData> operate_;
-		private readonly Func<TData, TUpdate, int, TData> update_;
-		private readonly Func<TUpdate, TUpdate, TUpdate> compose_;
-		private readonly TData unitData_;
-		private readonly TUpdate unitUpdate_;
+		private readonly int _n;
+		private readonly TData[] _data;
+		private readonly TUpdate[] _lazy;
+		private readonly Func<TData, TData, TData> _operate;
+		private readonly Func<TData, TUpdate, int, TData> _update;
+
+		/// <summary>遅延評価分を合成するデリゲート</summary>
+		/// <remarks>
+		/// (f, g) => h で、h(x) = (f・g)(x) となる。
+		/// すなわち、第一引数の方が新しい更新分で、後に適用される。
+		/// 演算がupdateの場合は、fを返せばよい。
+		/// </remarks>
+		private readonly Func<TUpdate, TUpdate, TUpdate> _compose;
+
+		private readonly TData _unitData;
+		private readonly TUpdate _unitUpdate;
 
 		public int Count { get; }
 
@@ -596,7 +604,7 @@ namespace TakyTank.KyoProLib.CSharp
 			set
 			{
 				Down(index);
-				data_[index + n_] = value;
+				_data[index + _n] = value;
 				Up(index);
 			}
 		}
@@ -610,26 +618,26 @@ namespace TakyTank.KyoProLib.CSharp
 			Func<TUpdate, TUpdate, TUpdate> compose)
 		{
 			Count = count;
-			n_ = 1;
-			while (n_ < count) {
-				n_ <<= 1;
+			_n = 1;
+			while (_n < count) {
+				_n <<= 1;
 			}
 
-			data_ = new TData[n_ << 1];
-			for (int i = 0; i < data_.Length; i++) {
-				data_[i] = unitData;
+			_data = new TData[_n << 1];
+			for (int i = 0; i < _data.Length; i++) {
+				_data[i] = unitData;
 			}
 
-			lazy_ = new TUpdate[n_ << 1];
-			for (int i = 0; i < lazy_.Length; i++) {
-				lazy_[i] = unitUpdate;
+			_lazy = new TUpdate[_n << 1];
+			for (int i = 0; i < _lazy.Length; i++) {
+				_lazy[i] = unitUpdate;
 			}
 
-			unitData_ = unitData;
-			unitUpdate_ = unitUpdate;
-			operate_ = operate;
-			update_ = update;
-			compose_ = compose;
+			_unitData = unitData;
+			_unitUpdate = unitUpdate;
+			_operate = operate;
+			_update = update;
+			_compose = compose;
 		}
 
 		public LazySegmentTree(
@@ -642,11 +650,11 @@ namespace TakyTank.KyoProLib.CSharp
 			: this(src.Count, unitData, unitUpdate, operate, update, compose)
 		{
 			for (int i = 0; i < src.Count; i++) {
-				data_[i + n_] = src[i];
+				_data[i + _n] = src[i];
 			}
 
-			for (int i = n_ - 1; i > 0; --i) {
-				data_[i] = operate_(data_[i << 1], data_[(i << 1) | 1]);
+			for (int i = _n - 1; i > 0; --i) {
+				_data[i] = _operate(_data[i << 1], _data[(i << 1) | 1]);
 			}
 		}
 
@@ -658,7 +666,7 @@ namespace TakyTank.KyoProLib.CSharp
 		//	=> Update(range.Start.Value, range.End.Value, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Update(int left, int right, TUpdate value)
-			=> UpdateCore(left, right, 1, 0, n_, value);
+			=> UpdateCore(left, right, 1, 0, _n, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void UpdateCore(int left, int right, int v, int l, int r, TUpdate value)
 		{
@@ -672,8 +680,8 @@ namespace TakyTank.KyoProLib.CSharp
 				UpdateCore(left, right, lc, l, mid, value);
 				Propagate(rc, mid, r, v);
 				UpdateCore(left, right, rc, mid, r, value);
-				data_[v] = operate_(data_[lc], data_[rc]);
-				lazy_[v] = unitUpdate_;
+				_data[v] = _operate(_data[lc], _data[rc]);
+				_lazy[v] = _unitUpdate;
 			}
 		}
 
@@ -683,22 +691,22 @@ namespace TakyTank.KyoProLib.CSharp
 		//public TData Query(Range range) => Query(range.Start.Value, range.End.Value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TData Query(int left, int right)
-			=> QueryCore(left, right, 1, 0, n_);
+			=> QueryCore(left, right, 1, 0, _n);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private TData QueryCore(int left, int right, int v, int l, int r)
 		{
 			if (left <= l && r <= right) {
-				return data_[v];
+				return _data[v];
 			} else if (r <= left || right <= l) {
-				return unitData_;
+				return _unitData;
 			} else {
 				int lc = v << 1;
 				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				Propagate(lc, l, mid, v);
 				Propagate(rc, mid, r, v);
-				lazy_[v] = unitUpdate_;
-				return operate_(
+				_lazy[v] = _unitUpdate;
+				return _operate(
 					QueryCore(left, right, lc, l, mid),
 					QueryCore(left, right, rc, mid, r)
 				);
@@ -710,21 +718,21 @@ namespace TakyTank.KyoProLib.CSharp
 		//	=> FindLeftest(range.Start.Value, range.End.Value, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int FindLeftest(int left, int right, Func<TData, bool> check)
-			=> FindLeftestCore(left, right, 1, 0, n_, check);
+			=> FindLeftestCore(left, right, 1, 0, _n, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private int FindLeftestCore(int left, int right, int v, int l, int r, Func<TData, bool> check)
 		{
-			if (check(data_[v]) == false || r <= left || right <= l || Count <= left) {
+			if (check(_data[v]) == false || r <= left || right <= l || Count <= left) {
 				return right;
-			} else if (v >= n_) {
-				return v - n_;
+			} else if (v >= _n) {
+				return v - _n;
 			} else {
 				int lc = v << 1;
 				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				Propagate(lc, l, mid, v);
 				Propagate(rc, mid, r, v);
-				lazy_[v] = unitUpdate_;
+				_lazy[v] = _unitUpdate;
 
 				int vl = FindLeftestCore(left, right, lc, l, mid, check);
 				if (vl != right) {
@@ -740,21 +748,21 @@ namespace TakyTank.KyoProLib.CSharp
 		//	=> FindRightest(range.Start.Value, range.End.Value, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int FindRightest(int left, int right, Func<TData, bool> check)
-			=> FindRightestCore(left, right, 1, 0, n_, check);
+			=> FindRightestCore(left, right, 1, 0, _n, check);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private int FindRightestCore(int left, int right, int v, int l, int r, Func<TData, bool> check)
 		{
-			if (check(data_[v]) == false || r <= left || right <= l || Count <= left) {
+			if (check(_data[v]) == false || r <= left || right <= l || Count <= left) {
 				return left - 1;
-			} else if (v >= n_) {
-				return v - n_;
+			} else if (v >= _n) {
+				return v - _n;
 			} else {
 				int lc = v << 1;
 				int rc = (v << 1) | 1;
 				int mid = (l + r) >> 1;
 				Propagate(lc, l, mid, v);
 				Propagate(rc, mid, r, v);
-				lazy_[v] = unitUpdate_;
+				_lazy[v] = _unitUpdate;
 
 				int vr = FindRightestCore(left, right, rc, mid, r, check);
 				if (vr != left - 1) {
@@ -767,31 +775,31 @@ namespace TakyTank.KyoProLib.CSharp
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Propagate(int v, int l, int r, int p)
-			=> Propagate(v, l, r, ref lazy_[p]);
+			=> Propagate(v, l, r, ref _lazy[p]);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Propagate(int v, int l, int r, ref TUpdate value)
 		{
-			if (value.Equals(unitUpdate_)) {
+			if (value.Equals(_unitUpdate)) {
 				return;
 			}
 
-			data_[v] = update_(data_[v], value, r - l);
-			lazy_[v] = compose_(value, lazy_[v]);
+			_data[v] = _update(_data[v], value, r - l);
+			_lazy[v] = _compose(value, _lazy[v]);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Up(int v)
 		{
-			v += n_;
+			v += _n;
 			v >>= 1;
 			while (v > 0) {
-				data_[v] = operate_(data_[v << 1], data_[(v << 1) | 1]);
+				_data[v] = _operate(_data[v << 1], _data[(v << 1) | 1]);
 				v >>= 1;
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Down(int v) => DownCore(v, v + 1, 1, 0, n_);
+		private void Down(int v) => DownCore(v, v + 1, 1, 0, _n);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void DownCore(int left, int right, int v, int l, int r)
 		{
@@ -803,7 +811,7 @@ namespace TakyTank.KyoProLib.CSharp
 				int mid = (l + r) >> 1;
 				Propagate(lc, l, mid, v);
 				Propagate(rc, mid, r, v);
-				lazy_[v] = unitUpdate_;
+				_lazy[v] = _unitUpdate;
 				DownCore(left, right, lc, l, mid);
 				DownCore(left, right, rc, mid, r);
 			}
@@ -854,9 +862,9 @@ namespace TakyTank.KyoProLib.CSharp
 				get
 				{
 					var items = new List<DebugItem>(tree_.Count);
-					int length = tree_.n_;
+					int length = tree_._n;
 					while (length > 0) {
-						int unit = tree_.n_ / length;
+						int unit = tree_._n / length;
 						for (int i = 0; i < length; i++) {
 							int l = i * unit;
 							int r = l + unit;
@@ -865,8 +873,8 @@ namespace TakyTank.KyoProLib.CSharp
 								items.Add(new DebugItem(
 									l,
 									r,
-									tree_.data_[dataIndex],
-									tree_.lazy_[dataIndex]));
+									tree_._data[dataIndex],
+									tree_._lazy[dataIndex]));
 							}
 						}
 
