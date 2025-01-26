@@ -301,6 +301,10 @@
 - [競プロ典型 90 問 60 Chimera](https://atcoder.jp/contests/typical90/tasks/typical90_bh)
 - [第2回 ドワンゴからの挑戦状 本選 C 電波塔](https://atcoder.jp/contests/dwango2016-honsen/tasks/dwango2016final_c)
 
+## LongComparer
+
+- [ABC390 D Stone XOR](https://atcoder.jp/contests/abc390/tasks/abc390_d)
+
 ## LowLink
 
 - [ABC075 C Bridge](https://atcoder.jp/contests/abc075/tasks/abc075_c)
