@@ -219,4 +219,175 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			_heap = newHeap;
 		}
 	}
+
+	public class IntervalHeap<TObject, TPriority> where TPriority : IComparable<TPriority>
+	{
+		private readonly Func<TObject, TPriority> _selector;
+		private TObject[] _heap;
+
+		public int Count { get; private set; } = 0;
+		public TObject Min => _heap.Length < 2 ? _heap[0] : _heap[1];
+		public TObject Max => _heap[0];
+
+		public IntervalHeap(Func<TObject, TPriority> selector) : this(0, selector) { }
+
+		public IntervalHeap(int capacity, Func<TObject, TPriority> selector)
+		{
+			if (capacity == 0) {
+				capacity = 128;
+			}
+
+			_selector = selector;
+			_heap = new TObject[capacity];
+		}
+
+		public IntervalHeap(ReadOnlySpan<TObject> values, Func<TObject, TPriority> selector)
+			: this(values.Length, selector)
+		{
+			Count = values.Length;
+			values.CopyTo(_heap);
+			for (int i = _heap.Length - 1; i >= 0; --i) {
+				if ((i & 1) != 0 && _selector(_heap[i - 1]).CompareTo(_selector(_heap[i])) < 0) {
+					(_heap[i - 1], _heap[i]) = (_heap[i], _heap[i - 1]);
+				}
+
+				int v = Down(i);
+				Up(v, i);
+			}
+		}
+
+		public void Enqueue(TObject x)
+		{
+			if (_heap.Length == Count) {
+				Extend(_heap.Length * 2);
+			}
+
+			int v = Count;
+			_heap[Count] = x;
+			++Count;
+
+			Up(v);
+		}
+
+		public TObject DequeueMin()
+		{
+			TObject ret;
+			int last = Count - 1;
+			if (Count < 3) {
+				ret = _heap[last];
+				--Count;
+			} else {
+				(_heap[1], _heap[last]) = (_heap[last], _heap[1]);
+				ret = _heap[last];
+				--Count;
+				int v = Down(1);
+				Up(v);
+			}
+
+			return ret;
+		}
+
+		public TObject DequeueMax()
+		{
+			TObject ret;
+			int last = Count - 1;
+			if (Count < 2) {
+				ret = _heap[last];
+				--Count;
+			} else {
+				(_heap[0], _heap[last]) = (_heap[last], _heap[0]);
+				ret = _heap[last];
+				--Count;
+				int v = Down(0);
+				Up(v);
+			}
+
+			return ret;
+		}
+
+		private int Down(int v)
+		{
+			int n = Count;
+			if ((v & 1) != 0) {
+				// min heap
+				while ((v << 1) + 1 < n) {
+					int c = (v << 1) + 3;
+					if (n <= c || _selector(_heap[c - 2]).CompareTo(_selector(_heap[c])) < 0) {
+						c -= 2;
+					}
+
+					if (c < n && _selector(_heap[c]).CompareTo(_selector(_heap[v])) < 0) {
+						(_heap[v], _heap[c]) = (_heap[c], _heap[v]);
+						v = c;
+					} else {
+						break;
+					}
+				}
+			} else {
+				// max heap
+				while ((v << 1) + 2 < n) {
+					int c = (v << 1) + 4;
+					if (n <= c || _selector(_heap[c]).CompareTo(_selector(_heap[c - 2])) < 0) {
+						c -= 2;
+					}
+
+					if (c < n && _selector(_heap[v]).CompareTo(_selector(_heap[c])) < 0) {
+						(_heap[v], _heap[c]) = (_heap[c], _heap[v]);
+						v = c;
+					} else {
+						break;
+					}
+				}
+			}
+
+			return v;
+		}
+
+		private int Up(int v, int root = 1)
+		{
+			if ((v | 1) < Count && _selector(_heap[v & ~1]).CompareTo(_selector(_heap[v | 1])) < 0) {
+				(_heap[v & ~1], _heap[v | 1]) = (_heap[v | 1], _heap[v & ~1]);
+				v ^= 1;
+			}
+
+			int p = Parent(v);
+			while (root < v && _selector(_heap[p]).CompareTo(_selector(_heap[v])) < 0) {
+				// max heap
+				(_heap[p], _heap[v]) = (_heap[v], _heap[p]);
+				v = p;
+				p = Parent(v);
+			}
+
+			p = Parent(v) | 1;
+			while (root < v && _selector(_heap[v]).CompareTo(_selector(_heap[p])) < 0) {
+				// min heap
+				(_heap[p], _heap[v]) = (_heap[v], _heap[p]);
+				v = p;
+				p = Parent(v) | 1;
+			}
+
+			return v;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private int Parent(int v) => ((v >> 1) - 1) & ~1;
+
+		// Compare、Prirority共にinline展開されず、2割ほど性能が悪化する。
+		// TODO AHCでの使用がメインなので看過出来ないため書きするが、どうにかしたい……
+		/*
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private int Compare(int x, int y) => Priority(x).CompareTo(Priority(y));
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private TPriority Priority(int index) => _selector(_heap[index]);
+		*/
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Extend(int newSize)
+		{
+			var newHeap = new TObject[newSize];
+			_heap.CopyTo(newHeap, 0);
+			_heap = newHeap;
+		}
+	}
 }
