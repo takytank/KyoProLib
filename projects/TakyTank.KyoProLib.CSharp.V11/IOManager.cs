@@ -371,6 +371,9 @@ public class IOManager : IDisposable
 		}
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public void Flush() => _writer.Flush();
+
 	private byte Read()
 	{
 		if (_isEof) {
@@ -402,14 +405,18 @@ public class IOManager : IDisposable
 		string directory = Path.GetDirectoryName(inFilePath);
 		string title = Path.GetFileNameWithoutExtension(inFilePath);
 		string ext = Path.GetExtension(inFilePath);
-		if (directory.EndsWith(@"in")) {
-			// AHCで配布される tools の in フォルダーの横に out フォルダーを作る
-			directory = directory[..^2] + @"out";
+		string directoryName = Path.GetFileName(directory);
+		string parentDirectory = Path.GetDirectoryName(directory);
+		if (directoryName.Contains(@"in")) {
+			// AHCで配布される tools の in フォルダーの横に out フォルダーを作る。
+			// mastersのinAにも対応出来るようにReplaceする。
+			directoryName = directoryName.Replace("in", "out");
+			directory = Path.Combine(parentDirectory, directoryName);
+		} else {
+			// ビジュアライザーの一括読み込みは、1234.txt 又は xxx_1234.txt のような形式に対応している。
+			// 入力と同じフォルダーの場合は、出力ファイルであることが分かるようにしておく。
+			title = "out_" + title;
 		}
-
-		// ビジュアライザーの一括読み込みは、1234.txt 又は xxx_1234.txt のような形式に対応している。
-		// 出力フォルダーにかかわらず、出力ファイルであることが分かるようにしておく。
-		title = "out_" + title;
 
 		if (Directory.Exists(directory) == false) {
 			Directory.CreateDirectory(directory);
