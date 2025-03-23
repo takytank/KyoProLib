@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
@@ -263,9 +262,27 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Span<char> AsWriteableSpan(this string str)
+		public static Span<char> ReverseInPlace(this string str)
+			=> str.ReverseInPlace(0, str.Length);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<char> ReverseInPlace(this string str, int l, int r)
 		{
-			var span = str.AsSpan();
+			var span = str.AsWriteableSpan(l, r);
+			for (int i = 0, j = span.Length - 1; i < j; ++i, --j) {
+				(span[j], span[i]) = (span[i], span[j]);
+			}
+
+			return MemoryMarshal.CreateSpan(ref MemoryMarshal.GetReference(span), span.Length);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<char> AsWriteableSpan(this string str)
+			=> str.AsWriteableSpan(0, str.Length);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<char> AsWriteableSpan(this string str, int l, int r)
+		{
+			var span = str.AsSpan(l, r - l);
 			return MemoryMarshal.CreateSpan(ref MemoryMarshal.GetReference(span), span.Length);
 		}
 
