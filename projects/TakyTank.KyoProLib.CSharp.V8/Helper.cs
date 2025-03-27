@@ -81,6 +81,44 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int LowerBound<T>(Span<T> array, T value) where T : IComparable<T>
+		=> LowerBound(array, -1, array.Length, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int LowerBound<T>(Span<T> array, int ng, int ok, T value)
+			where T : IComparable<T>
+		{
+			while (ok - ng > 1) {
+				int mid = (ok + ng) / 2;
+				if (array[mid].CompareTo(value) >= 0) {
+					ok = mid;
+				} else {
+					ng = mid;
+				}
+			}
+
+			return ok;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int UpperBound<T>(Span<T> array, T value) where T : IComparable<T>
+			=> UpperBound(array, -1, array.Length, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int UpperBound<T>(Span<T> array, int ng, int ok, T value)
+			where T : IComparable<T>
+		{
+			while (ok - ng > 1) {
+				int mid = (ok + ng) / 2;
+				if (array[mid].CompareTo(value) > 0) {
+					ok = mid;
+				} else {
+					ng = mid;
+				}
+			}
+
+			return ok;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Array1<T>(int n, T initialValue) where T : struct
 			=> new T[n].Fill(initialValue);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
