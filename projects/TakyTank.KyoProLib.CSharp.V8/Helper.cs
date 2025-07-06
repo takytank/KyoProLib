@@ -225,28 +225,38 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		private static readonly int[] delta4_ = { 1, 0, -1, 0, 1 };
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static IEnumerable<(int i, int j)> Adjacence4(int i, int j, int imax, int jmax)
+		public static ReadOnlySpan<(int i, int j)> Adjacence4(int i, int j, int imax, int jmax)
 		{
+			int p = 0;
+			Span<(int i, int j)> adjacences = new (int i, int j)[4];
 			for (int dn = 0; dn < 4; ++dn) {
 				int d4i = i + delta4_[dn];
 				int d4j = j + delta4_[dn + 1];
 				if ((uint)d4i < (uint)imax && (uint)d4j < (uint)jmax) {
-					yield return (d4i, d4j);
+					adjacences[p] = (d4i, d4j);
+					++p;
 				}
 			}
+
+			return adjacences[..p];
 		}
 
 		private static readonly int[] delta8_ = { 1, 0, -1, 0, 1, 1, -1, -1, 1 };
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static IEnumerable<(int i, int j)> Adjacence8(int i, int j, int imax, int jmax)
+		public static ReadOnlySpan<(int i, int j)> Adjacence8(int i, int j, int imax, int jmax)
 		{
+			int p = 0;
+			Span<(int i, int j)> adjacences = new (int i, int j)[8];
 			for (int dn = 0; dn < 8; ++dn) {
 				int d8i = i + delta8_[dn];
 				int d8j = j + delta8_[dn + 1];
 				if ((uint)d8i < (uint)imax && (uint)d8j < (uint)jmax) {
-					yield return (d8i, d8j);
+					adjacences[p] = (d8i, d8j);
+					++p;
 				}
 			}
+
+			return adjacences[..p];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
