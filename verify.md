@@ -309,6 +309,10 @@
 
 - [ABC075 C Bridge](https://atcoder.jp/contests/abc075/tasks/abc075_c)
 
+### Two-Edge-Connected-Components
+
+- [天下一プログラマーコンテスト2015予選A D ハシポン](https://atcoder.jp/contests/tenka1-2015-quala/tasks/tenka1_2015_qualA_d)
+
 ## Lucas
 
 - [ARC117 C Tricolor Pyramid](https://atcoder.jp/contests/arc117/tasks/arc117_c)
