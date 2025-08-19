@@ -11,6 +11,11 @@
 
 このライブラリは、以下の書籍や記事、動画を参考にして作成されています。
 
+### AhoCorasick
+
+- [Aho Corasick 法](https://naoya-2.hatenadiary.org/entry/20090405/aho_corasick)
+- [Aho-Corasick法をしっかりと理解する話](https://kntychance.hatenablog.jp/entry/2024/07/28/144203)
+
 ### BellmanFord
 
 - 蟻本 95p

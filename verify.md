@@ -5,6 +5,10 @@
 
 実質ネタバレなので、見るときは注意して下さい。
 
+## AhoCorasick
+
+- [ABC362 G Count Substring Query](https://atcoder.jp/contests/abc362/tasks/abc362_g)
+
 ## ArgumentSort
 
 - [ABC139 F Engines](https://atcoder.jp/contests/abc139/tasks/abc139_f)
