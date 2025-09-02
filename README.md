@@ -68,6 +68,11 @@
 
 - [ac-library-cs](https://github.com/key-moon/ac-library-cs)
 
+### DelaunayTriangulation
+
+- [ドロネー三角形分割の期待最速アルゴリズム](https://qiita.com/tsukasa__diary/items/a835c17e5bf4935636c4)
+- [ドロネー三角形分割](https://nachiavivias.github.io/cp-library/cpp/geometry/delaunay-triangulation.html)
+
 ### Deque
 
 - [deque](https://ufcpp.net/study/stl/deque.html)

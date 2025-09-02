@@ -96,6 +96,10 @@
 
 - [ABC377 E Permute K times 2](https://atcoder.jp/contests/abc377/tasks/abc377_e)
 
+## DelaunayTriangulation
+
+- [AHC051 Probabilistic Waste Sorting](https://atcoder.jp/contests/ahc051/tasks/ahc051_a)
+
 ## Deque
 
 ### Deque
