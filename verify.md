@@ -99,6 +99,7 @@
 ## DelaunayTriangulation
 
 - [AHC051 Probabilistic Waste Sorting](https://atcoder.jp/contests/ahc051/tasks/ahc051_a)
+- [yosupo-judge Euclidean MST](https://judge.yosupo.jp/problem/euclidean_mst)
 
 ## Deque
 

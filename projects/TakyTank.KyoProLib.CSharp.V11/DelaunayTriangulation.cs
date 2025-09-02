@@ -4,6 +4,8 @@
 	/// <remarks>
 	/// 逐次挿入法（incremental insertion）により三角形分割を構築する。
 	/// 点の順序は乱択され、エッジの合法性を保つためにフリップ操作を行う。
+	/// TODO 3点が一直線上にあるとき、特にMSTが正しく出ない。
+	/// あと、整数座標にしないと結構重い。
 	/// </remarks>
 	public class DelaunayTriangulation
 	{
@@ -138,6 +140,55 @@
 		/// </summary>
 		/// <returns>辺集合を頂点番号のペアのコレクションとして返す</returns>
 		public ReadOnlySpan<(int a, int b)> GetEdges() => _edges ??= Array.Empty<(int a, int b)>();
+
+		/// <summary>
+		/// 三角形の辺のみを使って最小全域木を作成
+		/// </summary>
+		public (double length, (int u, int v, double cost)[] edges) CreateMST()
+		{
+			var edgesList = new List<(int to, double d)>[_n];
+			for (int i = 0; i < _n; i++) {
+				edgesList[i] = new List<(int to, double d)>();
+			}
+
+			foreach (var e in GetEdges()) {
+				var p = _points[e.a];
+				var q = _points[e.b];
+				var r = p - q;
+				double d = Math.Sqrt(r.X * r.X + r.Y * r.Y);
+				edgesList[e.a].Add((e.b, d));
+				edgesList[e.b].Add((e.a, d));
+			}
+
+			double length = 0;
+			var edges = new (int u, int v, double cost)[_n - 1];
+			int count = 0;
+			var done = new bool[_n];
+			var que = new PriorityQueue<(int u, int v), double>();
+			done[0] = true;
+			foreach (var e in edgesList[0]) {
+				que.Enqueue((0, e.to), e.d);
+			}
+
+			while (que.Count > 0) {
+				que.TryDequeue(out var tag, out double priority);
+				if (done[tag.v]) {
+					continue;
+				}
+
+				done[tag.v] = true;
+				length += priority;
+				edges[count] = (tag.u, tag.v, priority);
+				++count;
+				foreach (var next in edgesList[tag.v]) {
+					if (done[next.to] == false) {
+						que.Enqueue((tag.v, next.to), next.d);
+					}
+				}
+			}
+
+			return (length, edges);
+		}
 
 		private bool IsCcw(int a, int b, int c) => Point.Cross(_points[b] - _points[a], _points[c] - _points[a]) > 0.0;
 
