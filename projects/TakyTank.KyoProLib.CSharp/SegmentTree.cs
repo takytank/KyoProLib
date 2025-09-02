@@ -394,7 +394,7 @@ namespace TakyTank.KyoProLib.CSharp
 			get => Query(i);
 			set
 			{
-				PropagateTopDown(i);
+				PropagateTopDown(i + _n);
 				_tree[i + _n] = value;
 			}
 		}
