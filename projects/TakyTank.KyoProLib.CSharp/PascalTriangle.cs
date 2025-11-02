@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TakyTank.KyoProLib.CSharp
+﻿namespace TakyTank.KyoProLib.CSharp
 {
 	public static class PascalTriangle
 	{
@@ -46,6 +42,54 @@ namespace TakyTank.KyoProLib.CSharp
 		}
 
 		public static double Combination(long n, long k)
+		{
+			if (n < k || (n < 0 || k < 0)) {
+				return 0;
+			}
+
+			return c_[n, k];
+		}
+	}
+
+	public static class PascalTriangleMod
+	{
+		private static ModInt[,] c_;
+		public static void Initialize(int n)
+		{
+			c_ = new ModInt[n + 1, n + 1];
+			for (int i = 0; i <= n; i++) {
+				c_[i, 0] = 1;
+				for (int j = 1; j <= i; j++) {
+					c_[i, j] = (c_[i - 1, j - 1] + c_[i - 1, j]);
+				}
+			}
+		}
+
+		public static ModInt Combination(long n, long k)
+		{
+			if (n < k || (n < 0 || k < 0)) {
+				return 0;
+			}
+
+			return c_[n, k];
+		}
+	}
+
+	public static class PascalTriangleDMod
+	{
+		private static DModInt[,] c_;
+		public static void Initialize(int n)
+		{
+			c_ = new DModInt[n + 1, n + 1];
+			for (int i = 0; i <= n; i++) {
+				c_[i, 0] = 1;
+				for (int j = 1; j <= i; j++) {
+					c_[i, j] = (c_[i - 1, j - 1] + c_[i - 1, j]);
+				}
+			}
+		}
+
+		public static DModInt Combination(long n, long k)
 		{
 			if (n < k || (n < 0 || k < 0)) {
 				return 0;
