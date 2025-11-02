@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakyTank.KyoProLib.CSharp.V
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakyTank.KyoProLib.CSharp.V11", "projects\TakyTank.KyoProLib.CSharp.V11\TakyTank.KyoProLib.CSharp.V11.csproj", "{ABBFC309-7E83-4CB7-802C-39D5A1F9E4FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakyTank.KyoProLib.CSharp.V13", "projects\TakyTank.KyoProLib.CSharp.V13\TakyTank.KyoProLib.CSharp.V13.csproj", "{619510FE-66E1-4E3F-B519-3394FE00CC77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{ABBFC309-7E83-4CB7-802C-39D5A1F9E4FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABBFC309-7E83-4CB7-802C-39D5A1F9E4FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABBFC309-7E83-4CB7-802C-39D5A1F9E4FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{619510FE-66E1-4E3F-B519-3394FE00CC77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{619510FE-66E1-4E3F-B519-3394FE00CC77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{619510FE-66E1-4E3F-B519-3394FE00CC77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{619510FE-66E1-4E3F-B519-3394FE00CC77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
