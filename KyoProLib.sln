@@ -12,8 +12,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakyTank.KyoProLib.CSharp",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarker", "projects\Benchmarker\Benchmarker.csproj", "{CA23779F-1266-4B82-8947-0E5F11CDE1E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakyTank.KyoProLib.CSharp.V7", "projects\TakyTank.KyoProLib.CSharp.V7\TakyTank.KyoProLib.CSharp.V7.csproj", "{CA089451-E7B6-49D2-92DE-E99286CF59A3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakyTank.KyoProLib.CSharp.V8", "projects\TakyTank.KyoProLib.CSharp.V8\TakyTank.KyoProLib.CSharp.V8.csproj", "{8DC55B91-D691-42D2-9746-3DAAD5225359}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakyTank.KyoProLib.CSharp.V11", "projects\TakyTank.KyoProLib.CSharp.V11\TakyTank.KyoProLib.CSharp.V11.csproj", "{ABBFC309-7E83-4CB7-802C-39D5A1F9E4FB}"
@@ -34,10 +32,6 @@ Global
 		{CA23779F-1266-4B82-8947-0E5F11CDE1E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA23779F-1266-4B82-8947-0E5F11CDE1E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA23779F-1266-4B82-8947-0E5F11CDE1E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA089451-E7B6-49D2-92DE-E99286CF59A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA089451-E7B6-49D2-92DE-E99286CF59A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA089451-E7B6-49D2-92DE-E99286CF59A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA089451-E7B6-49D2-92DE-E99286CF59A3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8DC55B91-D691-42D2-9746-3DAAD5225359}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8DC55B91-D691-42D2-9746-3DAAD5225359}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DC55B91-D691-42D2-9746-3DAAD5225359}.Release|Any CPU.ActiveCfg = Release|Any CPU
