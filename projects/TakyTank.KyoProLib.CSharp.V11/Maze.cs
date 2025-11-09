@@ -23,7 +23,10 @@ public class Maze
 	/// <summary>迷路の垂直方向のマス数</summary>
 	public int Height { get; private set; }
 	/// <summary>各マスから動ける方向の一覧</summary>
-	public Direction4[,][] CanMove { get; private set; }
+	public Direction4[,][] Moveables { get; private set; }
+	/// <summary>各マスから指定方向に動けるか</summary>
+	public bool[,][] CanMoves { get; private set; }
+	public bool CanMove(int i, int j, Direction4 dir) => CanMoves[i, j][dir.ToIndex4()];
 	/// <summary>各マスから移動可能な隣接4マスの座標情報</summary>
 	public (int i, int j)[,][] Adjacence4 { get; private set; }
 
@@ -92,7 +95,8 @@ public class Maze
 		Height = height;
 		_distances = new int[Height, Width];
 
-		CanMove = new Direction4[Height, Width][];
+		Moveables = new Direction4[Height, Width][];
+		CanMoves = new bool[Height, Width][];
 		for (int i = 0; i < Height; i++) {
 			for (int j = 0; j < Width; j++) {
 				var moves = new List<Direction4>();
@@ -116,7 +120,12 @@ public class Maze
 					moves.Add(Direction4.R);
 				}
 
-				CanMove[i, j] = moves.ToArray();
+				Moveables[i, j] = moves.ToArray();
+
+				CanMoves[i, j] = new bool[5];
+				foreach (var d in moves) {
+					CanMoves[i, j][d.ToIndex4()] = true;
+				}
 			}
 		}
 
@@ -124,7 +133,7 @@ public class Maze
 		for (int i = 0; i < Height; i++) {
 			for (int j = 0; j < Width; j++) {
 				var temp = new List<(int i, int j)>();
-				foreach (var dir in CanMove[i, j]) {
+				foreach (var dir in Moveables[i, j]) {
 					if (dir == Direction4.N) {
 						continue;
 					}
@@ -166,7 +175,7 @@ public class Maze
 
 			ret.Add((i, j, _distances[i, j], id));
 
-			foreach (var dir in CanMove[i, j]) {
+			foreach (var dir in Moveables[i, j]) {
 				var (ni, nj) = dir.Move(i, j);
 				if (_distances[ni, nj] != int.MaxValue) {
 					continue;
@@ -179,5 +188,57 @@ public class Maze
 		}
 
 		return (ret.ToArray(), trace);
+	}
+
+	/// <summary>
+	/// 指定した位置から条件に合うマスを1つ見つけるまでBFS
+	/// </summary>
+	/// <param name="si">探索開始位置Y座標</param>
+	/// <param name="sj">探索開始位置X座標</param>
+	/// <param name="moveables">移動可能な方向</param>
+	/// <param name="needs">条件に合うマスのときにtrueを返すデリゲート</param>
+	/// <returns>
+	/// positions -> 探索したマスの集合
+	/// trace -> 経路復元のためのオブジェクト
+	/// found -> true:条件に合うマスを見つけた
+	/// </returns>
+	public ((int i, int j, int d, int id)[] positions, Trace<Direction4> trace, bool found)
+		Bfs(
+		int si, int sj, Direction4[] moveables, Predicate<(int i, int j)> needs)
+	{
+		MemoryMarshal.CreateSpan(ref _distances[0, 0], _distances.Length).Fill(int.MaxValue);
+
+		var que = new Queue<(int i, int j, int id)>();
+		var ret = new List<(int i, int j, int d, int id)>();
+		var trace = new Trace<Direction4>();
+		que.Enqueue((si, sj, 0));
+		_distances[si, sj] = 0;
+
+		while (que.Count > 0) {
+			var (i, j, id) = que.Dequeue();
+			int nd = _distances[i, j] + 1;
+
+			if (needs.Invoke((i, j))) {
+				ret.Add((i, j, _distances[i, j], id));
+				return (ret.ToArray(), trace, true);
+			}
+
+			foreach (var dir in moveables) {
+				if (CanMove(i, j, dir) == false) {
+					continue;
+				}
+
+				var (ni, nj) = dir.Move(i, j);
+				if (_distances[ni, nj] != int.MaxValue) {
+					continue;
+				}
+
+				_distances[ni, nj] = nd;
+				int nextID = trace.Add(dir, id);
+				que.Enqueue((ni, nj, nextID));
+			}
+		}
+
+		return (ret.ToArray(), trace, false);
 	}
 }
