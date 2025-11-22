@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp
 {
@@ -156,6 +154,12 @@ namespace TakyTank.KyoProLib.CSharp
 			}
 
 			return Combination(2 * n, n) * Inverse(n + 1);
+		}
+
+		// Σ_0..N( Com(p, k) * Com(q, n - k) )
+		public static ModInt Vandermonde(long p, long q, long n)
+		{
+			return Combination(p + q, n);
 		}
 	}
 
