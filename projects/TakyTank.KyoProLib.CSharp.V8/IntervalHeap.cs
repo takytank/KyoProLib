@@ -18,7 +18,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 		public int Count { get; private set; } = 0;
 		// 最大・最小の取得はO(1)
-		public T Min => _heap.Length < 2 ? _heap[0] : _heap[1]; // 1要素しか無い場合は最大側に入っている。
+		public T Min => Count < 2 ? _heap[0] : _heap[1]; // 1要素しか無い場合は最大側に入っている。
 		public T Max => _heap[0];
 
 		public IntervalHeap() : this(0) { }
@@ -226,7 +226,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		private TObject[] _heap;
 
 		public int Count { get; private set; } = 0;
-		public TObject Min => _heap.Length < 2 ? _heap[0] : _heap[1];
+		public TObject Min => Count < 2 ? _heap[0] : _heap[1];
 		public TObject Max => _heap[0];
 
 		public IntervalHeap(Func<TObject, TPriority> selector) : this(0, selector) { }
