@@ -68,6 +68,56 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		/// <summary>
+		/// xが大きい方からK個に含まれるならばenqueueする
+		/// </summary>
+		/// <remarks>
+		/// 要素がK個以上の状態を保ったまま判定出来るほど高性能ではない。
+		/// Kは常に固定か、減少していく方向のみ考える。
+		/// 要素がK個より多い場合、K個になるまで最小のものをdequeueする。
+		/// </remarks>
+		/// <returns>true:enqueueした</returns>
+		public bool EnqueueIfMaxK(T x, int k)
+		{
+			// 要素がK個以上のときに判定出来るほど高性能ではない。
+			while (Count > k) {
+				DequeueMin();
+			}
+
+			if (Count < k) {
+				Enqueue(x);
+				return true;
+			} else {
+				if (Min.CompareTo(x) < 0) {
+					DequeueMin();
+					Enqueue(x);
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		public bool EnqueueIfMinK(T x, int k)
+		{
+			while (Count > k) {
+				DequeueMax();
+			}
+
+			if (Count < k) {
+				Enqueue(x);
+				return true;
+			} else {
+				if (Max.CompareTo(x) > 0) {
+					DequeueMax();
+					Enqueue(x);
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		/// <summary>
 		/// キューから最小値を O(log N) で取得
 		/// </summary>
 		public T DequeueMin()
@@ -267,6 +317,56 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			++Count;
 
 			Up(v);
+		}
+
+		/// <summary>
+		/// xが大きい方からK個に含まれるならばenqueueする
+		/// </summary>
+		/// <remarks>
+		/// 要素がK個以上の状態を保ったまま判定出来るほど高性能ではない。
+		/// Kは常に固定か、減少していく方向のみ考える。
+		/// 要素がK個より多い場合、K個になるまで最小のものをdequeueする。
+		/// </remarks>
+		/// <returns>true:enqueueした</returns>
+		public bool EnqueueIfMaxK(TObject x, int k)
+		{
+			// 要素がK個以上のときに判定出来るほど高性能ではない。
+			while (Count > k) {
+				DequeueMin();
+			}
+
+			if (Count < k) {
+				Enqueue(x);
+				return true;
+			} else {
+				if (_selector(Min).CompareTo(_selector(x)) < 0) {
+					DequeueMin();
+					Enqueue(x);
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		public bool EnqueueIfMinK(TObject x, int k)
+		{
+			while (Count > k) {
+				DequeueMax();
+			}
+
+			if (Count < k) {
+				Enqueue(x);
+				return true;
+			} else {
+				if (_selector(Max).CompareTo(_selector(x)) > 0) {
+					DequeueMax();
+					Enqueue(x);
+					return true;
+				} else {
+					return false;
+				}
+			}
 		}
 
 		public TObject DequeueMin()
