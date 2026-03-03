@@ -226,7 +226,7 @@ namespace TakyTank.KyoProLib.CSharp
 		/// </param>
 		/// <returns>
 		/// 条件を満たす最大のR。
-		/// 満たさない場合はCountが返る。
+		/// 満たさない場合はLが返る。
 		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int MaxRight(int l, Predicate<T> satisfies)
@@ -235,6 +235,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return Count;
 			}
 
+			int left = l;
 			l += _n;
 			var sum = _unit;
 			do {
@@ -259,7 +260,7 @@ namespace TakyTank.KyoProLib.CSharp
 				++l;
 			} while ((l & -l) != l);
 
-			return Count;
+			return left;
 		}
 
 		/// <summary>
@@ -284,6 +285,7 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
+			int right = r;
 			r += _n;
 			var sum = _unit;
 			do {
@@ -308,7 +310,7 @@ namespace TakyTank.KyoProLib.CSharp
 				sum = _operate(_tree[r], sum);
 			} while ((r & -r) != r);
 
-			return 0;
+			return right;
 		}
 
 		public IEnumerator<T> GetEnumerator()
