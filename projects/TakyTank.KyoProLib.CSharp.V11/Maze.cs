@@ -241,4 +241,137 @@ public class Maze
 
 		return (ret.ToArray(), trace, false);
 	}
+
+	/// <summary>
+	/// 指定したスタート位置から目標位置までの最短経路をBFSで探索し、移動方向を返す
+	/// </summary>
+	/// <param name="si">探索開始位置Y座標</param>
+	/// <param name="sj">探索開始位置X座標</param>
+	/// <param name="ti">目標位置Y座標</param>
+	/// <param name="tj">目標位置X座標</param>
+	/// <returns>最短経路の移動方向の配列。到達不可能な場合は空配列を返す。</returns>
+	public Direction4[] Bfs(int si, int sj, int ti, int tj)
+	{
+		if (si == ti && sj == tj) {
+			return Array.Empty<Direction4>();
+		}
+
+		MemoryMarshal.CreateSpan(ref _distances[0, 0], _distances.Length).Fill(int.MaxValue);
+
+		var que = new Queue<(int i, int j, int id)>();
+		var trace = new Trace<Direction4>();
+		que.Enqueue((si, sj, 0));
+		_distances[si, sj] = 0;
+
+		int goalId = -1;
+
+		while (que.Count > 0) {
+			var (i, j, id) = que.Dequeue();
+			int nd = _distances[i, j] + 1;
+
+			foreach (var dir in Moveables[i, j]) {
+				var (ni, nj) = dir.Move(i, j);
+				if (_distances[ni, nj] != int.MaxValue) {
+					continue;
+				}
+
+				_distances[ni, nj] = nd;
+				int nextID = trace.Add(dir, id);
+
+				if (ni == ti && nj == tj) {
+					goalId = nextID;
+					break;
+				}
+
+				que.Enqueue((ni, nj, nextID));
+			}
+
+			if (goalId != -1) {
+				break;
+			}
+		}
+
+		if (goalId == -1) {
+			return Array.Empty<Direction4>();
+		}
+
+		return trace.GetRouteTo(goalId).ToArray();
+	}
+
+	/// <summary>
+	/// 指定したスタート位置から目標位置までの最短経路を、向きの変更を考慮してBFSで探索し、移動方向を返す
+	/// </summary>
+	/// <param name="si">探索開始位置Y座標</param>
+	/// <param name="sj">探索開始位置X座標</param>
+	/// <param name="ti">目標位置Y座標</param>
+	/// <param name="tj">目標位置X座標</param>
+	/// <param name="startDir">開始時の向き</param>
+	/// <returns>最短経路の移動方向の配列。到達不可能な場合は空配列を返す。</returns>
+	public Direction4[] Bfs(int si, int sj, int ti, int tj, Direction4 startDir)
+	{
+		if (si == ti && sj == tj) {
+			return Array.Empty<Direction4>();
+		}
+
+		var distances = new int[Height, Width, 5];
+		if (distances.Length > 0) {
+			MemoryMarshal.CreateSpan(ref distances[0, 0, 0], distances.Length).Fill(int.MaxValue);
+		}
+
+		var que = new Queue<(int i, int j, Direction4 dir, int id)>();
+		var trace = new Trace<Direction4>();
+
+		int sIdx = startDir.ToIndex4();
+		que.Enqueue((si, sj, startDir, 0));
+		distances[si, sj, sIdx] = 0;
+
+		int goalId = -1;
+
+		while (que.Count > 0) {
+			var (i, j, dir, id) = que.Dequeue();
+			int nd = distances[i, j, dir.ToIndex4()] + 1;
+
+			if (CanMove(i, j, dir)) {
+				var (ni, nj) = dir.Move(i, j);
+				if (distances[ni, nj, dir.ToIndex4()] == int.MaxValue) {
+					distances[ni, nj, dir.ToIndex4()] = nd;
+					int nextID = trace.Add(dir, id);
+					if (ni == ti && nj == tj) {
+						goalId = nextID;
+						break;
+					}
+					que.Enqueue((ni, nj, dir, nextID));
+				}
+			}
+
+			var rotL = dir.Rotate(Rotation.L);
+			if (distances[i, j, rotL.ToIndex4()] == int.MaxValue) {
+				distances[i, j, rotL.ToIndex4()] = nd;
+				int nextID = trace.Add(Direction4.N, id);
+				que.Enqueue((i, j, rotL, nextID));
+			}
+
+			var rotR = dir.Rotate(Rotation.R);
+			if (distances[i, j, rotR.ToIndex4()] == int.MaxValue) {
+				distances[i, j, rotR.ToIndex4()] = nd;
+				int nextID = trace.Add(Direction4.N, id);
+				que.Enqueue((i, j, rotR, nextID));
+			}
+		}
+
+		if (goalId == -1) {
+			return Array.Empty<Direction4>();
+		}
+
+		var route = trace.GetRouteTo(goalId);
+		var result = new List<Direction4>();
+		while (route.Count > 0) {
+			var r = route.Pop();
+			if (r != Direction4.N) {
+				result.Add(r);
+			}
+		}
+
+		return result.ToArray();
+	}
 }
