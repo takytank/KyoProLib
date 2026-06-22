@@ -78,7 +78,7 @@ public static class Direction4Extensions
 		};
 	}
 
-	public static Direction4 Rorate(this Direction4 dir, Rotation rot)
+	public static Direction4 Rotate(this Direction4 dir, Rotation rot)
 	{
 		if (rot == Rotation.N) {
 			return dir;
