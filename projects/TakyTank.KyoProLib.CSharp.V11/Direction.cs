@@ -42,6 +42,17 @@ public static class Direction4Extensions
 		};
 	}
 
+	public static Direction4 FromIndex4(int dir)
+	{
+		return dir switch {
+			0 => Direction4.D,
+			1 => Direction4.L,
+			2 => Direction4.U,
+			3 => Direction4.R,
+			_ => Direction4.N,
+		};
+	}
+
 	public static (int i, int j) Move(this Direction4 dir, int i, int j)
 	{
 		return dir switch {
