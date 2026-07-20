@@ -75,6 +75,44 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		public static bool IsParallel(Ipt p1, Ipt p2, Ipt q1, Ipt q2)
 			=> (p2 - p1).Det(q2 - q1) == 0;
 
+		/// <summary>線分PQの垂直二等分線 ax + by + c = 0 を計算</summary>
+		public static (long a, long b, long c) PerpendicularBisector(Ipt p, Ipt q)
+		{
+			long a = 2 * (q.X - p.X);
+			long b = 2 * (q.Y - p.Y);
+			long c = (p.X * p.X - q.X * q.X) + (p.Y * p.Y - q.Y * q.Y);
+
+			// 標準化する
+			long gcd = Gcd(a, Gcd(b, c));
+			a /= gcd;
+			b /= gcd;
+			c /= gcd;
+
+			if (a == 0) {
+				if (b < 0) {
+					b *= -1;
+					c *= -1;
+				}
+			} else {
+				if (a < 0) {
+					a *= -1;
+					b *= -1;
+					c *= -1;
+				}
+			}
+
+			return (a, b, c);
+
+			static long Gcd(long a, long b)
+			{
+				if (b == 0) {
+					return a;
+				}
+
+				return Gcd(b, a % b);
+			}
+		}
+
 		public static Ipt operator +(Ipt lhs, Ipt rhs)
 			=> new Ipt(lhs.X + rhs.X, lhs.Y + rhs.Y);
 		public static Ipt operator -(Ipt lhs, Ipt rhs)
