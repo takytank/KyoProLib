@@ -5,11 +5,11 @@ namespace TakyTank.KyoProLib.CSharp.V11;
 public class HeuristicHelper
 {
 	public static void RunCases<T>(
-		int runCaseCount,
-		double testCaseCount,
+		int localTestCaseRunCount,
+		double judgePreTestCaseCount,
 		bool isParallel,
 		Func<int, T> run,
-		Func<object, int, T, (long score, int loop, int up)> outputCaseInformation,
+		Func<object, int, T, (long score, int loop, int up, long elapsed)> outputCaseInformation,
 		Action<double, int> addOutput = null)
 	{
 #if DEBUG
@@ -18,15 +18,16 @@ public class HeuristicHelper
 		double scoreLogSum = 0;
 		long loopSum = 0;
 		long upSum = 0;
+		long elapsedSum = 0;
 		long scoreMin = long.MaxValue;
 		long scoreMax = long.MinValue;
 		int errorCount = 0;
 		if (isParallel) {
-			Parallel.For(0, runCaseCount, i => {
+			Parallel.For(0, localTestCaseRunCount, i => {
 				RunCases(i);
 			});
 		} else {
-			for (int i = 0; i < runCaseCount; i++) {
+			for (int i = 0; i < localTestCaseRunCount; i++) {
 				RunCases(i);
 			}
 		}
@@ -35,13 +36,14 @@ public class HeuristicHelper
 		{
 			try {
 				var ret = run(i);
-				var (score, loop, up) = outputCaseInformation(locker, i, ret);
+				var (score, loop, up, elapsed) = outputCaseInformation(locker, i, ret);
 				Console.Out.Flush();
 				lock (locker) {
 					scoreSum += score;
 					scoreLogSum += Math.Log10(score);
 					loopSum += loop;
 					upSum += up;
+					elapsedSum += elapsed;
 					scoreMin = Math.Min(score, scoreMin);
 					scoreMax = Math.Max(score, scoreMax);
 				}
@@ -54,20 +56,22 @@ public class HeuristicHelper
 			}
 		}
 
-		scoreSum = (long)(scoreSum / (runCaseCount / testCaseCount));
-		scoreLogSum /= runCaseCount / testCaseCount;
+		// 本番環境への提出時とスコアのオーダーが揃うように、プレテストのケース数換算のスコアにする。
+		scoreSum = (long)(scoreSum / (localTestCaseRunCount / judgePreTestCaseCount));
+		scoreLogSum /= localTestCaseRunCount / judgePreTestCaseCount;
 		Console.WriteLine("");
 
 		Console.WriteLine("");
 		Console.WriteLine($"sum: {scoreSum}");
-		Console.WriteLine($"ave: {scoreSum / testCaseCount}");
+		Console.WriteLine($"ave: {scoreSum / judgePreTestCaseCount}");
 		Console.WriteLine($"min: {scoreMin}");
 		Console.WriteLine($"max: {scoreMax}");
-		Console.WriteLine($"log: {scoreLogSum / testCaseCount}");
-		Console.WriteLine($"loop ave.: {loopSum / (double)runCaseCount:f3}");
-		Console.WriteLine($"up ave.: {upSum / (double)runCaseCount:f3}");
+		Console.WriteLine($"log: {scoreLogSum / judgePreTestCaseCount}");
+		Console.WriteLine($"loop ave.: {loopSum / (double)localTestCaseRunCount:f3}");
+		Console.WriteLine($"up ave.: {upSum / (double)localTestCaseRunCount:f3}");
+		Console.WriteLine($"elpased ave.: {elapsedSum / (double)localTestCaseRunCount:f3}");
 
-		addOutput?.Invoke(testCaseCount, runCaseCount);
+		addOutput?.Invoke(judgePreTestCaseCount, localTestCaseRunCount);
 
 		Console.WriteLine($"error : {errorCount}");
 
