@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace TakyTank.KyoProLib.CSharp.V8
 {
@@ -84,9 +82,12 @@ namespace TakyTank.KyoProLib.CSharp.V8
 
 			var ret = a;
 			if (inplaces == false) {
+				int height0 = a.GetLength(0);
+				int width0 = a.GetLength(1);
+
 				ret = new Complex[height, width];
-				for (int y = 0; y < height; ++y) {
-					for (int x = 0; x < width; ++x) {
+				for (int y = 0; y < height0; ++y) {
+					for (int x = 0; x < width0; ++x) {
 						ret[y, x] = a[y, x];
 					}
 				}
@@ -247,89 +248,27 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				return ret;
 			}
 
-			var b = new ModInt[h, w];
-
-			{
-				int n = w;
-				int r = inverses
-					? (int)(ModInt.P - 1 - (ModInt.P - 1) / n)
-					: (int)((ModInt.P - 1) / n);
-				ModInt s = ModInt.Pow(ModInt.ROOT, r);
-				var kp = new ModInt[n / 2 + 1];
-				kp.AsSpan().Fill(1);
-
-				for (int i = 0; i < n / 2; ++i) {
-					kp[i + 1] = kp[i] * s;
-				}
-
-				for (int y = 0; y < h; ++y) {
-					int l = n / 2;
-					for (int i = 1; i < n; i <<= 1, l >>= 1) {
-						r = 0;
-						for (int j = 0; j < l; ++j, r += i) {
-							s = kp[i * j];
-							for (int k = 0; k < i; ++k) {
-								var p = ret[y, k + r];
-								var q = ret[y, k + r + n / 2];
-								b[y, k + 2 * r] = p + q;
-								b[y, k + 2 * r + i] = (p - q) * s;
-							}
-						}
-
-						(b, ret) = (ret, b);
-					}
-
-					if (inverses) {
-						s = ModInt.Inverse(n);
-						for (int i = 0; i < n; ++i) {
-							ret[y, i] = ret[y, i] * s;
-						}
-					}
-				}
-			}
-
-			for (int i = 0; i < h; ++i) {
-				for (int j = 0; j < w; ++j) {
-					b[i, j] = 0;
-				}
-			}
-
-			{
-				int n = h;
-				int r = inverses
-					? (int)(ModInt.P - 1 - (ModInt.P - 1) / n)
-					: (int)((ModInt.P - 1) / n);
-				ModInt s = ModInt.Pow(ModInt.ROOT, r);
-				var kp = new ModInt[n / 2 + 1];
-				kp.AsSpan().Fill(1);
-
-				for (int i = 0; i < n / 2; ++i) {
-					kp[i + 1] = kp[i] * s;
-				}
-
+			var tempW = new ModInt[w];
+			for (int y = 0; y < h; ++y) {
 				for (int x = 0; x < w; ++x) {
-					int l = n / 2;
-					for (int i = 1; i < n; i <<= 1, l >>= 1) {
-						r = 0;
-						for (int j = 0; j < l; ++j, r += i) {
-							s = kp[i * j];
-							for (int k = 0; k < i; ++k) {
-								var p = ret[k + r, x];
-								var q = ret[k + r + n / 2, x];
-								b[k + 2 * r, x] = p + q;
-								b[k + 2 * r + i, x] = (p - q) * s;
-							}
-						}
+					tempW[x] = ret[y, x];
+				}
 
-						(b, ret) = (ret, b);
-					}
+				NumberTheoreticTransform(tempW.AsSpan(), inverses);
+				for (int x = 0; x < w; ++x) {
+					ret[y, x] = tempW[x];
+				}
+			}
 
-					if (inverses) {
-						s = ModInt.Inverse(n);
-						for (int i = 0; i < n; ++i) {
-							ret[i, x] = ret[i, x] * s;
-						}
-					}
+			var tempH = new ModInt[h];
+			for (int x = 0; x < w; ++x) {
+				for (int y = 0; y < h; ++y) {
+					tempH[y] = ret[y, x];
+				}
+
+				NumberTheoreticTransform(tempH.AsSpan(), inverses);
+				for (int y = 0; y < h; ++y) {
+					ret[y, x] = tempH[y];
 				}
 			}
 
@@ -519,7 +458,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static int CeilPow2(int n)
+		public static int CeilPow2(int n)
 		{
 			int pow2 = 1;
 			while (pow2 < n) {
