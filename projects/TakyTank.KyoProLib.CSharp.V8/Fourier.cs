@@ -188,6 +188,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				kp[i + 1] = kp[i] * s;
 			}
 
+			bool resultInA = true;
 			int l = n / 2;
 			for (int i = 1; i < n; i <<= 1, l >>= 1) {
 				r = 0;
@@ -204,6 +205,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				var temp = ret;
 				ret = b;
 				b = temp;
+				resultInA = !resultInA;
 			}
 
 			if (inverses) {
@@ -211,6 +213,14 @@ namespace TakyTank.KyoProLib.CSharp.V8
 				for (int i = 0; i < n; ++i) {
 					ret[i] = ret[i] * s;
 				}
+			}
+
+			if (inplaces) {
+				if (!resultInA) {
+					ret.CopyTo(a);
+				}
+
+				return a;
 			}
 
 			return ret;
