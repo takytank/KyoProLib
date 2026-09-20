@@ -397,7 +397,7 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			var tt = new Complex[fftHeight, fftWidth];
 			for (int i = 0; i < fftHeight; ++i) {
 				for (int j = 0; j < fftWidth; ++j) {
-					tt[i, j] = target[i % th, j % rw];
+				tt[i, j] = target[i % th, j % tw];
 				}
 			}
 
