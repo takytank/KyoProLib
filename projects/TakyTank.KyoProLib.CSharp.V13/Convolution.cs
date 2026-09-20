@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 
-namespace TakyTank.KyoProLib.CSharp.V8
+namespace TakyTank.KyoProLib.CSharp.V13
 {
 	public static class Convolution
 	{
@@ -58,6 +55,65 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 		}
 
+		public static long[,] Convolve2D(long[,] a, long[,] b)
+		{
+			int ah = a.GetLength(0);
+			int aw = a.GetLength(1);
+			int bh = b.GetLength(0);
+			int bw = b.GetLength(1);
+			if (ah == 0 || aw == 0 || bh == 0 || bw == 0) {
+				return new long[0, 0];
+			}
+
+			int height = ah + bh - 1;
+			int width = aw + bw - 1;
+			int zH = 1 << CeilPow2(height);
+			int zW = 1 << CeilPow2(width);
+
+			var c1 = Convolve2D<FftMod1>(a, b, ah, aw, bh, bw, zH, zW);
+			var c2 = Convolve2D<FftMod2>(a, b, ah, aw, bh, bw, zH, zW);
+			var c3 = Convolve2D<FftMod3>(a, b, ah, aw, bh, bw, zH, zW);
+
+			var result = new long[height, width];
+			for (int i = 0; i < height; ++i) {
+				for (int j = 0; j < width; ++j) {
+					result[i, j] = Reconstruct(c1[i, j], c2[i, j], c3[i, j]);
+				}
+			}
+
+			return result;
+		}
+
+		public static long[,] Convolve2D2Mod(long[,] a, long[,] b)
+		{
+			int ah = a.GetLength(0);
+			int aw = a.GetLength(1);
+			int bh = b.GetLength(0);
+			int bw = b.GetLength(1);
+			if (ah == 0 || aw == 0 || bh == 0 || bw == 0) {
+				return new long[0, 0];
+			}
+
+			int height = ah + bh - 1;
+			int width = aw + bw - 1;
+			int zH = 1 << CeilPow2(height);
+			int zW = 1 << CeilPow2(width);
+
+			var c1 = Convolve2D<FftMod1>(
+				a, b, ah, aw, bh, bw, zH, zW);
+			var c3 = Convolve2D<FftMod3>(
+				a, b, ah, aw, bh, bw, zH, zW);
+
+			var result = new long[height, width];
+			for (int i = 0; i < height; ++i) {
+				for (int j = 0; j < width; ++j) {
+					result[i, j] = Reconstruct2Mod(c1[i, j], c3[i, j]);
+				}
+			}
+
+			return result;
+		}
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static ulong[] Convolve<TMod>(ReadOnlySpan<long> a, ReadOnlySpan<long> b)
 				where TMod : struct, IFftMod
@@ -103,6 +159,105 @@ namespace TakyTank.KyoProLib.CSharp.V8
 			}
 
 			return result;
+		}
+
+		private static uint[,] Convolve2D<TMod>(
+			long[,] a, long[,] b, int ah, int aw, int bh, int bw, int zH, int zW)
+			where TMod : struct, IFftMod
+		{
+			var aPadded = ToPadded<TMod>(a, zH, zW);
+			var bPadded = ToPadded<TMod>(b, zH, zW);
+			var convolution = Convolve2D(
+				aPadded, bPadded, ah, aw, bh, bw, zH, zW);
+
+			int height = ah + bh - 1;
+			int width = aw + bw - 1;
+			var result = new uint[height, width];
+			for (int i = 0; i < height; ++i) {
+				for (int j = 0; j < width; ++j) {
+					result[i, j] = (uint)convolution[i, j].Value;
+				}
+			}
+
+			return result;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static FftModInt<TMod>[,] ToPadded<TMod>(
+			long[,] source, int height, int width)
+			where TMod : struct, IFftMod
+		{
+			int sourceHeight = source.GetLength(0);
+			int sourceWidth = source.GetLength(1);
+			var result = new FftModInt<TMod>[height, width];
+			for (int i = 0; i < sourceHeight; ++i) {
+				for (int j = 0; j < sourceWidth; ++j) {
+					result[i, j] = source[i, j];
+				}
+			}
+
+			return result;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static FftModInt<TMod>[,] Convolve2D<TMod>(
+			FftModInt<TMod>[,] a, FftModInt<TMod>[,] b,
+			int ah, int aw, int bh, int bw, int zH, int zW)
+			where TMod : struct, IFftMod
+		{
+			FftModInt<TMod>.Butterfly2D(a);
+			FftModInt<TMod>.Butterfly2D(b);
+
+			var h = a.GetLength(0);
+			var w = a.GetLength(1);
+			for (int i = 0; i < h; i++) {
+				for (int j = 0; j < w; j++) {
+					a[i, j] *= b[i, j];
+				}
+			}
+
+			FftModInt<TMod>.ButterflyInv2D(a);
+			int height = ah + bh - 1;
+			int width = aw + bw - 1;
+			var iz = new FftModInt<TMod>(zH).Inv()
+				* new FftModInt<TMod>(zW).Inv();
+			var result = new FftModInt<TMod>[height, width];
+			for (int i = 0; i < height; i++) {
+				for (int j = 0; j < width; j++) {
+					result[i, j] = a[i, j] * iz;
+				}
+			}
+
+			return result;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static long Reconstruct(uint r1, uint r2, uint r3)
+		{
+			const ulong m1 = FftMod1.MOD;
+			const ulong m2 = FftMod2.MOD;
+			const ulong m3 = FftMod3.MOD;
+
+			ulong invM1 = (ulong)InverseGCD((long)(m1 % m2), (long)m2).x;
+			ulong m12 = m1 * m2;
+			ulong invM12 = (ulong)InverseGCD((long)(m12 % m3), (long)m3).x;
+
+			ulong t2 = ((r2 + m2 - r1 % m2) % m2) * invM1 % m2;
+			ulong x12 = r1 + m1 * t2;
+			ulong t3 = ((r3 + m3 - x12 % m3) % m3) * invM12 % m3;
+
+			UInt128 result = (UInt128)x12 + (UInt128)m12 * t3;
+			return (long)result;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static long Reconstruct2Mod(uint r1, uint r3)
+		{
+			const ulong m1 = FftMod1.MOD;
+			const ulong m3 = FftMod3.MOD;
+			ulong inverse = (ulong)InverseGCD((long)(m1 % m3), (long)m3).x;
+			ulong t = ((r3 + m3 - r1 % m3) % m3) * inverse % m3;
+			return (long)(r1 + m1 * t);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -321,6 +476,68 @@ namespace TakyTank.KyoProLib.CSharp.V8
 						}
 
 						inverseNow *= sumIE_[BitScanForward(~(uint)s)];
+					}
+				}
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public static void Butterfly2D(FftModInt<T>[,] a)
+			{
+				var height = a.GetLength(0);
+				var width = a.GetLength(1);
+
+				var tempW = new FftModInt<T>[width];
+				for (int y = 0; y < height; ++y) {
+					for (int x = 0; x < width; ++x) {
+						tempW[x] = a[y, x];
+					}
+
+					Butterfly(tempW);
+					for (int x = 0; x < width; ++x) {
+						a[y, x] = tempW[x];
+					}
+				}
+
+				var tempH = new FftModInt<T>[height];
+				for (int x = 0; x < width; ++x) {
+					for (int y = 0; y < height; ++y) {
+						tempH[y] = a[y, x];
+					}
+
+					Butterfly(tempH);
+					for (int y = 0; y < height; ++y) {
+						a[y, x] = tempH[y];
+					}
+				}
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public static void ButterflyInv2D(FftModInt<T>[,] a)
+			{
+				var height = a.GetLength(0);
+				var width = a.GetLength(1);
+
+				var tempW = new FftModInt<T>[width];
+				for (int y = 0; y < height; ++y) {
+					for (int x = 0; x < width; ++x) {
+						tempW[x] = a[y, x];
+					}
+
+					ButterflyInv(tempW);
+					for (int x = 0; x < width; ++x) {
+						a[y, x] = tempW[x];
+					}
+				}
+
+				var tempH = new FftModInt<T>[height];
+				for (int x = 0; x < width; ++x) {
+					for (int y = 0; y < height; ++y) {
+						tempH[y] = a[y, x];
+					}
+
+					ButterflyInv(tempH);
+					for (int y = 0; y < height; ++y) {
+						a[y, x] = tempH[y];
 					}
 				}
 			}
