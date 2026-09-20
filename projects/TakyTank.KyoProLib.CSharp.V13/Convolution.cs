@@ -165,17 +165,17 @@ namespace TakyTank.KyoProLib.CSharp.V13
 			long[,] a, long[,] b, int ah, int aw, int bh, int bw, int zH, int zW)
 			where TMod : struct, IFftMod
 		{
-			var aPadded = ToPadded<TMod>(a, zH, zW);
-			var bPadded = ToPadded<TMod>(b, zH, zW);
-			var convolution = Convolve2D(
-				aPadded, bPadded, ah, aw, bh, bw, zH, zW);
+			var aPadded = ToPadded1D<TMod>(a, zH, zW);
+			var bPadded = ToPadded1D<TMod>(b, zH, zW);
+			Convolve2D<TMod>(aPadded, bPadded, zH, zW);
 
 			int height = ah + bh - 1;
 			int width = aw + bw - 1;
 			var result = new uint[height, width];
+			var iz = new FftModInt<TMod>(zH).Inv() * new FftModInt<TMod>(zW).Inv();
 			for (int i = 0; i < height; ++i) {
 				for (int j = 0; j < width; ++j) {
-					result[i, j] = (uint)convolution[i, j].Value;
+					result[i, j] = (uint)(aPadded[i * zW + j] * iz).Value;
 				}
 			}
 
@@ -183,7 +183,7 @@ namespace TakyTank.KyoProLib.CSharp.V13
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static FftModInt<TMod>[,] ToPadded<TMod>(
+		private static FftModInt<TMod>[,] ToPadded2D<TMod>(
 			long[,] source, int height, int width)
 			where TMod : struct, IFftMod
 		{
@@ -200,35 +200,46 @@ namespace TakyTank.KyoProLib.CSharp.V13
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static FftModInt<TMod>[,] Convolve2D<TMod>(
-			FftModInt<TMod>[,] a, FftModInt<TMod>[,] b,
-			int ah, int aw, int bh, int bw, int zH, int zW)
+		private static FftModInt<TMod>[] ToPadded1D<TMod>(
+			long[,] source, int height, int width)
 			where TMod : struct, IFftMod
 		{
-			FftModInt<TMod>.Butterfly2D(a);
-			FftModInt<TMod>.Butterfly2D(b);
-
-			var h = a.GetLength(0);
-			var w = a.GetLength(1);
-			for (int i = 0; i < h; i++) {
-				for (int j = 0; j < w; j++) {
-					a[i, j] *= b[i, j];
-				}
-			}
-
-			FftModInt<TMod>.ButterflyInv2D(a);
-			int height = ah + bh - 1;
-			int width = aw + bw - 1;
-			var iz = new FftModInt<TMod>(zH).Inv()
-				* new FftModInt<TMod>(zW).Inv();
-			var result = new FftModInt<TMod>[height, width];
-			for (int i = 0; i < height; i++) {
-				for (int j = 0; j < width; j++) {
-					result[i, j] = a[i, j] * iz;
+			int sourceHeight = source.GetLength(0);
+			int sourceWidth = source.GetLength(1);
+			var result = new FftModInt<TMod>[height * width];
+			for (int i = 0; i < sourceHeight; ++i) {
+				for (int j = 0; j < sourceWidth; ++j) {
+					result[ToIndex(i, j, width)] = source[i, j];
 				}
 			}
 
 			return result;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static int ToIndex(int y, int x, int width) => y * width + x;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void Convolve2D<TMod>(FftModInt<TMod>[] a, FftModInt<TMod>[] b, int zH, int zW)
+			where TMod : struct, IFftMod
+		{
+			if (zH == zW) {
+				FftModInt<TMod>.Butterfly2DInPlace(a, zH, zW);
+				FftModInt<TMod>.Butterfly2DInPlace(b, zH, zW);
+			} else {
+				FftModInt<TMod>.Butterfly2D(a, zH, zW);
+				FftModInt<TMod>.Butterfly2D(b, zH, zW);
+			}
+
+			for (int i = 0; i < a.Length; i++) {
+				a[i] *= b[i];
+			}
+
+			if (zH == zW) {
+				FftModInt<TMod>.ButterflyInv2DInPlace(a, zH, zW);
+			} else {
+				FftModInt<TMod>.ButterflyInv2D(a, zH, zW);
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -481,63 +492,115 @@ namespace TakyTank.KyoProLib.CSharp.V13
 			}
 
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public static void Butterfly2D(FftModInt<T>[,] a)
+			public static void Butterfly2D(
+				FftModInt<T>[] a, int height, int width)
 			{
-				var height = a.GetLength(0);
-				var width = a.GetLength(1);
-
-				var tempW = new FftModInt<T>[width];
 				for (int y = 0; y < height; ++y) {
-					for (int x = 0; x < width; ++x) {
-						tempW[x] = a[y, x];
-					}
-
-					Butterfly(tempW);
-					for (int x = 0; x < width; ++x) {
-						a[y, x] = tempW[x];
-					}
+					Butterfly(a.AsSpan(y * width, width));
 				}
 
-				var tempH = new FftModInt<T>[height];
+				var transposed = new FftModInt<T>[a.Length];
+				Transpose(a, transposed, height, width);
 				for (int x = 0; x < width; ++x) {
-					for (int y = 0; y < height; ++y) {
-						tempH[y] = a[y, x];
-					}
+					Butterfly(transposed.AsSpan(x * height, height));
+				}
 
-					Butterfly(tempH);
-					for (int y = 0; y < height; ++y) {
-						a[y, x] = tempH[y];
+				Transpose(transposed, a, width, height);
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public static void Butterfly2DInPlace(
+				FftModInt<T>[] a, int height, int width)
+			{
+				for (int y = 0; y < height; ++y) {
+					Butterfly(a.AsSpan(y * width, width));
+				}
+
+				TransposeInPlace(a, height, width);
+				for (int x = 0; x < width; ++x) {
+					Butterfly(a.AsSpan(x * height, height));
+				}
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public static void ButterflyInv2D(
+				FftModInt<T>[] a, int height, int width)
+			{
+				for (int y = 0; y < height; ++y) {
+					ButterflyInv(a.AsSpan(y * width, width));
+				}
+
+				var transposed = new FftModInt<T>[a.Length];
+				Transpose(a, transposed, height, width);
+				for (int x = 0; x < width; ++x) {
+					ButterflyInv(transposed.AsSpan(x * height, height));
+				}
+
+				Transpose(transposed, a, width, height);
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public static void ButterflyInv2DInPlace(
+				FftModInt<T>[] a, int height, int width)
+			{
+				for (int x = 0; x < width; ++x) {
+					ButterflyInv(a.AsSpan(x * height, height));
+				}
+
+				TransposeInPlace(a, height, width);
+				for (int y = 0; y < height; ++y) {
+					ButterflyInv(a.AsSpan(y * width, width));
+				}
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			private static void Transpose(
+				FftModInt<T>[] source, FftModInt<T>[] destination,
+				int height, int width)
+			{
+				const int blockSize = 32;
+				for (int y0 = 0; y0 < height; y0 += blockSize) {
+					int yEnd = Math.Min(y0 + blockSize, height);
+					for (int x0 = 0; x0 < width; x0 += blockSize) {
+						int xEnd = Math.Min(x0 + blockSize, width);
+						for (int y = y0; y < yEnd; ++y) {
+							int sourceOffset = y * width;
+							for (int x = x0; x < xEnd; ++x) {
+								destination[x * height + y] = source[sourceOffset + x];
+							}
+						}
 					}
 				}
 			}
 
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public static void ButterflyInv2D(FftModInt<T>[,] a)
+			private static void TransposeInPlace(
+				FftModInt<T>[] a, int height, int width)
 			{
-				var height = a.GetLength(0);
-				var width = a.GetLength(1);
-
-				var tempW = new FftModInt<T>[width];
-				for (int y = 0; y < height; ++y) {
-					for (int x = 0; x < width; ++x) {
-						tempW[x] = a[y, x];
-					}
-
-					ButterflyInv(tempW);
-					for (int x = 0; x < width; ++x) {
-						a[y, x] = tempW[x];
-					}
+				if (height != width) {
+					throw new ArgumentException("In-place transpose requires a square array.");
 				}
 
-				var tempH = new FftModInt<T>[height];
-				for (int x = 0; x < width; ++x) {
-					for (int y = 0; y < height; ++y) {
-						tempH[y] = a[y, x];
-					}
-
-					ButterflyInv(tempH);
-					for (int y = 0; y < height; ++y) {
-						a[y, x] = tempH[y];
+				const int blockSize = 32;
+				for (int y0 = 0; y0 < height; y0 += blockSize) {
+					int yEnd = Math.Min(y0 + blockSize, height);
+					for (int x0 = y0; x0 < width; x0 += blockSize) {
+						int xEnd = Math.Min(x0 + blockSize, width);
+						if (x0 == y0) {
+							for (int y = y0; y < yEnd; ++y) {
+								for (int x = Math.Max(y + 1, x0); x < xEnd; ++x) {
+									(a[y * width + x], a[x * width + y]) =
+										(a[x * width + y], a[y * width + x]);
+								}
+							}
+						} else {
+							for (int y = y0; y < yEnd; ++y) {
+								for (int x = x0; x < xEnd; ++x) {
+									(a[y * width + x], a[x * width + y]) =
+										(a[x * width + y], a[y * width + x]);
+								}
+							}
+						}
 					}
 				}
 			}
