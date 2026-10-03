@@ -235,7 +235,6 @@ namespace TakyTank.KyoProLib.CSharp
 				return Count;
 			}
 
-			int left = l;
 			l += _n;
 			var sum = _unit;
 			do {
@@ -260,7 +259,7 @@ namespace TakyTank.KyoProLib.CSharp
 				++l;
 			} while ((l & -l) != l);
 
-			return left;
+			return Count;
 		}
 
 		/// <summary>
@@ -285,7 +284,6 @@ namespace TakyTank.KyoProLib.CSharp
 				return 0;
 			}
 
-			int right = r;
 			r += _n;
 			var sum = _unit;
 			do {
@@ -310,7 +308,7 @@ namespace TakyTank.KyoProLib.CSharp
 				sum = _operate(_tree[r], sum);
 			} while ((r & -r) != r);
 
-			return right;
+			return 0;
 		}
 
 		public IEnumerator<T> GetEnumerator()
